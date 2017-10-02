@@ -13,7 +13,8 @@ setup(
     install_requires=[
         'singer-python==1.8.1',
         'python-dateutil==2.6.0',
-        'FuelSDK==0.9.4'
+        'FuelSDK==0.9.4',
+        'voluptuous==0.10.5',
     ],
     dependency_links=[
         'git+https://github.com/cmcarthur/FuelSDK-Python.git#egg=FuelSDK-0.9.4'

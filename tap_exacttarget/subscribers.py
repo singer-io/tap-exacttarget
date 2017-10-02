@@ -1,116 +1,14 @@
-custom_property_list = {
-    'type': 'array',
-    'inclusion': 'available',
-    'description': ('Specifies key-value pairs of properties associated with '
-                    'an object.'),
-    'items': {
-        'type': 'object',
-        'properties': {
-            'Name': {'type': 'string'},
-            'Value': {'type': 'string'},
-        }
-    }
-}
+import FuelSDK
+import singer
 
-event = {
-    'type': 'object',
-    'properties': {
-        'SendID': {
-            'type': 'integer',
-            'description': 'Contains identifier for a specific send.',
-        },
-        'EventDate': {
-            'type': 'string',
-            'format': 'datetime',
-            'description': 'Date when a tracking event occurred.',
-        },
-        'EventType': {
-            'type': 'string',
-            'description': 'The type of tracking event',
-        },
-        'SubscriberKey': {
-            'type': 'string',
-            'description': 'Identification of a specific subscriber.',
-        }
-    }
-}
+from tap_exacttarget.client import request
+from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.schemas import custom_property_list
+from tap_exacttarget.state import incorporate, save_state
+from tap_exacttarget.util import partition_all
 
-send = {
-    'type': 'object',
-    'properties': {
-        'CreatedDate': {
-            'type': 'string',
-            'format': 'date-time',
-            'description': ('Read-only date and time of the object\'s '
-                            'creation.'),
-        },
-        'EmailName': {
-            'type': 'string',
-            'description': ('Specifies the name of an email message '
-                            'associated with a send.'),
-        },
-        'FromAddress': {
-            'type': 'string',
-            'description': ('Indicates From address associated with a '
-                            'object. Deprecated for email send definitions '
-                            'and triggered send definitions.'),
-        },
-        'FromName': {
-            'type': 'string',
-            'description': ('Specifies the default email message From Name. '
-                            'Deprecated for email send definitions and '
-                            'triggered send definitions.'),
-        },
-        'ID': {
-            'type': 'integer',
-            'description': ('Read-only legacy identifier for an object. Not '
-                            'supported on all objects. Some objects use the '
-                            'ObjectID property as the Marketing Cloud unique '
-                            'ID.'),
-        },
-        'IsAlwaysOn': {
-            'type': 'boolean',
-            'description': ('Indicates whether the request can be performed '
-                            'while the system is is maintenance mode. A value '
-                            'of true indicates the system will process the '
-                            'request.'),
-        },
-        'IsMultipart': {
-            'type': 'boolean',
-            'description': ('Indicates whether the email is sent with '
-                            'Multipart/MIME enabled.'),
-        },
-        'ModifiedDate': {
-            'type': 'string',
-            'format': 'date-time',
-            'description': ('Indicates the last time object information '
-                            'was modified.'),
-        },
-        'PartnerProperties': custom_property_list,
-        'SendDate': {
-            'type': 'string',
-            'format': 'date-time',
-            'description': ('Indicates the date on which a send occurred.'
-                            'Set this value to have a CST (Central Standard '
-                            'Time) value.'),
-        },
-        'SentDate': {
-            'type': 'string',
-            'format': 'date-time',
-            'description': 'Indicates date on which a send took place.',
-        },
-        'Status': {
-            'type': 'string',
-            'description': 'Defines status of object. Status of an address.',
-        },
-        'Subject': {
-            'type': 'string',
-            'description': 'Contains subject area information for a message.',
-        }
-    }
-}
 
-subscriber = {
+schema = {
     'type': 'object',
     'properties': {
         'Addresses': {
@@ -254,3 +152,112 @@ subscriber = {
         }
     }
 }
+
+
+class SubscriberDataAccessObject(DataAccessObject):
+
+    SCHEMA = schema
+    TABLE = 'subscriber'
+    KEY_PROPERTIES = ['ObjectID']
+
+    def parse_object(self, obj):
+        to_return = obj.copy()
+
+        if 'ListIDs' in to_return:
+            to_return['ListIDs'] = [_list.get('ObjectID')
+                                    for _list in to_return.get('Lists')]
+
+        return to_return
+
+    @classmethod
+    def sync(self):
+        all_subscribers_list = self._get_all_subscribers_list()
+
+        self._pull_list_subscribers(all_subscribers_list)
+
+    def _get_all_subscribers_list(self):
+        """
+        Find the 'All Subscribers' list via the SOAP API, and return it.
+        """
+        result = request('List', FuelSDK.ET_List, self.auth_stub, {
+            'Property': 'ListName',
+            'SimpleOperator': 'equals',
+            'Value': 'All Subscribers',
+        })
+
+        lists = list(result)
+
+        if len(lists) != 1:
+            msg = ('Found {} all subscriber lists, expected one!'
+                   .format(len(lists)))
+            raise RuntimeError(msg)
+
+        return lists[0]
+
+    def _pull_list_subscribers(self, all_subscribers_list):
+        """
+        Pull all the ListSubscribers for a given List, and then pull the
+        associated Subscribers. Persist the ListSubscribers and Subscribers.
+        """
+        retrieve_all_since = self.state.get('subscriber')
+
+        stream = request('ListSubscriber',
+                         FuelSDK.ET_ListSubscriber,
+                         self.auth_stub,
+                         self._get_list_subscriber_filter(
+                             all_subscribers_list,
+                             retrieve_all_since))
+
+        batch_size = 100
+
+        for list_subscribers_batch in partition_all(stream, batch_size):
+            subscriber_keys = list(map(
+                self._get_subscriber_key, list_subscribers_batch))
+
+            self._pull_subscribers_batch(subscriber_keys)
+
+    def _pull_subscribers_batch(self, subscriber_keys):
+        table = self.__class__.TABLE
+        stream = request('Subscriber', FuelSDK.ET_Subscriber, self.auth_stub, {
+            'Property': 'SubscriberKey',
+            'SimpleOperator': 'IN',
+            'Value': subscriber_keys
+        })
+
+        for subscriber in stream:
+            subscriber = self.filter_keys_and_parse(subscriber)
+            state = incorporate(self.state,
+                                table,
+                                'ModifiedDate',
+                                subscriber.get('ModifiedDate'))
+
+            singer.write_records(table, [subscriber])
+
+        save_state(state)
+
+    def _get_subscriber_key(list_subscriber):
+        list_subscriber.get('SubscriberKey')
+
+    def _get_list_subscriber_filter(_list, retrieve_all_since):
+        list_filter = {
+            'Property': 'ListID',
+            'SimpleOperator': 'equals',
+            'Value': _list.get('ListID'),
+        }
+
+        full_filter = None
+
+        if retrieve_all_since:
+            full_filter = {
+                'LogicalOperator': 'AND',
+                'LeftOperand': list_filter,
+                'RightOperand': {
+                    'Property': 'ModifiedDate',
+                    'SimpleOperator': 'greaterThan',
+                    'Value': retrieve_all_since,
+                }
+            }
+        else:
+            full_filter = list_filter
+
+        return full_filter

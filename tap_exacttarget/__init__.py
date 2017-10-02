@@ -2,14 +2,17 @@
 
 import FuelSDK
 
-import suds
-
 import argparse
-import datetime
 import json
 
 import singer
 import tap_exacttarget.schemas
+from tap_exacttarget.client import request
+from tap_exacttarget.state import load_state, save_state, incorporate
+from tap_exacttarget.util import sudsobj_to_dict
+
+from tap_exacttarget.data_extensions import DataExtensionDataAccessObject
+from tap_exacttarget.subscribers import SubscriberDataAccessObject
 
 
 logger = singer.get_logger()
@@ -42,33 +45,6 @@ def get_auth_stub(config):
     return auth_stub
 
 
-def request(name, selector, auth_stub, search_filter=None):
-    cursor = selector()
-    cursor.auth_stub = auth_stub
-
-    if search_filter is not None:
-        cursor.search_filter = search_filter
-
-    logger.info(
-        "Making RETRIEVE call to '{}' endpoint with filter {}."
-        .format(name, search_filter))
-
-    response = cursor.get()
-
-    for item in response.results:
-        yield item
-
-    while response.more_results:
-        logger.info("Getting more results from '{}' endpoint".format(name))
-
-        response = response.getMoreResults()
-
-        for item in response.results:
-            yield item
-
-    logger.info("Done retrieving results from '{}' endpoint".format(name))
-
-
 def sync_events(config, state, auth_stub):
     table = 'event'
 
@@ -92,17 +68,12 @@ def sync_events(config, state, auth_stub):
 
         for event in stream:
             event = parse_event(event)
-
-            if state.get(table) is None:
-                state[table] = {}
-
-            if state.get(table).get(event_name) is None or \
-               event.get('EventDate') > state.get(table).get(event_name):
-                state[table][event_name] = event.get('EventDate')
+            state = incorporate(state, table, 'EventDate',
+                                event.get('EventDate'))
 
             singer.write_records(table, [event])
 
-    singer.write_state(state)
+    save_state(state)
 
 
 def parse_event(event):
@@ -140,12 +111,12 @@ def sync_sends(config, state, auth_stub):
     for send in stream:
         send = parse_send(send)
 
-        if table not in state or send.get('ModifiedDate') > state[table]:
-            state[table] = send.get('ModifiedDate')
+        state = incorporate(state, table, 'ModifiedDate',
+                            send.get('ModifiedDate'))
 
         singer.write_records(table, [send])
 
-    singer.write_state(state)
+    save_state(state)
 
 
 def parse_send(send):
@@ -166,24 +137,6 @@ def parse_send(send):
         "Status": send.get("Status"),
         "Subject": send.get("Subject"),
     }
-
-
-def sudsobj_to_dict(obj):
-    if isinstance(obj, list):
-        return [sudsobj_to_dict(item) for item in obj]
-
-    if not isinstance(obj, suds.sudsobject.Object):
-        if isinstance(obj, datetime.datetime):
-            return obj.strftime('%Y-%m-%dT%H:%M:%SZ')
-
-        return obj
-
-    to_return = {}
-
-    for key in obj.__keylist__:
-        to_return[key] = sudsobj_to_dict(getattr(obj, key))
-
-    return to_return
 
 
 def validate_config(config):
@@ -213,6 +166,19 @@ def validate_config(config):
         raise RuntimeError
 
 
+def load_catalog(filename):
+    catalog = {}
+
+    try:
+        with open(filename) as f:
+            catalog = json.load(f)
+    except:
+        logger.fatal("Failed to decode catalog file. Is it valid json?")
+        raise RuntimeError
+
+    return catalog
+
+
 def load_config(filename):
     config = {}
 
@@ -228,16 +194,28 @@ def load_config(filename):
     return config
 
 
-def load_state(filename):
-    if filename is None:
-        return {}
+AVAILABLE_STREAMS = [
+    DataExtensionDataAccessObject,
+    SubscriberDataAccessObject
+]
 
-    try:
-        with open(filename) as f:
-            return json.load(f)
-    except:
-        logger.fatal("Failed to decode state file. Is it valid json?")
-        raise RuntimeError
+
+def do_discover(args):
+    logger.info("Starting discovery.")
+
+    config = load_config(args.config)
+    state = load_state(args.state)
+
+    auth_stub = get_auth_stub(config)
+
+    catalog = []
+
+    for available_stream in AVAILABLE_STREAMS:
+        stream = available_stream(config, state, auth_stub, None)
+
+        catalog += stream.generate_catalog()
+
+    print(json.dumps({'streams': catalog}))
 
 
 def do_sync(args):
@@ -245,8 +223,18 @@ def do_sync(args):
 
     config = load_config(args.config)
     state = load_state(args.state)
+    catalog = load_catalog(args.catalog)
 
     auth_stub = get_auth_stub(config)
+
+    for available_stream in AVAILABLE_STREAMS:
+        stream_catalogs = [stream_catalog for stream_catalog in catalog
+                           if (stream_catalog.get('stream') ==
+                               available_stream.TABLE)]
+
+        for stream_catalog in stream_catalogs:
+            stream = available_stream(config, state, auth_stub, stream_catalog)
+            stream.sync()
 
     sync_events(config, state, auth_stub)
     sync_sends(config, state, auth_stub)
@@ -259,12 +247,23 @@ def main():
         '-c', '--config', help='Config file', required=True)
     parser.add_argument(
         '-s', '--state', help='State file')
+    parser.add_argument(
+        '-C', '--catalog', help='Catalog file with fields selected')
+
+    parser.add_argument(
+        '-d', '--discover',
+        help='Build a catalog from the underlying schema',
+        action='store_true')
 
     args = parser.parse_args()
 
     try:
-        do_sync(args)
-    except RuntimeError:
+        if args.discover:
+            do_discover(args)
+        else:
+            do_sync(args)
+    except RuntimeError as e:
+        logger.error(str(e))
         logger.fatal("Run failed.")
         exit(1)
 
