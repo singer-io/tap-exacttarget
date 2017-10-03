@@ -1,6 +1,17 @@
 from tap_exacttarget.util import sudsobj_to_dict
 
 
+def _is_selected(catalog_entry):
+    return ((catalog_entry.get('inclusion') == 'automatic') or
+            (catalog_entry.get('inclusion') == 'available' and
+             catalog_entry.get('selected') is True))
+
+
+def _filter_selected(catalog):
+    return {key: value for key, value in catalog.iteritems()
+            if _is_selected(value)}
+
+
 class DataAccessObject(object):
 
     def __init__(self, config, state, auth_stub, catalog):
@@ -20,18 +31,12 @@ class DataAccessObject(object):
             'replication_key': 'ModifiedDate'
         }]
 
-    def _is_selected(self, catalog_entry):
-        return ((catalog_entry.get('inclusion') == 'automatic') or
-                (catalog_entry.get('inclusion') == 'available' and
-                 catalog_entry.get('selected') is True))
-
     def select_keys_with_catalog(self, obj):
         # by default, use all the keys
         selected_keys = self.__class__.SCHEMA.get('properties').keys()
 
         if self.catalog is not None:
-            selected_keys = \
-                filter(self._is_selected, self.catalog).keys()
+            selected_keys = _filter_selected(self.catalog).keys()
 
         return {key: obj[key]
                 for key in selected_keys}
@@ -48,10 +53,8 @@ class DataAccessObject(object):
     TABLE = None
     KEY_PROPERTIES = None
 
-    @classmethod
-    def parse_object(self, obj):
+    def parse_object(self, obj):  # pylint: disable=no-self-use,unused-argument
         raise RuntimeError('parse_object is not implemented!')
 
-    @classmethod
-    def sync(self):
+    def sync(self):  # pylint: disable=no-self-use
         raise RuntimeError('sync is not implemented!')

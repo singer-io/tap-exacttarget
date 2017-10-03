@@ -3,12 +3,12 @@ import singer
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
-from tap_exacttarget.schemas import custom_property_list
+from tap_exacttarget.schemas import CUSTOM_PROPERTY_LIST, ID_FIELD
 from tap_exacttarget.state import incorporate, save_state
 from tap_exacttarget.util import partition_all
 
 
-schema = {
+SCHEMA = {
     'type': 'object',
     'properties': {
         'Addresses': {
@@ -26,7 +26,7 @@ schema = {
                 }
             }
         },
-        'Attributes': custom_property_list,
+        'Attributes': CUSTOM_PROPERTY_LIST,
         'CorrelationID': {
             'type': 'string',
             'inclusion': 'available',
@@ -58,14 +58,7 @@ schema = {
             'inclusion': 'available',
             'description': 'The format in which email should be sent'
         },
-        'ID': {
-            'type': 'int',
-            'inclusion': 'automatic',
-            'description': ('Read-only legacy identifier for an object. Not '
-                            'supported on all objects. Some objects use the '
-                            'ObjectID property as the Marketing Cloud unique '
-                            'ID.'),
-        },
+        'ID': ID_FIELD,
         'ListIDs': {
             'type': 'array',
             'inclusion': 'available',
@@ -104,7 +97,7 @@ schema = {
             'description': ('Unique identifier provided by partner for an '
                             'object, accessible only via API.'),
         },
-        'PartnerProperties': custom_property_list,
+        'PartnerProperties': CUSTOM_PROPERTY_LIST,
         'PartnerType': {
             'type': 'string',
             'inclusion': 'available',
@@ -154,9 +147,38 @@ schema = {
 }
 
 
+def _get_list_subscriber_filter(_list, retrieve_all_since):
+    list_filter = {
+        'Property': 'ListID',
+        'SimpleOperator': 'equals',
+        'Value': _list.get('ListID'),
+    }
+
+    full_filter = None
+
+    if retrieve_all_since:
+        full_filter = {
+            'LogicalOperator': 'AND',
+            'LeftOperand': list_filter,
+            'RightOperand': {
+                'Property': 'ModifiedDate',
+                'SimpleOperator': 'greaterThan',
+                'Value': retrieve_all_since,
+            }
+        }
+    else:
+        full_filter = list_filter
+
+    return full_filter
+
+
+def _get_subscriber_key(list_subscriber):
+    list_subscriber.get('SubscriberKey')
+
+
 class SubscriberDataAccessObject(DataAccessObject):
 
-    SCHEMA = schema
+    SCHEMA = SCHEMA
     TABLE = 'subscriber'
     KEY_PROPERTIES = ['ObjectID']
 
@@ -169,7 +191,6 @@ class SubscriberDataAccessObject(DataAccessObject):
 
         return to_return
 
-    @classmethod
     def sync(self):
         all_subscribers_list = self._get_all_subscribers_list()
 
@@ -202,9 +223,9 @@ class SubscriberDataAccessObject(DataAccessObject):
         retrieve_all_since = self.state.get('subscriber')
 
         stream = request('ListSubscriber',
-                         FuelSDK.ET_ListSubscriber,
+                         FuelSDK.ET_List_Subscriber,
                          self.auth_stub,
-                         self._get_list_subscriber_filter(
+                         _get_list_subscriber_filter(
                              all_subscribers_list,
                              retrieve_all_since))
 
@@ -212,7 +233,7 @@ class SubscriberDataAccessObject(DataAccessObject):
 
         for list_subscribers_batch in partition_all(stream, batch_size):
             subscriber_keys = list(map(
-                self._get_subscriber_key, list_subscribers_batch))
+                _get_subscriber_key, list_subscribers_batch))
 
             self._pull_subscribers_batch(subscriber_keys)
 
@@ -234,30 +255,3 @@ class SubscriberDataAccessObject(DataAccessObject):
             singer.write_records(table, [subscriber])
 
         save_state(state)
-
-    def _get_subscriber_key(list_subscriber):
-        list_subscriber.get('SubscriberKey')
-
-    def _get_list_subscriber_filter(_list, retrieve_all_since):
-        list_filter = {
-            'Property': 'ListID',
-            'SimpleOperator': 'equals',
-            'Value': _list.get('ListID'),
-        }
-
-        full_filter = None
-
-        if retrieve_all_since:
-            full_filter = {
-                'LogicalOperator': 'AND',
-                'LeftOperand': list_filter,
-                'RightOperand': {
-                    'Property': 'ModifiedDate',
-                    'SimpleOperator': 'greaterThan',
-                    'Value': retrieve_all_since,
-                }
-            }
-        else:
-            full_filter = list_filter
-
-        return full_filter

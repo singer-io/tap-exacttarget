@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-import FuelSDK
-
 import argparse
 import json
 
+import FuelSDK
 import singer
 import tap_exacttarget.schemas
+
 from tap_exacttarget.client import request
 from tap_exacttarget.state import load_state, save_state, incorporate
 from tap_exacttarget.util import sudsobj_to_dict
@@ -15,14 +15,9 @@ from tap_exacttarget.data_extensions import DataExtensionDataAccessObject
 from tap_exacttarget.subscribers import SubscriberDataAccessObject
 
 
-logger = singer.get_logger()
+LOGGER = singer.get_logger()  # noqa
 
-table_mapping = {
-    'campaign': FuelSDK.ET_Campaign,
-    'event': FuelSDK.ET_SentEvent,
-}
-
-event_endpoints = {
+EVENT_ENDPOINTS = {
     'sent': FuelSDK.ET_SentEvent,
     'click': FuelSDK.ET_ClickEvent,
     'open': FuelSDK.ET_OpenEvent,
@@ -32,7 +27,7 @@ event_endpoints = {
 
 
 def get_auth_stub(config):
-    logger.info("Generating auth stub...")
+    LOGGER.info("Generating auth stub...")
 
     auth_stub = FuelSDK.ET_Client(
         params={
@@ -40,20 +35,20 @@ def get_auth_stub(config):
             'clientsecret': config['client_secret']
         })
 
-    logger.info("Success.")
+    LOGGER.info("Success.")
 
     return auth_stub
 
 
-def sync_events(config, state, auth_stub):
+def sync_events(state, auth_stub):
     table = 'event'
 
     singer.write_schema(
         table,
-        tap_exacttarget.schemas.event,
+        tap_exacttarget.schemas.EVENT,
         key_properties=['SendID', 'EventType', 'SubscriberKey', 'EventDate'])
 
-    for event_name, selector in event_endpoints.items():
+    for event_name, selector in EVENT_ENDPOINTS.items():
         search_filter = None
         retrieve_all_since = state.get('event', {}).get(event_name)
 
@@ -87,13 +82,13 @@ def parse_event(event):
     }
 
 
-def sync_sends(config, state, auth_stub):
+def sync_sends(state, auth_stub):
     table = 'send'
     selector = FuelSDK.ET_Send
 
     singer.write_schema(
         table,
-        tap_exacttarget.schemas.send,
+        tap_exacttarget.schemas.SEND,
         key_properties=['ID'])
 
     search_filter = None
@@ -152,13 +147,13 @@ def validate_config(config):
         elif config.get(required_key) is None:
             null_keys.append(required_key)
 
-    if len(missing_keys) > 0:
-        logger.fatal("Config is missing keys: {}"
+    if missing_keys:
+        LOGGER.fatal("Config is missing keys: {}"
                      .format(", ".join(missing_keys)))
         has_errors = True
 
-    if len(null_keys) > 0:
-        logger.fatal("Config has null keys: {}"
+    if null_keys:
+        LOGGER.fatal("Config has null keys: {}"
                      .format(", ".join(null_keys)))
         has_errors = True
 
@@ -170,10 +165,10 @@ def load_catalog(filename):
     catalog = {}
 
     try:
-        with open(filename) as f:
-            catalog = json.load(f)
+        with open(filename) as handle:
+            catalog = json.load(handle)
     except:
-        logger.fatal("Failed to decode catalog file. Is it valid json?")
+        LOGGER.fatal("Failed to decode catalog file. Is it valid json?")
         raise RuntimeError
 
     return catalog
@@ -183,10 +178,10 @@ def load_config(filename):
     config = {}
 
     try:
-        with open(filename) as f:
-            config = json.load(f)
+        with open(filename) as handle:
+            config = json.load(handle)
     except:
-        logger.fatal("Failed to decode config file. Is it valid json?")
+        LOGGER.fatal("Failed to decode config file. Is it valid json?")
         raise RuntimeError
 
     validate_config(config)
@@ -201,7 +196,7 @@ AVAILABLE_STREAMS = [
 
 
 def do_discover(args):
-    logger.info("Starting discovery.")
+    LOGGER.info("Starting discovery.")
 
     config = load_config(args.config)
     state = load_state(args.state)
@@ -219,7 +214,7 @@ def do_discover(args):
 
 
 def do_sync(args):
-    logger.info("Starting sync.")
+    LOGGER.info("Starting sync.")
 
     config = load_config(args.config)
     state = load_state(args.state)
@@ -236,8 +231,8 @@ def do_sync(args):
             stream = available_stream(config, state, auth_stub, stream_catalog)
             stream.sync()
 
-    sync_events(config, state, auth_stub)
-    sync_sends(config, state, auth_stub)
+    sync_events(state, auth_stub)
+    sync_sends(state, auth_stub)
 
 
 def main():
@@ -262,9 +257,9 @@ def main():
             do_discover(args)
         else:
             do_sync(args)
-    except RuntimeError as e:
-        logger.error(str(e))
-        logger.fatal("Run failed.")
+    except RuntimeError as exception:
+        LOGGER.error(str(exception))
+        LOGGER.fatal("Run failed.")
         exit(1)
 
 

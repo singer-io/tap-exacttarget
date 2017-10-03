@@ -5,7 +5,7 @@ from tap_exacttarget.state import incorporate
 
 class TestState(unittest.TestCase):
 
-    def test__incorporate(self):
+    def test_incorporate(self):
         self.assertEqual(
             incorporate({}, 'table', 'modifieddate', '2017'),
             {
@@ -17,7 +17,6 @@ class TestState(unittest.TestCase):
                 }
             })
 
-    def test__incorporate__new_greater_than_existing(self):
         self.assertEqual(
             incorporate({
                 'bookmarks': {
@@ -36,7 +35,6 @@ class TestState(unittest.TestCase):
                 }
             })
 
-    def test__incorporate__existing_greater_than_new(self):
         self.assertEqual(
             incorporate({
                 'bookmarks': {

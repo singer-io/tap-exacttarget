@@ -3,7 +3,7 @@ import singer
 
 from voluptuous import Schema, Required
 
-logger = singer.get_logger()
+LOGGER = singer.get_logger()
 
 STATE_SCHEMA = Schema({
     Required('bookmarks'): {
@@ -32,11 +32,9 @@ def incorporate(state, table, field, value):
 
 
 def save_state(state):
-    global STATE_SCHEMA
-
     STATE_SCHEMA(state)
 
-    logger.info('Updating state.')
+    LOGGER.info('Updating state.')
 
     singer.write_state(state)
 
@@ -46,8 +44,8 @@ def load_state(filename):
         return {}
 
     try:
-        with open(filename) as f:
-            return json.load(f)
+        with open(filename) as handle:
+            return json.load(handle)
     except:
-        logger.fatal("Failed to decode state file. Is it valid json?")
+        LOGGER.fatal("Failed to decode state file. Is it valid json?")
         raise RuntimeError

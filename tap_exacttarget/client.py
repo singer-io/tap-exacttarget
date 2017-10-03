@@ -1,7 +1,7 @@
 import singer
 
 
-logger = singer.get_logger()
+LOGGER = singer.get_logger()
 
 
 def request(name, selector, auth_stub, search_filter=None):
@@ -11,7 +11,7 @@ def request(name, selector, auth_stub, search_filter=None):
     if search_filter is not None:
         cursor.search_filter = search_filter
 
-    logger.info(
+    LOGGER.info(
         "Making RETRIEVE call to '{}' endpoint with filter {}."
         .format(name, search_filter))
 
@@ -21,11 +21,11 @@ def request(name, selector, auth_stub, search_filter=None):
         yield item
 
     while response.more_results:
-        logger.info("Getting more results from '{}' endpoint".format(name))
+        LOGGER.info("Getting more results from '{}' endpoint".format(name))
 
         response = response.getMoreResults()
 
         for item in response.results:
             yield item
 
-    logger.info("Done retrieving results from '{}' endpoint".format(name))
+    LOGGER.info("Done retrieving results from '{}' endpoint".format(name))
