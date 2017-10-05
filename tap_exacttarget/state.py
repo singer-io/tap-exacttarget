@@ -32,6 +32,9 @@ def incorporate(state, table, field, value):
 
 
 def save_state(state):
+    if not state:
+        return
+
     STATE_SCHEMA(state)
 
     LOGGER.info('Updating state.')

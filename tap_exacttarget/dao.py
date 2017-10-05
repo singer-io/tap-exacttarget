@@ -1,24 +1,28 @@
+import singer
+
+from funcy import project
+
 from tap_exacttarget.util import sudsobj_to_dict
 
-
-def _is_selected(catalog_entry):
-    return ((catalog_entry.get('inclusion') == 'automatic') or
-            (catalog_entry.get('inclusion') == 'available' and
-             catalog_entry.get('selected') is True))
+LOGGER = singer.get_logger()
 
 
-def _filter_selected(catalog):
-    return {key: value for key, value in catalog.iteritems()
-            if _is_selected(value)}
+def _get_catalog_schema(catalog):
+    return catalog.get('schema', {}).get('properties')
 
 
 class DataAccessObject(object):
 
-    def __init__(self, config, state, auth_stub, catalog):
-        self.config = config
-        self.state = state
-        self.auth_stub = auth_stub
+    def __init__(self, config, state, auth_stub, catalog, **kwargs):
+        self.config = config.copy()
+        self.state = state.copy()
         self.catalog = catalog
+
+        self.auth_stub = auth_stub
+
+    @classmethod
+    def matches_catalog(cls, catalog):
+        return catalog.get('stream') == cls.TABLE
 
     def generate_catalog(self):
         cls = self.__class__
@@ -31,21 +35,34 @@ class DataAccessObject(object):
             'replication_key': 'ModifiedDate'
         }]
 
-    def select_keys_with_catalog(self, obj):
-        # by default, use all the keys
-        selected_keys = self.__class__.SCHEMA.get('properties').keys()
-
-        if self.catalog is not None:
-            selected_keys = _filter_selected(self.catalog).keys()
-
-        return {key: obj[key]
-                for key in selected_keys}
-
     def filter_keys_and_parse(self, obj):
         to_return = sudsobj_to_dict(obj)
-        to_return = self.select_keys_with_catalog(to_return)
 
         return self.parse_object(to_return)
+
+    def get_catalog_keys(self):
+        return list(
+            self.catalog.get('schema', {}).get('properties', {}).keys())
+
+    def parse_object(self, obj):
+        return project(obj, self.get_catalog_keys())
+
+    def sync(self):
+        if not self.catalog.get('schema', {}).get('selected'):
+            LOGGER.info('{} is not marked as selected, skipping.'
+                        .format(self.catalog.get('stream')))
+            return
+
+        LOGGER.info('Syncing stream {} with accessor {}'
+                    .format(self.catalog.get('tap_stream_id'),
+                            self.__class__.__name__))
+
+        singer.write_schema(
+            self.catalog.get('stream'),
+            self.catalog.get('schema'),
+            key_properties=self.catalog.get('key_properties'))
+
+        return self.sync_data()
 
     # OVERRIDE THESE TO IMPLEMENT A NEW DAO:
 
@@ -53,8 +70,5 @@ class DataAccessObject(object):
     TABLE = None
     KEY_PROPERTIES = None
 
-    def parse_object(self, obj):  # pylint: disable=no-self-use,unused-argument
-        raise RuntimeError('parse_object is not implemented!')
-
-    def sync(self):  # pylint: disable=no-self-use
-        raise RuntimeError('sync is not implemented!')
+    def sync_data(self):  # pylint: disable=no-self-use
+        raise RuntimeError('sync_data is not implemented!')

@@ -3,135 +3,29 @@
 import argparse
 import json
 
-import FuelSDK
 import singer
-import tap_exacttarget.schemas
 
-from tap_exacttarget.client import request
-from tap_exacttarget.state import load_state, save_state, incorporate
-from tap_exacttarget.util import sudsobj_to_dict
+from tap_exacttarget.state import load_state
 
-from tap_exacttarget.data_extensions import DataExtensionDataAccessObject
-from tap_exacttarget.subscribers import SubscriberDataAccessObject
+from tap_exacttarget.client import get_auth_stub
+
+from tap_exacttarget.endpoints.campaigns \
+    import CampaignDataAccessObject
+from tap_exacttarget.endpoints.content_areas \
+    import ContentAreaDataAccessObject
+from tap_exacttarget.endpoints.data_extensions \
+    import DataExtensionDataAccessObject
+from tap_exacttarget.endpoints.emails import EmailDataAccessObject
+from tap_exacttarget.endpoints.events import EventDataAccessObject
+from tap_exacttarget.endpoints.folders import FolderDataAccessObject
+from tap_exacttarget.endpoints.lists import ListDataAccessObject
+from tap_exacttarget.endpoints.list_subscribers \
+    import ListSubscriberDataAccessObject
+from tap_exacttarget.endpoints.sends import SendDataAccessObject
+from tap_exacttarget.endpoints.subscribers import SubscriberDataAccessObject
 
 
 LOGGER = singer.get_logger()  # noqa
-
-EVENT_ENDPOINTS = {
-    'sent': FuelSDK.ET_SentEvent,
-    'click': FuelSDK.ET_ClickEvent,
-    'open': FuelSDK.ET_OpenEvent,
-    'bounce': FuelSDK.ET_BounceEvent,
-    'unsub': FuelSDK.ET_UnsubEvent
-}
-
-
-def get_auth_stub(config):
-    LOGGER.info("Generating auth stub...")
-
-    auth_stub = FuelSDK.ET_Client(
-        params={
-            'clientid': config['client_id'],
-            'clientsecret': config['client_secret']
-        })
-
-    LOGGER.info("Success.")
-
-    return auth_stub
-
-
-def sync_events(state, auth_stub):
-    table = 'event'
-
-    singer.write_schema(
-        table,
-        tap_exacttarget.schemas.EVENT,
-        key_properties=['SendID', 'EventType', 'SubscriberKey', 'EventDate'])
-
-    for event_name, selector in EVENT_ENDPOINTS.items():
-        search_filter = None
-        retrieve_all_since = state.get('event', {}).get(event_name)
-
-        if retrieve_all_since is not None:
-            search_filter = {
-                'Property': 'EventDate',
-                'SimpleOperator': 'greaterThan',
-                'Value': retrieve_all_since
-            }
-
-        stream = request(event_name, selector, auth_stub, search_filter)
-
-        for event in stream:
-            event = parse_event(event)
-            state = incorporate(state, table, 'EventDate',
-                                event.get('EventDate'))
-
-            singer.write_records(table, [event])
-
-    save_state(state)
-
-
-def parse_event(event):
-    event = sudsobj_to_dict(event)
-
-    return {
-        "SendID": event.get("SendID"),
-        "EventDate": event.get("EventDate"),
-        "EventType": event.get("EventType"),
-        "SubscriberKey": event.get("SubscriberKey")
-    }
-
-
-def sync_sends(state, auth_stub):
-    table = 'send'
-    selector = FuelSDK.ET_Send
-
-    singer.write_schema(
-        table,
-        tap_exacttarget.schemas.SEND,
-        key_properties=['ID'])
-
-    search_filter = None
-    retrieve_all_since = state.get(table)
-
-    if retrieve_all_since is not None:
-        search_filter = {
-            'Property': 'ModifiedDate',
-            'SimpleOperator': 'greaterThan',
-            'Value': retrieve_all_since
-        }
-
-    stream = request(table, selector, auth_stub, search_filter)
-
-    for send in stream:
-        send = parse_send(send)
-
-        state = incorporate(state, table, 'ModifiedDate',
-                            send.get('ModifiedDate'))
-
-        singer.write_records(table, [send])
-
-    save_state(state)
-
-
-def parse_send(send):
-    send = sudsobj_to_dict(send)
-
-    return {
-        "CreatedDate": send.get("CreatedDate"),
-        "EmailName": str(send.get("EmailName")),
-        "FromAddress": str(send.get("FromAddress")),
-        "FromName": str(send.get("FromName")),
-        "ID": send.get("ID"),
-        "IsAlwaysOn": send.get("IsAlwaysOn"),
-        "IsMultipart": send.get("IsMultipart"),
-        "ModifiedDate": send.get("ModifiedDate"),
-        "PartnerProperties": send.get("PartnerProperties"),
-        "SendDate": send.get("SendDate"),
-        "SentDate": send.get("SentDate"),
-        "Status": send.get("Status"),
-        "Subject": send.get("Subject"),
-    }
 
 
 def validate_config(config):
@@ -189,9 +83,17 @@ def load_config(filename):
     return config
 
 
-AVAILABLE_STREAMS = [
+AVAILABLE_STREAM_ACCESSORS = [
+    CampaignDataAccessObject,
+    ContentAreaDataAccessObject,
     DataExtensionDataAccessObject,
-    SubscriberDataAccessObject
+    EmailDataAccessObject,
+    EventDataAccessObject,
+    FolderDataAccessObject,
+    ListDataAccessObject,
+    ListSubscriberDataAccessObject,
+    SendDataAccessObject,
+    SubscriberDataAccessObject,
 ]
 
 
@@ -205,12 +107,19 @@ def do_discover(args):
 
     catalog = []
 
-    for available_stream in AVAILABLE_STREAMS:
-        stream = available_stream(config, state, auth_stub, None)
+    for available_stream_accessor in AVAILABLE_STREAM_ACCESSORS:
+        stream_accessor = available_stream_accessor(
+            config, state, auth_stub, None)
 
-        catalog += stream.generate_catalog()
+        catalog += stream_accessor.generate_catalog()
 
     print(json.dumps({'streams': catalog}))
+
+
+def _is_selected(catalog_entry):
+    return ((catalog_entry.get('inclusion') == 'automatic') or
+            (catalog_entry.get('inclusion') == 'available' and
+             catalog_entry.get('selected') is True))
 
 
 def do_sync(args):
@@ -218,21 +127,47 @@ def do_sync(args):
 
     config = load_config(args.config)
     state = load_state(args.state)
-    catalog = load_catalog(args.catalog)
+    catalog = load_catalog(args.properties)
 
     auth_stub = get_auth_stub(config)
 
-    for available_stream in AVAILABLE_STREAMS:
-        stream_catalogs = [stream_catalog for stream_catalog in catalog
-                           if (stream_catalog.get('stream') ==
-                               available_stream.TABLE)]
+    stream_accessors = []
 
-        for stream_catalog in stream_catalogs:
-            stream = available_stream(config, state, auth_stub, stream_catalog)
-            stream.sync()
+    subscriber_selected = False
+    list_subscriber_selected = False
 
-    sync_events(state, auth_stub)
-    sync_sends(state, auth_stub)
+    for stream_catalog in catalog.get('streams'):
+        stream_accessor = None
+
+        if SubscriberDataAccessObject.matches_catalog(stream_catalog):
+            subscriber_selected = True
+            LOGGER.info("'subscriber' selected, will replicate via "
+                        "'list_subscriber'")
+            continue
+
+        if ListSubscriberDataAccessObject.matches_catalog(stream_catalog):
+            list_subscriber_selected = True
+
+        for available_stream_accessor in AVAILABLE_STREAM_ACCESSORS:
+            if available_stream_accessor.matches_catalog(stream_catalog):
+                stream_accessors.append(available_stream_accessor(
+                    config, state, auth_stub, stream_catalog,
+                    replicate_subscriber=subscriber_selected))
+
+                break
+
+        if stream_accessor is None:
+            LOGGER.warn('No matching accessor found for stream {}, skipping'
+                        .format(stream_catalog.get('tap_stream_id')))
+
+    if subscriber_selected and not list_subscriber_selected:
+        LOGGER.fatal('Cannot replicate `subscriber` without '
+                     '`list_subscriber`. Please select `list_subscriber` '
+                     'and try again.')
+        exit(1)
+
+    for stream_accessor in stream_accessors:
+        stream_accessor.sync()
 
 
 def main():
@@ -243,11 +178,16 @@ def main():
     parser.add_argument(
         '-s', '--state', help='State file')
     parser.add_argument(
-        '-C', '--catalog', help='Catalog file with fields selected')
+        '-p', '--properties', help='Catalog file with fields selected')
 
     parser.add_argument(
         '-d', '--discover',
         help='Build a catalog from the underlying schema',
+        action='store_true')
+    parser.add_argument(
+        '-S', '--select-all',
+        help=('When "--discover" is set, this flag selects all fields for '
+              'replication in the generated catalog'),
         action='store_true')
 
     args = parser.parse_args()
