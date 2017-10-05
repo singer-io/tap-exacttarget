@@ -3,6 +3,7 @@ import singer
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.schemas import SUBSCRIBER_KEY_FIELD, with_properties
 from tap_exacttarget.state import incorporate, save_state
 
 
@@ -10,30 +11,22 @@ LOGGER = singer.get_logger()
 
 
 class EventDataAccessObject(DataAccessObject):
-    SCHEMA = {
-        'type': 'object',
-        'inclusion': 'available',
-        'selected': False,
-        'properties': {
-            'SendID': {
-                'type': 'integer',
-                'description': 'Contains identifier for a specific send.',
-            },
-            'EventDate': {
-                'type': 'string',
-                'format': 'datetime',
-                'description': 'Date when a tracking event occurred.',
-            },
-            'EventType': {
-                'type': 'string',
-                'description': 'The type of tracking event',
-            },
-            'SubscriberKey': {
-                'type': 'string',
-                'description': 'Identification of a specific subscriber.',
-            }
-        }
-    }
+    SCHEMA = with_properties({
+        'SendID': {
+            'type': 'integer',
+            'description': 'Contains identifier for a specific send.',
+        },
+        'EventDate': {
+            'type': 'string',
+            'format': 'datetime',
+            'description': 'Date when a tracking event occurred.',
+        },
+        'EventType': {
+            'type': 'string',
+            'description': 'The type of tracking event',
+        },
+        'SubscriberKey': SUBSCRIBER_KEY_FIELD,
+    })
 
     TABLE = 'event'
     KEY_PROPERTIES = ['SendID', 'EventType', 'SubscriberKey', 'EventDate']

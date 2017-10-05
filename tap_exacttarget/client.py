@@ -98,8 +98,8 @@ def request_from_cursor(name, cursor):
     response = cursor.get()
 
     if not response.status:
-        LOGGER.warn("Request failed with '{}'"
-                    .format(response.message))
+        LOGGER.error("Request failed with '{}'"
+                     .format(response.message))
 
     for item in _get_response_items(response):
         yield item
@@ -110,8 +110,8 @@ def request_from_cursor(name, cursor):
         response = response.getMoreResults()
 
         if not response.status:
-            LOGGER.warn("Request failed with '{}'"
-                        .format(response.message))
+            LOGGER.error("Request failed with '{}'"
+                         .format(response.message))
 
         LOGGER.info('Got {} results.'.format(response.results.get('count')))
 

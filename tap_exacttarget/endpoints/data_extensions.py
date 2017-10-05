@@ -10,6 +10,10 @@ from tap_exacttarget.util import sudsobj_to_dict
 LOGGER = singer.get_logger()  # noqa
 
 
+def _merge_in(collection, path, new_item):
+    return update_in(collection, path, lambda x: merge(x, [new_item]))
+
+
 def _convert_extension_datatype(datatype):
     if datatype in ['Boolean']:
         return 'bool'
@@ -99,10 +103,10 @@ class DataExtensionDataAccessObject(DataAccessObject):
             field_name = field['Name']
 
             if field.get('IsPrimaryKey'):
-                to_return = update_in(
+                to_return = _merge_in(
                     to_return,
                     [extension_id, 'key_properties'],
-                    lambda x: merge(x, [field_name]))
+                    field_name)
 
             field_schema = {
                 'type': [
@@ -127,8 +131,8 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         return extensions_catalog_with_fields.values()
 
-    def parse_object(self, row):
-        properties = row.get('Properties', {}).get('Property', {})
+    def parse_object(self, obj):
+        properties = obj.get('Properties', {}).get('Property', {})
         to_return = {}
 
         for prop in properties:

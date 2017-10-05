@@ -13,11 +13,11 @@ def _get_catalog_schema(catalog):
 
 class DataAccessObject(object):
 
+    # pylint: disable=unused-argument
     def __init__(self, config, state, auth_stub, catalog, **kwargs):
         self.config = config.copy()
         self.state = state.copy()
         self.catalog = catalog
-
         self.auth_stub = auth_stub
 
     @classmethod

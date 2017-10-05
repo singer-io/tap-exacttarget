@@ -3,100 +3,86 @@ import singer
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
-from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST
+from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
+    CREATED_DATE_FIELD, MODIFIED_DATE_FIELD, with_properties
 from tap_exacttarget.state import incorporate, save_state
 
 LOGGER = singer.get_logger()
 
 
 class SendDataAccessObject(DataAccessObject):
-    SCHEMA = {
-        'type': 'object',
-        'inclusion': 'available',
-        'selected': False,
-        'properties': {
-            'CreatedDate': {
-                'type': 'string',
-                'format': 'date-time',
-                'description': ('Read-only date and time of the object\'s '
-                                'creation.'),
-            },
-            'EmailID': {
-                'type': 'integer',
-                'description': ('Specifies the ID of an email message '
-                                'associated with a send.'),
-            },
-            'EmailName': {
-                'type': 'string',
-                'description': ('Specifies the name of an email message '
-                                'associated with a send.'),
-            },
-            'FromAddress': {
-                'type': 'string',
-                'description': ('Indicates From address associated with a '
-                                'object. Deprecated for email send '
-                                'definitions and triggered send '
-                                'definitions.'),
-            },
-            'FromName': {
-                'type': 'string',
-                'description': ('Specifies the default email message From '
-                                'Name. Deprecated for email send '
-                                'definitions and triggered send '
-                                'definitions.'),
-            },
-            'ID': ID_FIELD,
-            'IsAlwaysOn': {
-                'type': 'boolean',
-                'description': ('Indicates whether the request can be '
-                                'performed while the system is is '
-                                'maintenance mode. A value of true '
-                                'indicates the system will process the '
-                                'request.'),
-            },
-            'IsMultipart': {
-                'type': 'boolean',
-                'description': ('Indicates whether the email is sent with '
-                                'Multipart/MIME enabled.'),
-            },
-            'ModifiedDate': {
-                'type': 'string',
-                'format': 'date-time',
-                'description': ('Indicates the last time object '
-                                'information was modified.'),
-            },
-            'PartnerProperties': CUSTOM_PROPERTY_LIST,
-            'SendDate': {
-                'type': 'string',
-                'format': 'date-time',
-                'description': ('Indicates the date on which a send '
-                                'occurred. Set this value to have a CST '
-                                '(Central Standard Time) value.'),
-            },
-            'SentDate': {
-                'type': 'string',
-                'format': 'date-time',
-                'description': ('Indicates date on which a send took '
-                                'place.'),
-            },
-            'Status': {
-                'type': 'string',
-                'description': ('Defines status of object. Status of an '
-                                'address.'),
-            },
-            'Subject': {
-                'type': 'string',
-                'description': ('Contains subject area information for '
-                                'a message.'),
-            }
+    SCHEMA = with_properties({
+        'CreatedDate': CREATED_DATE_FIELD,
+        'EmailID': {
+            'type': 'integer',
+            'description': ('Specifies the ID of an email message '
+                            'associated with a send.'),
+        },
+        'EmailName': {
+            'type': 'string',
+            'description': ('Specifies the name of an email message '
+                            'associated with a send.'),
+        },
+        'FromAddress': {
+            'type': 'string',
+            'description': ('Indicates From address associated with a '
+                            'object. Deprecated for email send '
+                            'definitions and triggered send '
+                            'definitions.'),
+        },
+        'FromName': {
+            'type': 'string',
+            'description': ('Specifies the default email message From '
+                            'Name. Deprecated for email send '
+                            'definitions and triggered send '
+                            'definitions.'),
+        },
+        'ID': ID_FIELD,
+        'IsAlwaysOn': {
+            'type': 'boolean',
+            'description': ('Indicates whether the request can be '
+                            'performed while the system is is '
+                            'maintenance mode. A value of true '
+                            'indicates the system will process the '
+                            'request.'),
+        },
+        'IsMultipart': {
+            'type': 'boolean',
+            'description': ('Indicates whether the email is sent with '
+                            'Multipart/MIME enabled.'),
+        },
+        'ModifiedDate': MODIFIED_DATE_FIELD,
+        'PartnerProperties': CUSTOM_PROPERTY_LIST,
+        'SendDate': {
+            'type': 'string',
+            'format': 'date-time',
+            'description': ('Indicates the date on which a send '
+                            'occurred. Set this value to have a CST '
+                            '(Central Standard Time) value.'),
+        },
+        'SentDate': {
+            'type': 'string',
+            'format': 'date-time',
+            'description': ('Indicates date on which a send took '
+                            'place.'),
+        },
+        'Status': {
+            'type': 'string',
+            'description': ('Defines status of object. Status of an '
+                            'address.'),
+        },
+        'Subject': {
+            'type': 'string',
+            'description': ('Contains subject area information for '
+                            'a message.'),
         }
-    }
+    })
 
     TABLE = 'send'
     KEY_PROPERTIES = ['SendID', 'SendType', 'SubscriberKey', 'SendDate']
 
-    def parse_object(self, row):
-        to_return = row.copy()
+    def parse_object(self, obj):
+        to_return = obj.copy()
 
         to_return['EmailID'] = to_return.get('Email', {}).get('ID')
 

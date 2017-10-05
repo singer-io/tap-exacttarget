@@ -1,3 +1,12 @@
+def with_properties(properties):
+    return {
+        'type': 'object',
+        'inclusion': 'available',
+        'selected': False,
+        'properties': properties
+    }
+
+
 CUSTOM_PROPERTY_LIST = {
     'type': 'array',
     'description': ('Specifies key-value pairs of properties associated with '
@@ -17,4 +26,41 @@ ID_FIELD = {
                     'supported on all objects. Some objects use the '
                     'ObjectID property as the Marketing Cloud unique '
                     'ID.')
+}
+
+CREATED_DATE_FIELD = {
+    'type': ['null', 'string'],
+    'description': ('Read-only date and time of the object\'s'
+                    'creation.'),
+}
+
+MODIFIED_DATE_FIELD = {
+    'type': ['null', 'string'],
+    'description': ('Indicates the last time object information '
+                    'was modified.')
+}
+
+CUSTOMER_KEY_FIELD = {
+    'type': ['null', 'string'],
+    'description': ('User-supplied unique identifier for an '
+                    'object within an object type (corresponds '
+                    'to the external key assigned to an object '
+                    'in the user interface).'),
+}
+
+OBJECT_ID_FIELD = {
+    'type': ['null', 'string'],
+    'description': ('System-controlled, read-only text string '
+                    'identifier for object.'),
+}
+
+DESCRIPTION_FIELD = {
+    'type': ['null', 'string'],
+    'description': ('Describes and provides information regarding '
+                    'the object.'),
+}
+
+SUBSCRIBER_KEY_FIELD = {
+    'type': 'string',
+    'description': 'Identification of a specific subscriber.',
 }

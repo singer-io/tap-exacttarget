@@ -6,7 +6,9 @@ from funcy import get_in
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
 from tap_exacttarget.endpoints.subscribers import SubscriberDataAccessObject
-from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST
+from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
+    CREATED_DATE_FIELD, OBJECT_ID_FIELD, MODIFIED_DATE_FIELD, \
+    SUBSCRIBER_KEY_FIELD, with_properties
 from tap_exacttarget.state import incorporate, save_state
 from tap_exacttarget.util import partition_all, sudsobj_to_dict
 
@@ -44,44 +46,25 @@ def _get_list_subscriber_filter(_list, retrieve_all_since):
 
 
 class ListSubscriberDataAccessObject(DataAccessObject):
-    SCHEMA = {
-        'type': 'object',
-        'inclusion': 'available',
-        'selected': False,
-        'properties': {
-            'ID': ID_FIELD,
-            'CreatedDate': {
-                'type': 'string',
-                'description': ('Read-only date and time of the object\'s '
-                                'creation.')
-            },
-            'ModifiedDate': {
-                'type': ['null', 'string'],
-                'description': ('Indicates the last time object information '
-                                'was modified.')
-            },
-            'ObjectID': {
-                'type': ['null', 'string'],
-                'description': ('System-controlled, read-only text string '
-                                'identifier for object.'),
-            },
-            'PartnerProperties': CUSTOM_PROPERTY_LIST,
-            'ListID': {
-                'type': ['null', 'integer'],
-                'description': ('Defines identification for a list the '
-                                'subscriber resides on.'),
-            },
-            'Status': {
-                'type': 'string',
-                'description': ('Defines status of object. Status of '
-                                'an address.'),
-            },
-            'SubscriberKey': {
-                'type': 'string',
-                'description': 'Identification of a specific subscriber.',
-            },
+    SCHEMA = with_properties({
+        'ID': ID_FIELD,
+        'CreatedDate': CREATED_DATE_FIELD,
+        'ModifiedDate': MODIFIED_DATE_FIELD,
+        'ObjectID': OBJECT_ID_FIELD,
+        'PartnerProperties': CUSTOM_PROPERTY_LIST,
+        'ListID': {
+            'type': ['null', 'integer'],
+            'description': ('Defines identification for a list the '
+                            'subscriber resides on.'),
         },
-    }
+        'Status': {
+            'type': 'string',
+            'description': ('Defines status of object. Status of '
+                            'an address.'),
+        },
+        'SubscriberKey': SUBSCRIBER_KEY_FIELD,
+    })
+
     TABLE = 'list_subscriber'
     KEY_PROPERTIES = ['ObjectID']
 
@@ -149,6 +132,6 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                 subscriber_keys = list(map(
                     _get_subscriber_key, list_subscribers_batch))
 
-                subscriber_dao._pull_subscribers_batch(subscriber_keys)
+                subscriber_dao.pull_subscribers_batch(subscriber_keys)
 
         save_state(self.state)

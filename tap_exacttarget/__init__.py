@@ -157,8 +157,8 @@ def do_sync(args):
                 break
 
         if stream_accessor is None:
-            LOGGER.warn('No matching accessor found for stream {}, skipping'
-                        .format(stream_catalog.get('tap_stream_id')))
+            LOGGER.error('No matching accessor found for stream {}, skipping'
+                         .format(stream_catalog.get('tap_stream_id')))
 
     if subscriber_selected and not list_subscriber_selected:
         LOGGER.fatal('Cannot replicate `subscriber` without '
