@@ -19,6 +19,7 @@ from tap_exacttarget.endpoints.emails import EmailDataAccessObject
 from tap_exacttarget.endpoints.events import EventDataAccessObject
 from tap_exacttarget.endpoints.folders import FolderDataAccessObject
 from tap_exacttarget.endpoints.lists import ListDataAccessObject
+from tap_exacttarget.endpoints.list_sends import ListSendDataAccessObject
 from tap_exacttarget.endpoints.list_subscribers \
     import ListSubscriberDataAccessObject
 from tap_exacttarget.endpoints.sends import SendDataAccessObject
@@ -91,6 +92,7 @@ AVAILABLE_STREAM_ACCESSORS = [
     EventDataAccessObject,
     FolderDataAccessObject,
     ListDataAccessObject,
+    ListSendDataAccessObject,
     ListSubscriberDataAccessObject,
     SendDataAccessObject,
     SubscriberDataAccessObject,
