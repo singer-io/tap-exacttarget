@@ -102,7 +102,7 @@ class ContentAreaDataAccessObject(DataAccessObject):
     })
 
     TABLE = 'content_area'
-    KEY_PROPERTIES = ['ObjectID']
+    KEY_PROPERTIES = ['ID']
 
     def sync_data(self):
         table = self.__class__.TABLE

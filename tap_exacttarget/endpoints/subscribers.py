@@ -101,7 +101,7 @@ class SubscriberDataAccessObject(DataAccessObject):
 
     SCHEMA = SCHEMA
     TABLE = 'subscriber'
-    KEY_PROPERTIES = ['ObjectID']
+    KEY_PROPERTIES = ['ID']
 
     def parse_object(self, obj):
         to_return = obj.copy()

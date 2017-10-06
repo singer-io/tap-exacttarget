@@ -66,14 +66,14 @@ class ListSubscriberDataAccessObject(DataAccessObject):
     })
 
     TABLE = 'list_subscriber'
-    KEY_PROPERTIES = ['ObjectID']
+    KEY_PROPERTIES = ['SubscriberKey', 'ListID']
 
-    def __init__(self, config, state, auth_stub, catalog,
-                 replicate_subscriber=False):
+    def __init__(self, config, state, auth_stub, catalog):
         super(ListSubscriberDataAccessObject, self).__init__(
             config, state, auth_stub, catalog)
 
-        self.replicate_subscriber = replicate_subscriber
+        self.replicate_subscriber = False
+        self.subscriber_catalog = None
 
     def _get_all_subscribers_list(self):
         """
@@ -100,7 +100,8 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             self.config,
             self.state,
             self.auth_stub,
-            self.catalog)
+
+            self.subscriber_catalog)
 
         all_subscribers_list = self._get_all_subscribers_list()
 
@@ -114,6 +115,9 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                              retrieve_all_since))
 
         batch_size = 100
+
+        if self.replicate_subscriber:
+            subscriber_dao.write_schema()
 
         for list_subscribers_batch in partition_all(list(stream), batch_size):
             for list_subscriber in list_subscribers_batch:

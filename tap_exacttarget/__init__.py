@@ -136,6 +136,7 @@ def do_sync(args):
     stream_accessors = []
 
     subscriber_selected = False
+    subscriber_catalog = None
     list_subscriber_selected = False
 
     for stream_catalog in catalog.get('streams'):
@@ -143,6 +144,7 @@ def do_sync(args):
 
         if SubscriberDataAccessObject.matches_catalog(stream_catalog):
             subscriber_selected = True
+            subscriber_catalog = stream_catalog
             LOGGER.info("'subscriber' selected, will replicate via "
                         "'list_subscriber'")
             continue
@@ -153,14 +155,9 @@ def do_sync(args):
         for available_stream_accessor in AVAILABLE_STREAM_ACCESSORS:
             if available_stream_accessor.matches_catalog(stream_catalog):
                 stream_accessors.append(available_stream_accessor(
-                    config, state, auth_stub, stream_catalog,
-                    replicate_subscriber=subscriber_selected))
+                    config, state, auth_stub, stream_catalog))
 
                 break
-
-        if stream_accessor is None:
-            LOGGER.error('No matching accessor found for stream {}, skipping'
-                         .format(stream_catalog.get('tap_stream_id')))
 
     if subscriber_selected and not list_subscriber_selected:
         LOGGER.fatal('Cannot replicate `subscriber` without '
@@ -169,6 +166,11 @@ def do_sync(args):
         exit(1)
 
     for stream_accessor in stream_accessors:
+        if isinstance(stream_accessor, ListSubscriberDataAccessObject) and \
+           subscriber_selected:
+            stream_accessor.replicate_subscriber = True
+            stream_accessor.subscriber_catalog = subscriber_catalog
+
         stream_accessor.sync()
 
 

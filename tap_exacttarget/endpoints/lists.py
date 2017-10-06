@@ -47,7 +47,7 @@ class ListDataAccessObject(DataAccessObject):
     })
 
     TABLE = 'list'
-    KEY_PROPERTIES = ['ObjectID']
+    KEY_PROPERTIES = ['ID']
 
     def sync_data(self):
         table = self.__class__.TABLE
