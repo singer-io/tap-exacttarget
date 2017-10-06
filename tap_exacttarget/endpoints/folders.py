@@ -50,7 +50,7 @@ class FolderDataAccessObject(DataAccessObject):
     })
 
     TABLE = 'folder'
-    KEY_PROPERTIES = ['ObjectID']
+    KEY_PROPERTIES = ['ID']
 
     def parse_object(self, obj):
         to_return = obj.copy()

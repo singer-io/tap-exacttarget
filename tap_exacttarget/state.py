@@ -16,6 +16,9 @@ STATE_SCHEMA = Schema({
 
 
 def incorporate(state, table, field, value):
+    if value is None:
+        return state
+
     new_state = state.copy()
 
     if 'bookmarks' not in new_state:

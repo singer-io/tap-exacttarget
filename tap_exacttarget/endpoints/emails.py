@@ -105,7 +105,7 @@ class EmailDataAccessObject(DataAccessObject):
     })
 
     TABLE = 'email'
-    KEY_PROPERTIES = ['SendID', 'SendType', 'SubscriberKey', 'SendDate']
+    KEY_PROPERTIES = ['ID']
 
     def parse_object(self, obj):
         to_return = obj.copy()

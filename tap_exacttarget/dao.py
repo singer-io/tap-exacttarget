@@ -13,8 +13,7 @@ def _get_catalog_schema(catalog):
 
 class DataAccessObject(object):
 
-    # pylint: disable=unused-argument
-    def __init__(self, config, state, auth_stub, catalog, **kwargs):
+    def __init__(self, config, state, auth_stub, catalog):
         self.config = config.copy()
         self.state = state.copy()
         self.catalog = catalog
@@ -47,6 +46,12 @@ class DataAccessObject(object):
     def parse_object(self, obj):
         return project(obj, self.get_catalog_keys())
 
+    def write_schema(self):
+        singer.write_schema(
+            self.catalog.get('stream'),
+            self.catalog.get('schema'),
+            key_properties=self.catalog.get('key_properties'))
+
     def sync(self):
         if not self.catalog.get('schema', {}).get('selected'):
             LOGGER.info('{} is not marked as selected, skipping.'
@@ -57,10 +62,7 @@ class DataAccessObject(object):
                     .format(self.catalog.get('tap_stream_id'),
                             self.__class__.__name__))
 
-        singer.write_schema(
-            self.catalog.get('stream'),
-            self.catalog.get('schema'),
-            key_properties=self.catalog.get('key_properties'))
+        self.write_schema()
 
         return self.sync_data()
 
