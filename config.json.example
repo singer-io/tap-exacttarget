@@ -1,4 +1,12 @@
 {
     "client_id": "",
-    "client_secret": ""
+    "client_secret": "",
+    "default_start_date": "2014-01-01T00:00:00Z",
+    "pagination": {
+        "sent": {"minutes": 15},
+        "click": {"minutes": 15},
+        "open": {"minutes": 15},
+        "bounce": {"minutes": 15},
+        "unsub": {"minutes": 15}
+    }
 }
