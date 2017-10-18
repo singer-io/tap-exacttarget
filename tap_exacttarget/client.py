@@ -36,7 +36,8 @@ def get_auth_stub(config):
             'clientid': config['client_id'],
             'clientsecret': config['client_secret']
         })
-    auth_stub.soap_client.set_options(timeout=900)
+    auth_stub.soap_client.set_options(
+        timeout=config.get('request_timeout', 900))
 
     LOGGER.info("Success.")
 

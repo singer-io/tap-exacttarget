@@ -2,6 +2,7 @@
     "client_id": "",
     "client_secret": "",
     "default_start_date": "2014-01-01T00:00:00Z",
+    "request_timeout": 3600,
     "pagination": {
         "sent": {"minutes": 15},
         "click": {"minutes": 15},
