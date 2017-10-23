@@ -5,7 +5,7 @@ import json
 
 import singer
 
-from tap_exacttarget.state import load_state
+from tap_exacttarget.state import load_state, save_state
 
 from tap_exacttarget.client import get_auth_stub
 
@@ -171,7 +171,11 @@ def do_sync(args):
             stream_accessor.replicate_subscriber = True
             stream_accessor.subscriber_catalog = subscriber_catalog
 
+        stream_accessor.state = state
         stream_accessor.sync()
+        state = stream_accessor.state
+
+    save_state(state)
 
 
 def main():

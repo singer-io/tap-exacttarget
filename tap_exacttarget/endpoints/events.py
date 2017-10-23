@@ -46,7 +46,9 @@ class EventDataAccessObject(DataAccessObject):
         for event_name, selector in endpoints.items():
             search_filter = None
 
-            start = self.state.get('event', {}).get(event_name)
+            start = self.state.get('bookmarks', {}) \
+                              .get(event_name, {}) \
+                              .get('last_record')
 
             if start is None:
                 start = self.config.get('default_start_date')
@@ -80,6 +82,11 @@ class EventDataAccessObject(DataAccessObject):
                                              event.get('EventDate'))
 
                     singer.write_records(table, [event])
+
+                self.state = incorporate(self.state,
+                                         event_name,
+                                         'EventDate',
+                                         start)
 
                 save_state(self.state)
 

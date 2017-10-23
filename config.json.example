@@ -2,12 +2,17 @@
     "client_id": "",
     "client_secret": "",
     "default_start_date": "2014-01-01T00:00:00Z",
-    "request_timeout": 3600,
+    "request_timeout": 900,
+    "data_extensions": {
+        "replication_keys": ["ModifiedDate"]
+    },
     "pagination": {
         "sent": {"minutes": 15},
         "click": {"minutes": 15},
         "open": {"minutes": 15},
         "bounce": {"minutes": 15},
-        "unsub": {"minutes": 15}
+        "unsub": {"minutes": 15},
+        "data_extension": {"days": 7},
+        "list_subscriber": {"days": 7}
     }
 }
