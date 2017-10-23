@@ -230,6 +230,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 customer_key,
                 keys,
                 parent_category_id,
+                table,
                 partial=(replication_key is not None),
                 start=start,
                 end=end,
