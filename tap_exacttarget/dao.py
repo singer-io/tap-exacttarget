@@ -53,7 +53,10 @@ class DataAccessObject(object):
             key_properties=self.catalog.get('key_properties'))
 
     def sync(self):
-        if not self.catalog.get('schema', {}).get('selected'):
+        default = self.catalog.get('schema', {}) \
+                              .get('selected-by-default', False)
+
+        if not self.catalog.get('schema', {}).get('selected', default):
             LOGGER.info('{} is not marked as selected, skipping.'
                         .format(self.catalog.get('stream')))
             return
