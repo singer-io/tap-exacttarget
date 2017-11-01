@@ -73,7 +73,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 'schema': {
                     'type': 'object',
                     'inclusion': 'available',
-                    'selected': False,
+                    'selected-by-default': False,
                     'properties': {
                         '_CustomObjectKey': {
                             'type': 'string',

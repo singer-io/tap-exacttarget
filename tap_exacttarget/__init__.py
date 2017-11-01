@@ -119,9 +119,11 @@ def do_discover(args):
 
 
 def _is_selected(catalog_entry):
+    default = catalog_entry.get('selected-by-default', False)
+
     return ((catalog_entry.get('inclusion') == 'automatic') or
             (catalog_entry.get('inclusion') == 'available' and
-             catalog_entry.get('selected') is True))
+             catalog_entry.get('selected', default) is True))
 
 
 def do_sync(args):
@@ -141,6 +143,11 @@ def do_sync(args):
 
     for stream_catalog in catalog.get('streams'):
         stream_accessor = None
+
+        if not _is_selected(stream_catalog.get('schema', {})):
+            LOGGER.info("'{}' is not marked selected, skipping."
+                        .format(stream_catalog.get('stream')))
+            continue
 
         if SubscriberDataAccessObject.matches_catalog(stream_catalog):
             subscriber_selected = True
