@@ -69,8 +69,7 @@ class EventDataAccessObject(DataAccessObject):
                 stream = request(event_name,
                                  selector,
                                  self.auth_stub,
-                                 search_filter,
-                                 retrieve_all_since_last_batch=True)
+                                 search_filter)
 
                 for event in stream:
                     event = self.filter_keys_and_parse(event)

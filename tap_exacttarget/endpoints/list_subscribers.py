@@ -1,8 +1,6 @@
 import FuelSDK
 import singer
 
-from funcy import get_in
-
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
 from tap_exacttarget.endpoints.subscribers import SubscriberDataAccessObject

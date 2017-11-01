@@ -1,6 +1,6 @@
+import json
 from dateutil.parser import parse
 
-import json
 import singer
 
 from voluptuous import Schema, Required

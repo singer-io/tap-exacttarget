@@ -44,8 +44,7 @@ def get_auth_stub(config):
     return auth_stub
 
 
-def request(name, selector, auth_stub, search_filter=None, props=None,
-            retrieve_all_since_last_batch=False):
+def request(name, selector, auth_stub, search_filter=None, props=None):
     """
     Given an object name (`name`), used for logging purposes only,
       a `selector`, for example FuelSDK.ET_ClickEvent,

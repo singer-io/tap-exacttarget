@@ -62,7 +62,7 @@ def load_catalog(filename):
     try:
         with open(filename) as handle:
             catalog = json.load(handle)
-    except:
+    except Exception:
         LOGGER.fatal("Failed to decode catalog file. Is it valid json?")
         raise RuntimeError
 
@@ -75,7 +75,7 @@ def load_config(filename):
     try:
         with open(filename) as handle:
             config = json.load(handle)
-    except:
+    except Exception:
         LOGGER.fatal("Failed to decode config file. Is it valid json?")
         raise RuntimeError
 
@@ -176,7 +176,7 @@ def do_sync(args):
             stream_accessor.sync()
             state = stream_accessor.state
 
-        except:
+        except Exception:
             LOGGER.error('Failed to sync endpoint, moving on!')
 
     save_state(state)
