@@ -6,7 +6,8 @@ from tap_exacttarget.dao import DataAccessObject
 from tap_exacttarget.pagination import get_date_page, before_today, \
     increment_date
 from tap_exacttarget.schemas import SUBSCRIBER_KEY_FIELD, with_properties
-from tap_exacttarget.state import incorporate, save_state
+from tap_exacttarget.state import incorporate, save_state, \
+    get_last_record_value_for_table
 
 
 LOGGER = singer.get_logger()
@@ -46,9 +47,7 @@ class EventDataAccessObject(DataAccessObject):
         for event_name, selector in endpoints.items():
             search_filter = None
 
-            start = self.state.get('bookmarks', {}) \
-                              .get(event_name, {}) \
-                              .get('last_record')
+            start = get_last_record_value_for_table(self.state, table)
 
             if start is None:
                 start = self.config.get('default_start_date')

@@ -7,7 +7,8 @@ from tap_exacttarget.client import request, request_from_cursor
 from tap_exacttarget.dao import DataAccessObject
 from tap_exacttarget.pagination import get_date_page, before_today, \
     increment_date
-from tap_exacttarget.state import incorporate, save_state
+from tap_exacttarget.state import incorporate, save_state, \
+    get_last_record_value_for_table
 from tap_exacttarget.util import sudsobj_to_dict
 
 LOGGER = singer.get_logger()  # noqa
@@ -192,9 +193,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         replication_key = None
 
-        start = self.state.get('bookmarks', {}) \
-                          .get(table, {}) \
-                          .get('last_record')
+        start = get_last_record_value_for_table(self.state, table)
 
         if start is None:
             start = self.config.get('default_start_date')

@@ -17,6 +17,12 @@ STATE_SCHEMA = Schema({
 })
 
 
+def get_last_record_value_for_table(state, table):
+    return state.get('bookmarks', {}) \
+                .get(table, {}) \
+                .get('value')
+
+
 def incorporate(state, table, field, value):
     if value is None:
         return state

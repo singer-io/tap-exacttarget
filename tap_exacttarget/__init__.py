@@ -171,9 +171,13 @@ def do_sync(args):
             stream_accessor.replicate_subscriber = True
             stream_accessor.subscriber_catalog = subscriber_catalog
 
-        stream_accessor.state = state
-        stream_accessor.sync()
-        state = stream_accessor.state
+        try:
+            stream_accessor.state = state
+            stream_accessor.sync()
+            state = stream_accessor.state
+
+        except:
+            LOGGER.error('Failed to sync endpoint, moving on!')
 
     save_state(state)
 

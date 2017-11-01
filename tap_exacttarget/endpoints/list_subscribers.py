@@ -11,7 +11,8 @@ from tap_exacttarget.pagination import get_date_page, before_today, \
 from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
     CREATED_DATE_FIELD, OBJECT_ID_FIELD, MODIFIED_DATE_FIELD, \
     SUBSCRIBER_KEY_FIELD, with_properties
-from tap_exacttarget.state import incorporate, save_state
+from tap_exacttarget.state import incorporate, save_state, \
+    get_last_record_value_for_table
 from tap_exacttarget.util import partition_all, sudsobj_to_dict
 
 
@@ -89,12 +90,9 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             self.config,
             self.state,
             self.auth_stub,
-
             self.subscriber_catalog)
 
-        start = self.state.get('bookmarks', {}) \
-                          .get(table, {}) \
-                          .get('last_record')
+        start = get_last_record_value_for_table(self.state, table)
 
         if start is None:
             start = self.config.get('default_start_date')
