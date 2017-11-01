@@ -5,7 +5,7 @@ import json
 
 import singer
 
-from tap_exacttarget.state import load_state
+from tap_exacttarget.state import load_state, save_state
 
 from tap_exacttarget.client import get_auth_stub
 
@@ -62,7 +62,7 @@ def load_catalog(filename):
     try:
         with open(filename) as handle:
             catalog = json.load(handle)
-    except:
+    except Exception:
         LOGGER.fatal("Failed to decode catalog file. Is it valid json?")
         raise RuntimeError
 
@@ -75,7 +75,7 @@ def load_config(filename):
     try:
         with open(filename) as handle:
             config = json.load(handle)
-    except:
+    except Exception:
         LOGGER.fatal("Failed to decode config file. Is it valid json?")
         raise RuntimeError
 
@@ -171,7 +171,15 @@ def do_sync(args):
             stream_accessor.replicate_subscriber = True
             stream_accessor.subscriber_catalog = subscriber_catalog
 
-        stream_accessor.sync()
+        try:
+            stream_accessor.state = state
+            stream_accessor.sync()
+            state = stream_accessor.state
+
+        except Exception:
+            LOGGER.error('Failed to sync endpoint, moving on!')
+
+    save_state(state)
 
 
 def main():

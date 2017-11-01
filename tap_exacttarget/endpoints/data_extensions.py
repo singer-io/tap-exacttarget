@@ -5,6 +5,10 @@ from funcy import set_in, update_in, merge
 
 from tap_exacttarget.client import request, request_from_cursor
 from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.pagination import get_date_page, before_today, \
+    increment_date
+from tap_exacttarget.state import incorporate, save_state, \
+    get_last_record_value_for_table
 from tap_exacttarget.util import sudsobj_to_dict
 
 LOGGER = singer.get_logger()  # noqa
@@ -140,22 +144,72 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         return to_return
 
+    def _replicate(self, customer_key, keys,
+                   parent_category_id, table,
+                   partial=False, start=None,
+                   end=None, unit=None, replication_key=None):
+        if partial:
+            LOGGER.info("Fetching {} from {} to {}"
+                        .format(table, start, end))
+
+        cursor = FuelSDK.ET_DataExtension_Row()
+        cursor.auth_stub = self.auth_stub
+        cursor.CustomerKey = customer_key
+        cursor.props = keys
+
+        if partial:
+            cursor.search_filter = get_date_page(replication_key,
+                                                 start,
+                                                 unit)
+
+        result = request_from_cursor('DataExtensionObject', cursor)
+
+        for row in result:
+            row = self.filter_keys_and_parse(row)
+            row['CategoryID'] = parent_category_id
+
+            self.state = incorporate(self.state,
+                                     table,
+                                     replication_key,
+                                     row.get(replication_key))
+
+            singer.write_records(table, [row])
+
+        if partial:
+            self.state = incorporate(self.state,
+                                     table,
+                                     replication_key,
+                                     start)
+
+            save_state(self.state)
+
     def sync_data(self):
         tap_stream_id = self.catalog.get('tap_stream_id')
         table = self.catalog.get('stream')
         (_, customer_key) = tap_stream_id.split('.', 1)
 
-        cursor = FuelSDK.ET_DataExtension_Row()
-        cursor.auth_stub = self.auth_stub
-        cursor.CustomerKey = customer_key
-
         keys = self.get_catalog_keys()
         keys.remove('CategoryID')
 
-        cursor.props = keys
+        replication_key = None
 
-        result = request_from_cursor('DataExtensionObject', cursor)
+        start = get_last_record_value_for_table(self.state, table)
 
+        if start is None:
+            start = self.config.get('default_start_date')
+
+        for key in self.config.get('data_extensions', {}) \
+                              .get('replication_keys', ['ModifiedDate']):
+            if key in keys:
+                replication_key = key
+
+        unit = self.config.get('pagination', {}) \
+                          .get('data_extension', {'days': 1})
+
+        end = increment_date(start, unit)
+
+        parent_result = None
+        parent_extension = None
         parent_result = request(
             'DataExtension',
             FuelSDK.ET_DataExtension,
@@ -168,9 +222,28 @@ class DataExtensionDataAccessObject(DataAccessObject):
             props=['CustomerKey', 'CategoryID'])
 
         parent_extension = next(parent_result)
+        parent_category_id = parent_extension.CategoryID
 
-        for row in result:
-            row = self.filter_keys_and_parse(row)
-            row['CategoryID'] = parent_extension.CategoryID
+        while before_today(start) or replication_key is None:
+            self._replicate(
+                customer_key,
+                keys,
+                parent_category_id,
+                table,
+                partial=(replication_key is not None),
+                start=start,
+                end=end,
+                replication_key=replication_key)
 
-            singer.write_records(table, [row])
+            if replication_key is None:
+                return
+
+            self.state = incorporate(self.state,
+                                     table,
+                                     replication_key,
+                                     start)
+
+            save_state(self.state)
+
+            start = end
+            end = increment_date(start, unit)

@@ -5,7 +5,8 @@ from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
 from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
     CREATED_DATE_FIELD, MODIFIED_DATE_FIELD, with_properties
-from tap_exacttarget.state import incorporate, save_state
+from tap_exacttarget.state import incorporate, save_state, \
+    get_last_record_value_for_table
 
 LOGGER = singer.get_logger()
 
@@ -93,7 +94,7 @@ class SendDataAccessObject(DataAccessObject):
         selector = FuelSDK.ET_Send
 
         search_filter = None
-        retrieve_all_since = self.state.get('bookmarks', {}).get(table)
+        retrieve_all_since = get_last_record_value_for_table(self.state, table)
 
         if retrieve_all_since is not None:
             search_filter = {

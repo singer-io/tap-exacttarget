@@ -1,15 +1,16 @@
 import FuelSDK
 import singer
 
-from funcy import get_in
-
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
 from tap_exacttarget.endpoints.subscribers import SubscriberDataAccessObject
+from tap_exacttarget.pagination import get_date_page, before_today, \
+    increment_date
 from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
     CREATED_DATE_FIELD, OBJECT_ID_FIELD, MODIFIED_DATE_FIELD, \
     SUBSCRIBER_KEY_FIELD, with_properties
-from tap_exacttarget.state import incorporate, save_state
+from tap_exacttarget.state import incorporate, save_state, \
+    get_last_record_value_for_table
 from tap_exacttarget.util import partition_all, sudsobj_to_dict
 
 
@@ -20,29 +21,16 @@ def _get_subscriber_key(list_subscriber):
     return list_subscriber.SubscriberKey
 
 
-def _get_list_subscriber_filter(_list, retrieve_all_since):
-    list_filter = {
-        'Property': 'ListID',
-        'SimpleOperator': 'equals',
-        'Value': _list.get('ID'),
+def _get_list_subscriber_filter(_list, start, unit):
+    return {
+        'LogicalOperator': 'AND',
+        'LeftOperand': {
+            'Property': 'ListID',
+            'SimpleOperator': 'equals',
+            'Value': _list.get('ID'),
+        },
+        'RightOperand': get_date_page('ModifiedDate', start, unit)
     }
-
-    full_filter = None
-
-    if retrieve_all_since:
-        full_filter = {
-            'LogicalOperator': 'AND',
-            'LeftOperand': list_filter,
-            'RightOperand': {
-                'Property': 'ModifiedDate',
-                'SimpleOperator': 'greaterThan',
-                'Value': retrieve_all_since,
-            }
-        }
-    else:
-        full_filter = list_filter
-
-    return full_filter
 
 
 class ListSubscriberDataAccessObject(DataAccessObject):
@@ -100,42 +88,55 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             self.config,
             self.state,
             self.auth_stub,
-
             self.subscriber_catalog)
+
+        start = get_last_record_value_for_table(self.state, table)
+
+        if start is None:
+            start = self.config.get('default_start_date')
+
+        unit = self.config.get('pagination', {}) \
+                          .get(table, {'days': 1})
+
+        end = increment_date(start, unit)
 
         all_subscribers_list = self._get_all_subscribers_list()
 
-        retrieve_all_since = get_in(self.state, ['bookmarks', 'subscriber'])
+        while before_today(start):
+            stream = request('ListSubscriber',
+                             FuelSDK.ET_List_Subscriber,
+                             self.auth_stub,
+                             _get_list_subscriber_filter(
+                                 all_subscribers_list,
+                                 start, unit))
 
-        stream = request('ListSubscriber',
-                         FuelSDK.ET_List_Subscriber,
-                         self.auth_stub,
-                         _get_list_subscriber_filter(
-                             all_subscribers_list,
-                             retrieve_all_since))
-
-        batch_size = 100
-
-        if self.replicate_subscriber:
-            subscriber_dao.write_schema()
-
-        for list_subscribers_batch in partition_all(list(stream), batch_size):
-            for list_subscriber in list_subscribers_batch:
-                list_subscriber = self.filter_keys_and_parse(list_subscriber)
-
-                if list_subscriber.get('ModifiedDate'):
-                    self.state = incorporate(
-                        self.state,
-                        table,
-                        'ModifiedDate',
-                        list_subscriber.get('ModifiedDate'))
-
-                singer.write_records(table, [list_subscriber])
+            batch_size = 100
 
             if self.replicate_subscriber:
-                subscriber_keys = list(map(
-                    _get_subscriber_key, list_subscribers_batch))
+                subscriber_dao.write_schema()
 
-                subscriber_dao.pull_subscribers_batch(subscriber_keys)
+            for list_subscribers_batch in partition_all(list(stream),
+                                                        batch_size):
+                for list_subscriber in list_subscribers_batch:
+                    list_subscriber = self.filter_keys_and_parse(
+                        list_subscriber)
 
-        save_state(self.state)
+                    if list_subscriber.get('ModifiedDate'):
+                        self.state = incorporate(
+                            self.state,
+                            table,
+                            'ModifiedDate',
+                            list_subscriber.get('ModifiedDate'))
+
+                    singer.write_records(table, [list_subscriber])
+
+                if self.replicate_subscriber:
+                    subscriber_keys = list(map(
+                        _get_subscriber_key, list_subscribers_batch))
+
+                    subscriber_dao.pull_subscribers_batch(subscriber_keys)
+
+            save_state(self.state)
+
+            start = end
+            end = increment_date(start, unit)

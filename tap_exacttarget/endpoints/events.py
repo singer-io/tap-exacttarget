@@ -3,8 +3,11 @@ import singer
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.pagination import get_date_page, before_today, \
+    increment_date
 from tap_exacttarget.schemas import SUBSCRIBER_KEY_FIELD, with_properties
-from tap_exacttarget.state import incorporate, save_state
+from tap_exacttarget.state import incorporate, save_state, \
+    get_last_record_value_for_table
 
 
 LOGGER = singer.get_logger()
@@ -43,28 +46,47 @@ class EventDataAccessObject(DataAccessObject):
 
         for event_name, selector in endpoints.items():
             search_filter = None
-            retrieve_all_since = self.state.get('event', {}).get(event_name)
 
-            if retrieve_all_since is not None:
-                search_filter = {
-                    'Property': 'EventDate',
-                    'SimpleOperator': 'greaterThan',
-                    'Value': retrieve_all_since
-                }
+            start = get_last_record_value_for_table(self.state, table)
 
-            stream = request(event_name,
-                             selector,
-                             self.auth_stub,
-                             search_filter)
+            if start is None:
+                start = self.config.get('default_start_date')
 
-            for event in stream:
-                event = self.filter_keys_and_parse(event)
+            if start is None:
+                raise RuntimeError('default_start_date not defined!')
+
+            unit = self.config.get('pagination', {}).get(
+                event_name)
+
+            end = increment_date(start, unit)
+
+            while before_today(start):
+                LOGGER.info("Fetching {} from {} to {}"
+                            .format(event_name, start, end))
+
+                search_filter = get_date_page('EventDate', start, unit)
+
+                stream = request(event_name,
+                                 selector,
+                                 self.auth_stub,
+                                 search_filter)
+
+                for event in stream:
+                    event = self.filter_keys_and_parse(event)
+
+                    self.state = incorporate(self.state,
+                                             event_name,
+                                             'EventDate',
+                                             event.get('EventDate'))
+
+                    singer.write_records(table, [event])
 
                 self.state = incorporate(self.state,
                                          event_name,
                                          'EventDate',
-                                         event.get('EventDate'))
+                                         start)
 
-                singer.write_records(table, [event])
+                save_state(self.state)
 
-        save_state(self.state)
+                start = end
+                end = increment_date(start, unit)

@@ -36,6 +36,8 @@ def get_auth_stub(config):
             'clientid': config['client_id'],
             'clientsecret': config['client_secret']
         })
+    auth_stub.soap_client.set_options(
+        timeout=config.get('request_timeout', 900))
 
     LOGGER.info("Success.")
 
@@ -98,8 +100,8 @@ def request_from_cursor(name, cursor):
     response = cursor.get()
 
     if not response.status:
-        LOGGER.error("Request failed with '{}'"
-                     .format(response.message))
+        raise RuntimeError("Request failed with '{}'"
+                           .format(response.message))
 
     for item in _get_response_items(response):
         yield item
@@ -107,13 +109,11 @@ def request_from_cursor(name, cursor):
     while response.more_results:
         LOGGER.info("Getting more results from '{}' endpoint".format(name))
 
-        response = response.getMoreResults()
+        response = cursor.getMoreResults()
 
         if not response.status:
-            LOGGER.error("Request failed with '{}'"
-                         .format(response.message))
-
-        LOGGER.info('Got {} results.'.format(response.results.get('count')))
+            raise RuntimeError("Request failed with '{}'"
+                               .format(response.message))
 
         for item in _get_response_items(response):
             yield item

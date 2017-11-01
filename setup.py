@@ -12,7 +12,7 @@ setup(
     py_modules=['tap_exacttarget'],
     install_requires=[
         'funcy==1.9.1',
-        'singer-python==3.5.3',
+        'singer-python>=3.5.0',
         'python-dateutil==2.6.0',
         'FuelSDK==0.9.4',
         'voluptuous==0.10.5',

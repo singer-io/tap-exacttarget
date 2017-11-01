@@ -1,4 +1,6 @@
 import json
+from dateutil.parser import parse
+
 import singer
 
 from voluptuous import Schema, Required
@@ -15,11 +17,19 @@ STATE_SCHEMA = Schema({
 })
 
 
+def get_last_record_value_for_table(state, table):
+    return state.get('bookmarks', {}) \
+                .get(table, {}) \
+                .get('value')
+
+
 def incorporate(state, table, field, value):
     if value is None:
         return state
 
     new_state = state.copy()
+
+    parsed = parse(value).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     if 'bookmarks' not in new_state:
         new_state['bookmarks'] = {}
@@ -28,7 +38,7 @@ def incorporate(state, table, field, value):
        new_state['bookmarks'].get(table, {}).get('last_record') < value):
         new_state['bookmarks'][table] = {
             'field': field,
-            'last_record': value,
+            'last_record': parsed,
         }
 
     return new_state
