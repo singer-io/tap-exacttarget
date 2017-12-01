@@ -95,8 +95,12 @@ class ListSubscriberDataAccessObject(DataAccessObject):
         if start is None:
             start = self.config.get('default_start_date')
 
-        unit = self.config.get('pagination', {}) \
-                          .get(table, {'days': 1})
+        pagination_unit = self.config.get(
+            'pagination__list_subscriber_interval_unit', 'days')
+        pagination_quantity = self.config.get(
+            'pagination__list_subsctiber_interval_quantity', 1)
+
+        unit = {pagination_unit: int(pagination_quantity)}
 
         end = increment_date(start, unit)
 

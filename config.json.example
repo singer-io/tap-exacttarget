@@ -3,16 +3,19 @@
     "client_secret": "",
     "default_start_date": "2014-01-01T00:00:00Z",
     "request_timeout": 900,
-    "data_extensions": {
-        "replication_keys": ["ModifiedDate"]
-    },
-    "pagination": {
-        "sent": {"minutes": 15},
-        "click": {"minutes": 15},
-        "open": {"minutes": 15},
-        "bounce": {"minutes": 15},
-        "unsub": {"minutes": 15},
-        "data_extension": {"days": 7},
-        "list_subscriber": {"days": 7}
-    }
+
+    "pagination__sent_interval_unit": "minutes",
+    "pagination__sent_interval_quantity": "10",
+    "pagination__click_interval_unit": "minutes",
+    "pagination__click_interval_quantity": "30",
+    "pagination__open_interval_unit": "minutes",
+    "pagination__open_interval_quantity": "30",
+    "pagination__bounce_interval_unit": "minutes",
+    "pagination__bounce_interval_quantity": "30",
+    "pagination__unsub_interval_unit": "minutes",
+    "pagination__unsub_interval_quantity": "30",
+    "pagination__data_extension_interval_unit": "days",
+    "pagination__data_extension_interval_quantity": "7",
+    "pagination__list_subscriber_interval_unit": "days",
+    "pagination__list_subscriber_interval_quantity": "7"
 }

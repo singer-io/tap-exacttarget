@@ -88,7 +88,6 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         }
                     }
                 },
-                'replication_key': 'ModifiedDate',
             }
 
         return to_return
@@ -198,13 +197,16 @@ class DataExtensionDataAccessObject(DataAccessObject):
         if start is None:
             start = self.config.get('default_start_date')
 
-        for key in self.config.get('data_extensions', {}) \
-                              .get('replication_keys', ['ModifiedDate']):
+        for key in ['ModifiedDate', 'JoinDate']:
             if key in keys:
                 replication_key = key
 
-        unit = self.config.get('pagination', {}) \
-                          .get('data_extension', {'days': 1})
+        pagination_unit = self.config.get(
+            'pagination__data_extension_interval_unit', 'days')
+        pagination_quantity = self.config.get(
+            'pagination__data_extension_interval_quantity', 7)
+
+        unit = {pagination_unit: int(pagination_quantity)}
 
         end = increment_date(start, unit)
 
