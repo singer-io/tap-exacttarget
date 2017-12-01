@@ -55,8 +55,12 @@ class EventDataAccessObject(DataAccessObject):
             if start is None:
                 raise RuntimeError('default_start_date not defined!')
 
-            unit = self.config.get('pagination', {}).get(
-                event_name)
+            pagination_unit = self.config.get(
+                'pagination__{}_interval_unit'.format(event_name), 'minutes')
+            pagination_quantity = self.config.get(
+                'pagination__{}_interval_quantity'.format(event_name), 10)
+
+            unit = {pagination_unit: int(pagination_quantity)}
 
             end = increment_date(start, unit)
 
