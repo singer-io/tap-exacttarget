@@ -50,10 +50,10 @@ class EventDataAccessObject(DataAccessObject):
             start = get_last_record_value_for_table(self.state, table)
 
             if start is None:
-                start = self.config.get('default_start_date')
+                start = self.config.get('start_date')
 
             if start is None:
-                raise RuntimeError('default_start_date not defined!')
+                raise RuntimeError('start_date not defined!')
 
             pagination_unit = self.config.get(
                 'pagination__{}_interval_unit'.format(event_name), 'minutes')

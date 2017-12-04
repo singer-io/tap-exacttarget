@@ -61,4 +61,4 @@ tap-exacttarget -c config.json --properties catalog.json
 
 ---
 
-Copyright &copy; 2017 Fishtown Analytics
+Copyright &copy; 2017 Stitch

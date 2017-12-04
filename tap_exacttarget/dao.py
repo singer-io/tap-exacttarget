@@ -31,7 +31,6 @@ class DataAccessObject(object):
             'stream': cls.TABLE,
             'key_properties': cls.KEY_PROPERTIES,
             'schema': cls.SCHEMA,
-            'replication_key': 'ModifiedDate'
         }]
 
     def filter_keys_and_parse(self, obj):

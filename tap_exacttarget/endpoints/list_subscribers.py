@@ -93,7 +93,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
         start = get_last_record_value_for_table(self.state, table)
 
         if start is None:
-            start = self.config.get('default_start_date')
+            start = self.config.get('start_date')
 
         pagination_unit = self.config.get(
             'pagination__list_subscriber_interval_unit', 'days')

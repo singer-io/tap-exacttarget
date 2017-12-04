@@ -20,7 +20,7 @@ def _merge_in(collection, path, new_item):
 
 def _convert_extension_datatype(datatype):
     if datatype in ['Boolean']:
-        return 'bool'
+        return 'boolean'
     elif datatype in ['Decimal', 'Number']:
         return 'number'
 
@@ -195,7 +195,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
         start = get_last_record_value_for_table(self.state, table)
 
         if start is None:
-            start = self.config.get('default_start_date')
+            start = self.config.get('start_date')
 
         for key in ['ModifiedDate', 'JoinDate']:
             if key in keys:

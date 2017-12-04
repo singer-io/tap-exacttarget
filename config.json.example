@@ -1,7 +1,7 @@
 {
     "client_id": "",
     "client_secret": "",
-    "default_start_date": "2014-01-01T00:00:00Z",
+    "start_date": "2014-01-01T00:00:00Z",
     "request_timeout": "900",
 
     "pagination__sent_interval_unit": "minutes",

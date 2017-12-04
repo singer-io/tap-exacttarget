@@ -214,8 +214,10 @@ def main():
     try:
         if args.discover:
             do_discover(args)
-        else:
+        elif args.properties:
             do_sync(args)
+        else:
+            LOGGER.info("No properties were selected")
     except RuntimeError as exception:
         LOGGER.error(str(exception))
         LOGGER.fatal("Run failed.")
