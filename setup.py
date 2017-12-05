@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='tap-exacttarget',
-    version='0.0.4',
+    version='0.0.5',
     description='Singer.io tap for extracting data from the ExactTarget API',
     author='Fishtown Analytics',
     url='http://fishtownanalytics.com',
@@ -23,5 +23,5 @@ setup(
     [console_scripts]
     tap-exacttarget=tap_exacttarget:main
     ''',
-    packages=['tap_exacttarget']
+    packages=['tap_exacttarget', 'FuelSDK']
 )
