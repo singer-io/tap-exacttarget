@@ -61,4 +61,6 @@ tap-exacttarget -c config.json --properties catalog.json
 
 ---
 
+Embedded FuelSDK Copyright &copy; 2017 Salesforce and Licensed under the MIT License
+
 Copyright &copy; 2017 Stitch

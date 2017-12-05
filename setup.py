@@ -14,11 +14,10 @@ setup(
         'funcy==1.9.1',
         'singer-python>=3.5.0',
         'python-dateutil==2.6.0',
-        'FuelSDK==0.9.4',
         'voluptuous==0.10.5',
-    ],
-    dependency_links=[
-        'git+https://github.com/cmcarthur/FuelSDK-Python.git#egg=FuelSDK-0.9.4'
+        'pyjwt>=0.1.9',
+        'requests>=2.2.1',
+        'suds-jurko>=0.6'
     ],
     entry_points='''
     [console_scripts]
