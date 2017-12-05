@@ -23,5 +23,5 @@ setup(
     [console_scripts]
     tap-exacttarget=tap_exacttarget:main
     ''',
-    packages=['tap_exacttarget']
+    packages=['tap_exacttarget', 'FuelSDK']
 )
