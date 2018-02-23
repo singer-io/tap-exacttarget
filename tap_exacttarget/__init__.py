@@ -140,20 +140,16 @@ def do_sync(args):
     save_state(state)
 
 
+@utils.handle_top_exception(LOGGER)
 def main():
     args = utils.parse_args(REQUIRED_CONFIG_KEYS)
 
-    try:
-        if args.discover:
-            do_discover(args)
-        elif args.properties:
-            do_sync(args)
-        else:
-            LOGGER.info("No properties were selected")
-    except Exception as exception:
-        LOGGER.critical(exception)
-        raise exception
-
+    if args.discover:
+        do_discover(args)
+    elif args.properties:
+        do_sync(args)
+    else:
+        LOGGER.info("No properties were selected")
 
 if __name__ == '__main__':
     main()
