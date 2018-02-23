@@ -4,8 +4,9 @@ import argparse
 import json
 
 import singer
+from singer import utils
 
-from tap_exacttarget.state import load_state, save_state
+from tap_exacttarget.state import save_state
 
 from tap_exacttarget.client import get_auth_stub
 
@@ -28,60 +29,10 @@ from tap_exacttarget.endpoints.subscribers import SubscriberDataAccessObject
 
 LOGGER = singer.get_logger()  # noqa
 
-
-def validate_config(config):
-    required_keys = ['client_id', 'client_secret']
-    missing_keys = []
-    null_keys = []
-    has_errors = False
-
-    for required_key in required_keys:
-        if required_key not in config:
-            missing_keys.append(required_key)
-
-        elif config.get(required_key) is None:
-            null_keys.append(required_key)
-
-    if missing_keys:
-        LOGGER.fatal("Config is missing keys: {}"
-                     .format(", ".join(missing_keys)))
-        has_errors = True
-
-    if null_keys:
-        LOGGER.fatal("Config has null keys: {}"
-                     .format(", ".join(null_keys)))
-        has_errors = True
-
-    if has_errors:
-        raise RuntimeError
-
-
-def load_catalog(filename):
-    catalog = {}
-
-    try:
-        with open(filename) as handle:
-            catalog = json.load(handle)
-    except Exception:
-        LOGGER.fatal("Failed to decode catalog file. Is it valid json?")
-        raise RuntimeError
-
-    return catalog
-
-
-def load_config(filename):
-    config = {}
-
-    try:
-        with open(filename) as handle:
-            config = json.load(handle)
-    except Exception:
-        LOGGER.fatal("Failed to decode config file. Is it valid json?")
-        raise RuntimeError
-
-    validate_config(config)
-
-    return config
+REQUIRED_CONFIG_KEYS = [
+    'client_id',
+    'client_secret'
+]
 
 
 AVAILABLE_STREAM_ACCESSORS = [
@@ -102,8 +53,8 @@ AVAILABLE_STREAM_ACCESSORS = [
 def do_discover(args):
     LOGGER.info("Starting discovery.")
 
-    config = load_config(args.config)
-    state = load_state(args.state)
+    config = args.config
+    state = args.state
 
     auth_stub = get_auth_stub(config)
 
@@ -129,9 +80,9 @@ def _is_selected(catalog_entry):
 def do_sync(args):
     LOGGER.info("Starting sync.")
 
-    config = load_config(args.config)
-    state = load_state(args.state)
-    catalog = load_catalog(args.properties)
+    config = args.config
+    state = args.state
+    catalog = args.properties
 
     auth_stub = get_auth_stub(config)
 
@@ -189,40 +140,16 @@ def do_sync(args):
     save_state(state)
 
 
+@utils.handle_top_exception(LOGGER)
 def main():
-    parser = argparse.ArgumentParser()
+    args = utils.parse_args(REQUIRED_CONFIG_KEYS)
 
-    parser.add_argument(
-        '-c', '--config', help='Config file', required=True)
-    parser.add_argument(
-        '-s', '--state', help='State file')
-    parser.add_argument(
-        '-p', '--properties', help='Catalog file with fields selected')
-
-    parser.add_argument(
-        '-d', '--discover',
-        help='Build a catalog from the underlying schema',
-        action='store_true')
-    parser.add_argument(
-        '-S', '--select-all',
-        help=('When "--discover" is set, this flag selects all fields for '
-              'replication in the generated catalog'),
-        action='store_true')
-
-    args = parser.parse_args()
-
-    try:
-        if args.discover:
-            do_discover(args)
-        elif args.properties:
-            do_sync(args)
-        else:
-            LOGGER.info("No properties were selected")
-    except RuntimeError as exception:
-        LOGGER.error(str(exception))
-        LOGGER.fatal("Run failed.")
-        exit(1)
-
+    if args.discover:
+        do_discover(args)
+    elif args.properties:
+        do_sync(args)
+    else:
+        LOGGER.info("No properties were selected")
 
 if __name__ == '__main__':
     main()

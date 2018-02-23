@@ -1,4 +1,3 @@
-import json
 from dateutil.parser import parse
 
 import singer
@@ -53,15 +52,3 @@ def save_state(state):
     LOGGER.info('Updating state.')
 
     singer.write_state(state)
-
-
-def load_state(filename):
-    if filename is None:
-        return {}
-
-    try:
-        with open(filename) as handle:
-            return json.load(handle)
-    except:
-        LOGGER.fatal("Failed to decode state file. Is it valid json?")
-        raise RuntimeError
