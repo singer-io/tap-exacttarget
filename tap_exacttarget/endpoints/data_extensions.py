@@ -19,10 +19,12 @@ def _merge_in(collection, path, new_item):
 
 
 def _convert_extension_datatype(datatype):
-    if datatype in ['Boolean']:
+    if datatype == 'Boolean':
         return 'boolean'
-    elif datatype in ['Decimal', 'Number']:
+    elif datatype == 'Decimal':
         return 'number'
+    elif datatype == 'Number':
+        return 'integer'
 
     return 'string'
 
@@ -140,6 +142,28 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         for prop in properties:
             to_return[prop['Name']] = prop['Value']
+
+        return to_return
+
+    def filter_keys_and_parse(self, obj):
+        to_return = self.parse_object(sudsobj_to_dict(obj))
+
+        obj_schema = self.catalog['schema']['properties']
+
+        for k, v in to_return.items():
+            field_schema = obj_schema.get(k, {})
+
+            # sometimes data extension fields have type integer or
+            # number, but come back as strings from the API. we need
+            # to explicitly cast them.
+            if v is None:
+                pass
+
+            elif 'integer' in field_schema.get('type'):
+                to_return[k] = int(v)
+
+            elif 'number' in field_schema.get('type'):
+                to_return[k] = float(v)
 
         return to_return
 
