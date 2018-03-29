@@ -3,9 +3,16 @@ import suds
 
 
 def partition_all(collection, chunk_size):
-    return (collection[index:(index + chunk_size)]
-            for index
-            in range(0, len(collection), chunk_size))
+    to_yield = []
+
+    for item in collection:
+        to_yield.append(item)
+
+        if len(to_yield) >= chunk_size:
+            yield to_yield
+            to_yield = []
+
+    yield to_yield
 
 
 def sudsobj_to_dict(obj):

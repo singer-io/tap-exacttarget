@@ -119,8 +119,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             if self.replicate_subscriber:
                 subscriber_dao.write_schema()
 
-            for list_subscribers_batch in partition_all(list(stream),
-                                                        batch_size):
+            for list_subscribers_batch in partition_all(stream, batch_size):
                 for list_subscriber in list_subscribers_batch:
                     list_subscriber = self.filter_keys_and_parse(
                         list_subscriber)
