@@ -1,13 +1,15 @@
 import datetime
+import singer
+
 from tap_exacttarget.filters import between
 
-
+LOGGER = singer.get_logger()
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
 
-def before_today(date_value):
-    return (datetime.datetime.strptime(date_value, DATE_FORMAT).date() <=
-            datetime.datetime.today().date())
+def before_now(date_value):
+    return (datetime.datetime.strptime(date_value, DATE_FORMAT) <=
+            datetime.datetime.utcnow())
 
 
 def increment_date(date_value, unit=None):
