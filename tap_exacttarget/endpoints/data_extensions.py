@@ -5,7 +5,7 @@ from funcy import set_in, update_in, merge
 
 from tap_exacttarget.client import request, request_from_cursor
 from tap_exacttarget.dao import DataAccessObject
-from tap_exacttarget.pagination import get_date_page, before_today, \
+from tap_exacttarget.pagination import get_date_page, before_now, \
     increment_date
 from tap_exacttarget.state import incorporate, save_state, \
     get_last_record_value_for_table
@@ -226,7 +226,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
         parent_extension = next(parent_result)
         parent_category_id = parent_extension.CategoryID
 
-        while before_today(start) or replication_key is None:
+        while before_now(start) or replication_key is None:
             self._replicate(
                 customer_key,
                 keys,

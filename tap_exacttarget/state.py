@@ -1,8 +1,11 @@
 from dateutil.parser import parse
 
+import datetime
 import singer
 
 from voluptuous import Schema, Required
+
+from tap_exacttarget.pagination import DATE_FORMAT
 
 LOGGER = singer.get_logger()
 
@@ -17,10 +20,14 @@ STATE_SCHEMA = Schema({
 
 
 def get_last_record_value_for_table(state, table):
-    return state.get('bookmarks', {}) \
-                .get(table, {}) \
-                .get('last_record')
+    raw = state.get('bookmarks', {}) \
+               .get(table, {}) \
+               .get('last_record')
 
+    date_obj = datetime.datetime.strptime(raw, DATE_FORMAT)
+    date_obj = date_obj - datetime.timedelta(days=1)
+
+    return date_obj.strftime(DATE_FORMAT)
 
 def incorporate(state, table, field, value):
     if value is None:
