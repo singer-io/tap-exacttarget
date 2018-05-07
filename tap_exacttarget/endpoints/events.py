@@ -3,7 +3,7 @@ import singer
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
-from tap_exacttarget.pagination import get_date_page, before_today, \
+from tap_exacttarget.pagination import get_date_page, before_now, \
     increment_date
 from tap_exacttarget.schemas import SUBSCRIBER_KEY_FIELD, with_properties
 from tap_exacttarget.state import incorporate, save_state, \
@@ -64,7 +64,7 @@ class EventDataAccessObject(DataAccessObject):
 
             end = increment_date(start, unit)
 
-            while before_today(start):
+            while before_now(start):
                 LOGGER.info("Fetching {} from {} to {}"
                             .format(event_name, start, end))
 
