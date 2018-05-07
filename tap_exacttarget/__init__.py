@@ -134,7 +134,8 @@ def do_sync(args):
             stream_accessor.sync()
             state = stream_accessor.state
 
-        except Exception:
+        except Exception as e:
+            LOGGER.exception(e)
             LOGGER.error('Failed to sync endpoint, moving on!')
 
     save_state(state)
