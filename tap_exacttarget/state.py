@@ -24,6 +24,9 @@ def get_last_record_value_for_table(state, table):
                .get(table, {}) \
                .get('last_record')
 
+    if raw is None:
+        return None
+
     date_obj = datetime.datetime.strptime(raw, DATE_FORMAT)
     date_obj = date_obj - datetime.timedelta(days=1)
 
