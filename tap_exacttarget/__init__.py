@@ -84,6 +84,8 @@ def do_sync(args):
     state = args.state
     catalog = args.properties
 
+    success = True
+
     auth_stub = get_auth_stub(config)
 
     stream_accessors = []
@@ -134,22 +136,35 @@ def do_sync(args):
             stream_accessor.sync()
             state = stream_accessor.state
 
-        except Exception:
+        except Exception as e:
+            LOGGER.exception(e)
             LOGGER.error('Failed to sync endpoint, moving on!')
+            success = False
 
     save_state(state)
+
+    return success
 
 
 @utils.handle_top_exception(LOGGER)
 def main():
     args = utils.parse_args(REQUIRED_CONFIG_KEYS)
 
+    success = True
+
     if args.discover:
         do_discover(args)
     elif args.properties:
-        do_sync(args)
+        success = do_sync(args)
     else:
         LOGGER.info("No properties were selected")
+
+    if success:
+        LOGGER.info("Completed successfully, exiting.")
+        exit(0)
+    else:
+        LOGGER.info("Run failed, exiting.")
+        exit(1)
 
 if __name__ == '__main__':
     main()
