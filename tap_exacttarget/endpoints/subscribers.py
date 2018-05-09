@@ -125,6 +125,9 @@ class SubscriberDataAccessObject(DataAccessObject):
         pass
 
     def pull_subscribers_batch(self, subscriber_keys):
+        if not subscriber_keys:
+            return
+
         table = self.__class__.TABLE
         stream = request('Subscriber', FuelSDK.ET_Subscriber, self.auth_stub, {
             'Property': 'SubscriberKey',
