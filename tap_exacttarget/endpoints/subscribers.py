@@ -129,11 +129,27 @@ class SubscriberDataAccessObject(DataAccessObject):
             return
 
         table = self.__class__.TABLE
-        stream = request('Subscriber', FuelSDK.ET_Subscriber, self.auth_stub, {
-            'Property': 'SubscriberKey',
-            'SimpleOperator': 'IN',
-            'Value': subscriber_keys
-        })
+        _filter = {}
+
+        if len(subscriber_keys) == 1:
+            _filter = {
+                'Property': 'SubscriberKey',
+                'SimpleOperator': 'equals',
+                'Value': subscriber_keys[0]
+            }
+
+        elif len(subscriber_keys) > 1:
+            _filter = {
+                'Property': 'SubscriberKey',
+                'SimpleOperator': 'IN',
+                'Value': subscriber_keys
+            }
+        else:
+            LOGGER.info('Got empty set of subscriber keys, moving on')
+            return
+
+        stream = request(
+            'Subscriber', FuelSDK.ET_Subscriber, self.auth_stub, _filter)
 
         for subscriber in stream:
             subscriber = self.filter_keys_and_parse(subscriber)
