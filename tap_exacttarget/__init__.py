@@ -66,7 +66,7 @@ def do_discover(args):
 
         catalog += stream_accessor.generate_catalog()
 
-    print(json.dumps({'streams': catalog}), indent=4)
+    print(json.dumps({'streams': catalog}, indent=4))
 
 
 def _is_selected(catalog_entry):
