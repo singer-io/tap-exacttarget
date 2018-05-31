@@ -17,7 +17,7 @@ class ListDataAccessObject(DataAccessObject):
 
     SCHEMA = with_properties({
         'Category': {
-            'type': 'integer',
+            'type': ['null', 'integer'],
             'description': 'ID of the folder that an item is located in.',
         },
         'CreatedDate': CREATED_DATE_FIELD,

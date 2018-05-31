@@ -56,30 +56,30 @@ class ContentAreaDataAccessObject(DataAccessObject):
             'description': 'Indicates font family used in content area',
         },
         'HasFontSize': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Indicates whether the content area includes '
                             'a specified font size or not'),
         },
         'ID': ID_FIELD,
         'IsBlank': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Indicates if specified content area '
                             'contains no content.'),
         },
         'IsDynamicContent': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Indicates if specific content area '
                             'contains dynamic content.'),
         },
         'IsLocked': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Indicates if specific email content area '
                             'within an Enterprise or Enterprise 2.0 '
                             'account is locked and cannot be changed by '
                             'subaccounts.'),
         },
         'IsSurvey': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Indicates whether a specific content area '
                             'contains survey questions.'),
         },

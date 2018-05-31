@@ -19,9 +19,9 @@ SCHEMA = with_properties({
         'items': {
             'type': 'object',
             'properties': {
-                'Address': {'type': 'string'},
-                'AddressType': {'type': 'string'},
-                'AddressStatus': {'type': 'string'}
+                'Address': {'type': ['null', 'string']},
+                'AddressType': {'type': ['null', 'string']},
+                'AddressStatus': {'type': ['null', 'string']}
             }
         }
     },
@@ -43,7 +43,7 @@ SCHEMA = with_properties({
         'type': 'array',
         'description': 'Defines list IDs a subscriber resides on.',
         'items': {
-            'type': 'string'
+            'type': ['null', 'string']
         }
     },
     'Locale': {
@@ -79,7 +79,7 @@ SCHEMA = with_properties({
         'description': 'Indicates the subscriber\'s modality status.',
     },
     'Status': {
-        'type': 'string',
+        'type': ['null', 'string'],
         'description': 'Defines status of object. Status of an address.',
     },
     'SubscriberKey': SUBSCRIBER_KEY_FIELD,

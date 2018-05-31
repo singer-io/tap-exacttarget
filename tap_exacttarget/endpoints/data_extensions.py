@@ -76,12 +76,12 @@ class DataExtensionDataAccessObject(DataAccessObject):
                     'selected-by-default': False,
                     'properties': {
                         '_CustomObjectKey': {
-                            'type': 'string',
+                            'type': ['null', 'string'],
                             'description': ('Hidden auto-incrementing primary '
                                             'key for data extension rows.'),
                         },
                         'CategoryID': {
-                            'type': 'integer',
+                            'type': ['null', 'integer'],
                             'description': ('Specifies the identifier of the '
                                             'folder. (Taken from the parent '
                                             'data extension.)')
