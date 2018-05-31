@@ -46,7 +46,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                             'subscriber resides on.'),
         },
         'Status': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'description': ('Defines status of object. Status of '
                             'an address.'),
         },

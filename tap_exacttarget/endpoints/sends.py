@@ -15,24 +15,24 @@ class SendDataAccessObject(DataAccessObject):
     SCHEMA = with_properties({
         'CreatedDate': CREATED_DATE_FIELD,
         'EmailID': {
-            'type': 'integer',
+            'type': ['null', 'integer'],
             'description': ('Specifies the ID of an email message '
                             'associated with a send.'),
         },
         'EmailName': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'description': ('Specifies the name of an email message '
                             'associated with a send.'),
         },
         'FromAddress': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'description': ('Indicates From address associated with a '
                             'object. Deprecated for email send '
                             'definitions and triggered send '
                             'definitions.'),
         },
         'FromName': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'description': ('Specifies the default email message From '
                             'Name. Deprecated for email send '
                             'definitions and triggered send '
@@ -40,7 +40,7 @@ class SendDataAccessObject(DataAccessObject):
         },
         'ID': ID_FIELD,
         'IsAlwaysOn': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Indicates whether the request can be '
                             'performed while the system is is '
                             'maintenance mode. A value of true '
@@ -48,32 +48,32 @@ class SendDataAccessObject(DataAccessObject):
                             'request.'),
         },
         'IsMultipart': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Indicates whether the email is sent with '
                             'Multipart/MIME enabled.'),
         },
         'ModifiedDate': MODIFIED_DATE_FIELD,
         'PartnerProperties': CUSTOM_PROPERTY_LIST,
         'SendDate': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'format': 'date-time',
             'description': ('Indicates the date on which a send '
                             'occurred. Set this value to have a CST '
                             '(Central Standard Time) value.'),
         },
         'SentDate': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'format': 'date-time',
             'description': ('Indicates date on which a send took '
                             'place.'),
         },
         'Status': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'description': ('Defines status of object. Status of an '
                             'address.'),
         },
         'Subject': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'description': ('Contains subject area information for '
                             'a message.'),
         }

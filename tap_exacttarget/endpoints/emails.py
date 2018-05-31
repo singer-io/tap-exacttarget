@@ -34,7 +34,7 @@ class EmailDataAccessObject(DataAccessObject):
             'description': ('Contains information on content areas '
                             'included in an email message.'),
             'items': {
-                'type': 'integer'
+                'type': ['null', 'integer']
             }
         },
         'ContentCheckStatus': {
@@ -49,7 +49,7 @@ class EmailDataAccessObject(DataAccessObject):
             'description': ('Defines preferred email type.'),
         },
         'HasDynamicSubjectLine': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Indicates whether email message contains '
                             'a dynamic subject line.'),
         },
@@ -59,11 +59,11 @@ class EmailDataAccessObject(DataAccessObject):
         },
         'ID': ID_FIELD,
         'IsActive': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Specifies whether the object is active.')
         },
         'IsHTMLPaste': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Indicates whether email message was created '
                             'via pasted HTML.')
         },
@@ -90,7 +90,7 @@ class EmailDataAccessObject(DataAccessObject):
                             'message.'),
         },
         'SyncTextWithHTML': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Makes the text version of an email contain '
                             'the same content as the HTML version.'),
         },

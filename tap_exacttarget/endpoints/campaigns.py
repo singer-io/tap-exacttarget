@@ -12,25 +12,25 @@ class CampaignDataAccessObject(DataAccessObject):
 
     SCHEMA = with_properties({
         'id': {
-            'type': 'string',
+            'type': ['null', 'string'],
         },
         'createdDate': {
-            'type': 'string',
+            'type': ['null', 'string'],
         },
         'modifiedDate': {
-            'type': 'string',
+            'type': ['null', 'string'],
         },
         'name': {
-            'type': 'string',
+            'type': ['null', 'string'],
         },
         'description': {
-            'type': 'string',
+            'type': ['null', 'string'],
         },
         'campaignCode': {
-            'type': 'string',
+            'type': ['null', 'string'],
         },
         'color': {
-            'type': 'string',
+            'type': ['null', 'string'],
         }
     })
 
