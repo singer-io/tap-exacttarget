@@ -14,14 +14,14 @@ CUSTOM_PROPERTY_LIST = {
     'items': {
         'type': 'object',
         'properties': {
-            'Name': {'type': 'string'},
+            'Name': {'type': ['null', 'string']},
             'Value': {'type': ['null', 'string']},
         }
     }
 }
 
 ID_FIELD = {
-    'type': 'integer',
+    'type': ['null', 'integer'],
     'description': ('Read-only legacy identifier for an object. Not '
                     'supported on all objects. Some objects use the '
                     'ObjectID property as the Marketing Cloud unique '
@@ -61,6 +61,6 @@ DESCRIPTION_FIELD = {
 }
 
 SUBSCRIBER_KEY_FIELD = {
-    'type': 'string',
+    'type': ['null', 'string'],
     'description': 'Identification of a specific subscriber.',
 }

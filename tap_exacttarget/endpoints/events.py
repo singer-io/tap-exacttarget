@@ -16,16 +16,16 @@ LOGGER = singer.get_logger()
 class EventDataAccessObject(DataAccessObject):
     SCHEMA = with_properties({
         'SendID': {
-            'type': 'integer',
+            'type': ['null', 'integer'],
             'description': 'Contains identifier for a specific send.',
         },
         'EventDate': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'format': 'datetime',
             'description': 'Date when a tracking event occurred.',
         },
         'EventType': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'description': 'The type of tracking event',
         },
         'SubscriberKey': SUBSCRIBER_KEY_FIELD,
