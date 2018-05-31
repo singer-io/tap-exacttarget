@@ -17,12 +17,12 @@ class FolderDataAccessObject(DataAccessObject):
 
     SCHEMA = with_properties({
         'AllowChildren': {
-            'type': 'boolean',
+            'type': ['null', 'boolean'],
             'description': ('Specifies whether a data folder can have '
                             'child data folders.'),
         },
         'ContentType': {
-            'type': 'string',
+            'type': ['null', 'string'],
             'description': ('Defines the type of content contained '
                             'within a folder.'),
         },
