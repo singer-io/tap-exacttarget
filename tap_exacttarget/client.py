@@ -1,6 +1,7 @@
 import FuelSDK
 import singer
 
+from suds.transport.https import HttpAuthenticated
 
 LOGGER = singer.get_logger()
 
@@ -36,8 +37,9 @@ def get_auth_stub(config):
             'clientid': config['client_id'],
             'clientsecret': config['client_secret']
         })
+    transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 900)))
     auth_stub.soap_client.set_options(
-        timeout=int(config.get('request_timeout', 900)))
+        transport=transport)
 
     LOGGER.info("Success.")
 
