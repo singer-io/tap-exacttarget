@@ -165,6 +165,22 @@ class DataExtensionDataAccessObject(DataAccessObject):
             elif 'number' in field_schema.get('type'):
                 to_return[k] = float(v)
 
+            elif ('boolean' in field_schema.get('type') and
+                  isinstance(to_return[k], str)):
+                # Extension bools can come through as a number of values, see:
+                # https://help.salesforce.com/articleView?id=mc_es_data_extension_data_types.htm&type=5
+                # In practice, looks like they come through as either "True"
+                # or "False", but for completeness I have included the other
+                # possible values.
+                if str(to_return[k]).lower() in [1, "1", "y", "yes", "true"]:
+                    to_return[k] = True
+                elif str(to_return[k]).lower() in [0, "0", "n", "no", "false"]:
+                    to_return[k] = False
+                else:
+                    LOGGER.warn('Could not infer boolean value from {}'
+                                .format(to_return[k]))
+                    to_return[k] = None
+
         return to_return
 
     def _replicate(self, customer_key, keys,
