@@ -235,6 +235,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 partial=(replication_key is not None),
                 start=start,
                 end=end,
+                unit=unit,
                 replication_key=replication_key)
 
             if replication_key is None:
