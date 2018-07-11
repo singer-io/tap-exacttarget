@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.3
+  * Fixes a bug where the data extension replicator uses the wrong time unit and misses data [#16](https://github.com/singer-io/tap-exacttarget/pull/16)
+
 ## 1.1.2
   * Convert boolean data types to actual bools [#15](https://github.com/singer-io/tap-exacttarget/pull/15)
 
