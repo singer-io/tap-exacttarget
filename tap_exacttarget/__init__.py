@@ -70,11 +70,9 @@ def do_discover(args):
 
 
 def _is_selected(catalog_entry):
-    default = catalog_entry.get('selected-by-default', False)
-
-    return ((catalog_entry.get('inclusion') == 'automatic') or
-            (catalog_entry.get('inclusion') == 'available' and
-             catalog_entry.get('selected', default) is True))
+    return singer.should_sync_field(catalog_entry.get('inclusion'),
+                                    catalog_entry.get('selected'),
+                                    False)
 
 
 def do_sync(args):
