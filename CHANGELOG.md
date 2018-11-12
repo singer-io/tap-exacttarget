@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.4
+  * Update version of `requests` to `0.20.0` in response to CVE 2018-18074
+
 ## 1.1.3
   * Fixes a bug where the data extension replicator uses the wrong time unit and misses data [#16](https://github.com/singer-io/tap-exacttarget/pull/16)
 
