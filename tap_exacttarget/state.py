@@ -28,7 +28,7 @@ def get_last_record_value_for_table(state, table):
         return None
 
     date_obj = datetime.datetime.strptime(raw, DATE_FORMAT)
-    date_obj = date_obj - datetime.timedelta(days=1)
+    date_obj = date_obj - datetime.timedelta(hours=6)
 
     return date_obj.strftime(DATE_FORMAT)
 
