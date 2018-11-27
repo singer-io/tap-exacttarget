@@ -28,6 +28,10 @@ class EventDataAccessObject(DataAccessObject):
             'type': ['null', 'string'],
             'description': 'The type of tracking event',
         },
+        'URL': {
+            'type': ['null','string'],
+            'description': 'URL that was clicked.'
+        },
         'SubscriberKey': SUBSCRIBER_KEY_FIELD,
     })
 
