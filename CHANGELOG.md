@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.5
+  * Adds `URL` to the `event` stream for click events [#19](https://github.com/singer-io/tap-exacttarget/pull/19)
+
 ## 1.1.4
   * Update version of `requests` to `2.20.0` in response to CVE 2018-18074
   * Update singer-python to use `should_sync_field` for field selection [#18](https://github.com/singer-io/tap-exacttarget/pull/18)
