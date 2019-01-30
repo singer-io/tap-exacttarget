@@ -32,11 +32,19 @@ def get_auth_stub(config):
     """
     LOGGER.info("Generating auth stub...")
 
-    auth_stub = FuelSDK.ET_Client(
-        params={
+    params = {
             'clientid': config['client_id'],
             'clientsecret': config['client_secret']
-        })
+        }
+
+    if config.get('tenant_subdomain'):
+        # For S10+ accounts: https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/your-subdomain-tenant-specific-endpoints.htm
+        params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com/v1/requestToken'
+                                       .format(config['tenant_subdomain']))
+        params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
+                                  .format(config['tenant_subdomain']))
+
+    auth_stub = FuelSDK.ET_Client(params=params)
     transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 900)))
     auth_stub.soap_client.set_options(
         transport=transport)
