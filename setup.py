@@ -17,7 +17,7 @@ setup(
         'voluptuous==0.10.5',
         'pyjwt>=0.1.9',
         'requests==2.20.0',
-        'suds-jurko>=0.6'
+        'Salesforce-FuelSDK==1.1.1'
     ],
     entry_points='''
     [console_scripts]
