@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.6
+  * Adds support for using tenant subdomains for authentication [#23](https://github.com/singer-io/tap-exacttarget/pull/23)
+  * Removes local copy of FuelSDK in favor of PyPi package.
+  * Removes unused dependencies
+
 ## 1.1.5
   * Adds `URL` to the `event` stream for click events [#19](https://github.com/singer-io/tap-exacttarget/pull/19)
 
