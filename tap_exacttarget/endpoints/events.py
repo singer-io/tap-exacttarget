@@ -36,7 +36,7 @@ class EventDataAccessObject(DataAccessObject):
     })
 
     TABLE = 'event'
-    KEY_PROPERTIES = ['SendID', 'EventType', 'SubscriberKey', 'EventDate']
+    KEY_PROPERTIES = ['SendID', 'EventType', 'EventDate']
 
     def sync_data(self):
         table = self.__class__.TABLE
