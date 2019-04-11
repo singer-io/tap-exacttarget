@@ -102,3 +102,6 @@ ENV/
 
 # Emacs
 .tramp_history
+
+# ignore PyCharm
+.idea
