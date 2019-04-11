@@ -5,7 +5,7 @@ import singer
 
 from voluptuous import Schema, Required
 
-from tap_exacttarget.pagination import DATE_FORMAT
+from tap_exacttarget.pagination import DATE_FORMAT, decrement_date
 
 LOGGER = singer.get_logger()
 
@@ -27,10 +27,12 @@ def get_last_record_value_for_table(state, table):
     if raw is None:
         return None
 
-    date_obj = datetime.datetime.strptime(raw, DATE_FORMAT)
-    date_obj = date_obj - datetime.timedelta(hours=6)
+    interval_unit = self.config.get('state__bookmark_interval_unit', 'days')
+    interval = self.config.get('state__bookmark_interval', 1)
 
-    return date_obj.strftime(DATE_FORMAT)
+    unit = {interval_unit: int(interval)}
+
+    return decrement_date(state, unit)
 
 
 def incorporate(state, table, field, value):

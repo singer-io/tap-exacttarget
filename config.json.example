@@ -17,5 +17,7 @@
     "pagination__data_extension_interval_unit": "days",
     "pagination__data_extension_interval_quantity": "7",
     "pagination__list_subscriber_interval_unit": "days",
-    "pagination__list_subscriber_interval_quantity": "7"
+    "pagination__list_subscriber_interval_quantity": "7",
+    "state__bookmark_interval_unit": "days",
+    "state__bookmark_interval": "2"
 }
