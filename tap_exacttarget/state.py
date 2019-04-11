@@ -19,7 +19,7 @@ STATE_SCHEMA = Schema({
 })
 
 
-def get_last_record_value_for_table(state, table):
+def get_last_record_value_for_table(state, table, config=None):
     raw = state.get('bookmarks', {}) \
                .get(table, {}) \
                .get('last_record')
@@ -27,8 +27,8 @@ def get_last_record_value_for_table(state, table):
     if raw is None:
         return None
 
-    interval_unit = self.config.get('state__bookmark_interval_unit', 'days')
-    interval = self.config.get('state__bookmark_interval', 1)
+    interval_unit = config.get('state__bookmark_interval_unit', 'days')
+    interval = config.get('state__bookmark_interval', 1)
 
     unit = {interval_unit: int(interval)}
 
