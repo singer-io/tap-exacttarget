@@ -70,8 +70,8 @@ def do_discover(args):
 
 
 def _is_selected(catalog_entry):
-    return singer.should_sync_field(catalog_entry.get('inclusion'),
-                                    catalog_entry.get('selected'),
+    return singer.should_sync_field(catalog_entry.inclusion,
+                                    catalog_entry.selected,
                                     False)
 
 
@@ -80,7 +80,7 @@ def do_sync(args):
 
     config = args.config
     state = args.state
-    catalog = args.properties
+    catalog = args.catalog
 
     success = True
 
@@ -92,12 +92,12 @@ def do_sync(args):
     subscriber_catalog = None
     list_subscriber_selected = False
 
-    for stream_catalog in catalog.get('streams'):
+    for stream_catalog in catalog.streams:
         stream_accessor = None
 
-        if not _is_selected(stream_catalog.get('schema', {})):
+        if not _is_selected(stream_catalog.schema):
             LOGGER.info("'{}' is not marked selected, skipping."
-                        .format(stream_catalog.get('stream')))
+                        .format(stream_catalog.stream))
             continue
 
         if SubscriberDataAccessObject.matches_catalog(stream_catalog):
@@ -152,9 +152,10 @@ def main():
 
     if args.discover:
         do_discover(args)
-    elif args.properties:
+    elif args.catalog:
         success = do_sync(args)
     else:
+        sucess = False
         LOGGER.info("No properties were selected")
 
     if success:

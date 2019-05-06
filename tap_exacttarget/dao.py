@@ -21,7 +21,7 @@ class DataAccessObject(object):
 
     @classmethod
     def matches_catalog(cls, catalog):
-        return catalog.get('stream') == cls.TABLE
+        return catalog.stream == cls.TABLE
 
     def generate_catalog(self):
         cls = self.__class__
@@ -40,25 +40,25 @@ class DataAccessObject(object):
 
     def get_catalog_keys(self):
         return list(
-            self.catalog.get('schema', {}).get('properties', {}).keys())
+            self.catalog.schema.properties.keys())
 
     def parse_object(self, obj):
         return project(obj, self.get_catalog_keys())
 
     def write_schema(self):
         singer.write_schema(
-            self.catalog.get('stream'),
-            self.catalog.get('schema'),
-            key_properties=self.catalog.get('key_properties'))
+            self.catalog.stream,
+            self.catalog.schema.to_dict(),
+            key_properties=self.catalog.key_properties)
 
     def sync(self):
-        if not self.catalog.get('schema', {}).get('selected', False):
+        if not self.catalog.schema.selected:
             LOGGER.info('{} is not marked as selected, skipping.'
-                        .format(self.catalog.get('stream')))
+                        .format(self.catalog.stream))
             return
 
         LOGGER.info('Syncing stream {} with accessor {}'
-                    .format(self.catalog.get('tap_stream_id'),
+                    .format(self.catalog.tap_stream_id,
                             self.__class__.__name__))
 
         self.write_schema()

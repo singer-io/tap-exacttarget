@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='tap-exacttarget',
-    version='1.1.6',
+    version='1.1.7',
     description='Singer.io tap for extracting data from the ExactTarget API',
     author='Fishtown Analytics',
     url='http://fishtownanalytics.com',
