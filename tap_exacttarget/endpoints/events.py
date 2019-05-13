@@ -28,9 +28,17 @@ class EventDataAccessObject(DataAccessObject):
             'type': ['null', 'string'],
             'description': 'The type of tracking event',
         },
+        'BatchID': {
+            'type': ['null','integer'],
+            'description': 'Ties triggered send sent events to other events (like clicks and opens that occur at a later date and time)',
+        },
+        'CorrelationID': {
+            'type': ['null','string'],
+            'description': 'Identifies correlation of objects across several requests.',
+        },
         'URL': {
             'type': ['null','string'],
-            'description': 'URL that was clicked.'
+            'description': 'URL that was clicked.',
         },
         'SubscriberKey': SUBSCRIBER_KEY_FIELD,
     })
