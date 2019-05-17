@@ -95,6 +95,13 @@ class EventDataAccessObject(DataAccessObject):
                                              'EventDate',
                                              event.get('EventDate'))
 
+                    if event.get('SubscriberKey') is None:
+                        LOGGER.info("SubscriberKey is Null so ignoring {} record with SendID: {} and EventDate: {}"
+                                    .format(event_name,
+                                            event.get('SendID'),
+                                            event.get('EventDate')))
+                        continue
+
                     singer.write_records(table, [event])
 
                 self.state = incorporate(self.state,
