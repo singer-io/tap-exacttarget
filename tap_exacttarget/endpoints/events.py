@@ -95,8 +95,8 @@ class EventDataAccessObject(DataAccessObject):
                                              'EventDate',
                                              event.get('EventDate'))
 
-                        if event.get('SubscriberKey') is None:
-                            LOGGER.info("SubscriberKey is NULL so ignoring {} record with SendID: {} and EventDate: {}"
+                    if event.get('SubscriberKey') is None:
+                        LOGGER.info("SubscriberKey is NULL so ignoring {} record with SendID: {} and EventDate: {}"
                                     .format(event_name,
                                             event.get('SendID'),
                                             event.get('EventDate')))
