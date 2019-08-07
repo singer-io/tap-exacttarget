@@ -2,6 +2,7 @@ import FuelSDK
 import singer
 
 from suds.transport.https import HttpAuthenticated
+from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 
 LOGGER = singer.get_logger()
 
@@ -54,7 +55,7 @@ def get_auth_stub(config):
     return auth_stub
 
 
-def request(name, selector, auth_stub, search_filter=None, props=None):
+def request(name, selector, auth_stub, search_filter=None, props=None, batch_size=2500):
     """
     Given an object name (`name`), used for logging purposes only,
       a `selector`, for example FuelSDK.ET_ClickEvent,
@@ -94,10 +95,10 @@ def request(name, selector, auth_stub, search_filter=None, props=None):
             "Making RETRIEVE call to '{}' endpoint with no filters."
             .format(name))
 
-    return request_from_cursor(name, cursor)
+    return request_from_cursor(name, cursor, batch_size)
 
 
-def request_from_cursor(name, cursor):
+def request_from_cursor(name, cursor, batch_size):
     """
     Given an object name (`name`), used for logging purposes only, and a
     `cursor` provided by FuelSDK, return a generator that yields all the
@@ -119,7 +120,10 @@ def request_from_cursor(name, cursor):
     while response.more_results:
         LOGGER.info("Getting more results from '{}' endpoint".format(name))
 
-        response = cursor.getMoreResults()
+        # Override call to getMoreResults to add a batch_size parameter
+        # response = cursor.getMoreResults()
+        response = tap_exacttarget__getMoreResults(cursor, batch_size=batch_size)
+        LOGGER.info("Fetched {} results from '{}' endpoint".format(len(response.results), name))
 
         if not response.status:
             raise RuntimeError("Request failed with '{}'"
