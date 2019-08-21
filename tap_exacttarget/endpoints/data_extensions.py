@@ -61,7 +61,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
             FuelSDK.ET_DataExtension,
             self.auth_stub,
             props=['CustomerKey', 'Name'],
-            batch_size=self.config.get('batch_size', 2500)
+            batch_size=int(self.config.get('batch_size', 2500))
         )
 
         to_return = {}
@@ -202,7 +202,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
                                                  start,
                                                  unit)
 
-        batch_size = self.config.get('batch_size', 2500)
+        batch_size = int(self.config.get('batch_size', 2500))
         result = request_from_cursor('DataExtensionObject', cursor,
                                      batch_size=batch_size)
 
