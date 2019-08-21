@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.0
+  * Adds a configurable batch_size to reduce the data read from the SFMC API and limit memory usage [#36](https://github.com/singer-io/tap-exacttarget/pull/36)
+
 ## 1.1.6
   * Adds support for using tenant subdomains for authentication [#23](https://github.com/singer-io/tap-exacttarget/pull/23)
   * Removes local copy of FuelSDK in favor of PyPi package.
