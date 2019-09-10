@@ -5,6 +5,7 @@ import json
 
 import singer
 from singer import utils
+from singer import metadata
 
 from tap_exacttarget.state import save_state
 
@@ -70,9 +71,10 @@ def do_discover(args):
 
 
 def _is_selected(catalog_entry):
-    return singer.should_sync_field(catalog_entry.get('inclusion'),
-                                    catalog_entry.get('selected'),
-                                    False)
+    mdata = metadata.to_map(catalog_entry['metadata'])
+    return singer.should_sync_field(metadata.get(mdata, (), 'inclusion'),
+                                    metadata.get(mdata, (), 'selected'),
+                                    default=False)
 
 
 def do_sync(args):
@@ -95,7 +97,7 @@ def do_sync(args):
     for stream_catalog in catalog.get('streams'):
         stream_accessor = None
 
-        if not _is_selected(stream_catalog.get('schema', {})):
+        if not _is_selected(stream_catalog):
             LOGGER.info("'{}' is not marked selected, skipping."
                         .format(stream_catalog.get('stream')))
             continue
