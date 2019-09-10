@@ -83,8 +83,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
                              {'breadcrumb': ('properties', '_CustomObjectKey'),
                               'metadata': {'inclusion':'available'}},
                              {'breadcrumb': ('properties', 'CategoryID'),
-                              'metadata': {'inclusion':'available'}},
-                ]
+                              'metadata': {'inclusion':'available'}}]
             }
 
         return to_return
@@ -230,6 +229,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
         (_, customer_key) = tap_stream_id.split('.', 1)
 
         keys = self.get_catalog_keys()
+
         keys.remove('CategoryID')
 
         replication_key = None

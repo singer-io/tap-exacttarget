@@ -17,6 +17,13 @@ setup(
         'voluptuous==0.10.5',
         'Salesforce-FuelSDK==1.1.1'
     ],
+    extras_require={
+        'dev': [
+            'ipdb==0.11',
+            'pylint==2.1.1',
+            'astroid==2.1.0',
+        ]
+    },
     entry_points='''
     [console_scripts]
     tap-exacttarget=tap_exacttarget:main
