@@ -1,4 +1,5 @@
 import singer
+from singer import metadata
 
 from funcy import project
 
@@ -11,7 +12,7 @@ def _get_catalog_schema(catalog):
     return catalog.get('schema', {}).get('properties')
 
 
-class DataAccessObject(object):
+class DataAccessObject():
 
     def __init__(self, config, state, auth_stub, catalog):
         self.config = config.copy()
@@ -26,11 +27,17 @@ class DataAccessObject(object):
     def generate_catalog(self):
         cls = self.__class__
 
+        mdata = metadata.new()
+        metadata.write(mdata, (), 'inclusion', 'available')
+        for prop in cls.SCHEMA['properties']: # pylint:disable=unsubscriptable-object
+            metadata.write(mdata, ('properties', prop), 'inclusion', 'available')
+
         return [{
             'tap_stream_id': cls.TABLE,
             'stream': cls.TABLE,
             'key_properties': cls.KEY_PROPERTIES,
             'schema': cls.SCHEMA,
+            'metadata': metadata.to_list(mdata)
         }]
 
     def filter_keys_and_parse(self, obj):
@@ -52,10 +59,11 @@ class DataAccessObject(object):
             key_properties=self.catalog.get('key_properties'))
 
     def sync(self):
-        if not self.catalog.get('schema', {}).get('selected', False):
+        mdata = metadata.to_map(self.catalog['metadata'])
+        if not metadata.get(mdata, (), 'selected'):
             LOGGER.info('{} is not marked as selected, skipping.'
                         .format(self.catalog.get('stream')))
-            return
+            return None
 
         LOGGER.info('Syncing stream {} with accessor {}'
                     .format(self.catalog.get('tap_stream_id'),

@@ -34,8 +34,8 @@ def get_auth_stub(config):
     LOGGER.info("Generating auth stub...")
 
     params = {
-            'clientid': config['client_id'],
-            'clientsecret': config['client_secret']
+        'clientid': config['client_id'],
+        'clientsecret': config['client_secret']
         }
 
     if config.get('tenant_subdomain'):

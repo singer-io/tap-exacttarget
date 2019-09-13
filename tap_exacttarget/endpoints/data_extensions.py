@@ -29,17 +29,6 @@ def _convert_extension_datatype(datatype):
     return 'string'
 
 
-def _convert_data_extension_to_catalog(extension):
-    return {
-        field.get('Name'): {
-            'type': _convert_extension_datatype(field.get('ValueType')),
-            'description': field.get('Description'),
-            'inclusion': 'available',
-        }
-        for field in extension.get('Fields')
-    }
-
-
 def _get_tap_stream_id(extension):
     extension_name = extension.CustomerKey
     return 'data_extension.{}'.format(extension_name)
@@ -76,7 +65,6 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 'key_properties': ['_CustomObjectKey'],
                 'schema': {
                     'type': 'object',
-                    'inclusion': 'available',
                     'properties': {
                         '_CustomObjectKey': {
                             'type': ['null', 'string'],
@@ -91,6 +79,11 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         }
                     }
                 },
+                'metadata': [{'breadcrumb': (), 'metadata': {'inclusion':'available'}},
+                             {'breadcrumb': ('properties', '_CustomObjectKey'),
+                              'metadata': {'inclusion':'available'}},
+                             {'breadcrumb': ('properties', 'CategoryID'),
+                              'metadata': {'inclusion':'available'}}]
             }
 
         return to_return
@@ -126,6 +119,11 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 to_return,
                 [extension_id, 'schema', 'properties', field_name],
                 field_schema)
+
+            to_return[extension_id]['metadata'].append({
+                'breadcrumb': ('properties', field_name),
+                'metadata': {'inclusion': 'available'}
+            })
 
         return to_return
 
@@ -231,6 +229,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
         (_, customer_key) = tap_stream_id.split('.', 1)
 
         keys = self.get_catalog_keys()
+
         keys.remove('CategoryID')
 
         replication_key = None

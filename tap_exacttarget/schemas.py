@@ -1,7 +1,6 @@
 def with_properties(properties):
     return {
         'type': 'object',
-        'inclusion': 'available',
         'properties': properties
     }
 
