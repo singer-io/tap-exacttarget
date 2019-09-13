@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.0
+  * Update Singer patterns to use metadata for stream selection [#37](https://github.com/singer-io/tap-exacttarget/pull/37)
+
 ## 1.4.0
   * Adds a configurable batch_size to reduce the data read from the SFMC API and limit memory usage [#36](https://github.com/singer-io/tap-exacttarget/pull/36)
 
