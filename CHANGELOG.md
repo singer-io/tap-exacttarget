@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.1
+  * Don't add duplicate metadata to catalog during discovery mode [#38](https://github.com/singer-io/tap-exacttarget/pull/38)
+
 ## 1.5.0
   * Update Singer patterns to use metadata for stream selection [#37](https://github.com/singer-io/tap-exacttarget/pull/37)
 
