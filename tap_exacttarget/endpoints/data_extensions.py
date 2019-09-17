@@ -120,10 +120,12 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 [extension_id, 'schema', 'properties', field_name],
                 field_schema)
 
-            to_return[extension_id]['metadata'].append({
-                'breadcrumb': ('properties', field_name),
-                'metadata': {'inclusion': 'available'}
-            })
+            # These fields are defaulted into the schema, do not add to metadata again.
+            if field_name not in {'_CustomObjectKey', 'CategoryID'}:
+                to_return[extension_id]['metadata'].append({
+                    'breadcrumb': ('properties', field_name),
+                    'metadata': {'inclusion': 'available'}
+                })
 
         return to_return
 
