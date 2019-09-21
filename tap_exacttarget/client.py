@@ -35,12 +35,13 @@ def get_auth_stub(config):
 
     params = {
         'clientid': config['client_id'],
-        'clientsecret': config['client_secret']
+        'clientsecret': config['client_secret'],
+        'useOAuth2Authentication': 'True'
         }
 
     if config.get('tenant_subdomain'):
         # For S10+ accounts: https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/your-subdomain-tenant-specific-endpoints.htm
-        params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com/v1/requestToken'
+        params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com'
                                        .format(config['tenant_subdomain']))
         params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
                                   .format(config['tenant_subdomain']))
