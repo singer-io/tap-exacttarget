@@ -36,7 +36,8 @@ def get_auth_stub(config):
     params = {
         'clientid': config['client_id'],
         'clientsecret': config['client_secret'],
-        'useOAuth2Authentication': 'True'
+        'useOAuth2Authentication': 'True',
+        'accountId': config['account_id']
         }
 
     if config.get('tenant_subdomain'):
