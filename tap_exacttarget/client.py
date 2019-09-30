@@ -50,7 +50,7 @@ def get_auth_stub(config):
             params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com/v1/requestToken'
                                            .format(config['tenant_subdomain']))
 
-        LOGGER.info(f"Authentication URL is: {params['authenticationurl']}")
+        LOGGER.debug(f"Authentication URL is: {params['authenticationurl']}")
         params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
                                   .format(config['tenant_subdomain']))
 
