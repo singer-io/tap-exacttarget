@@ -34,10 +34,11 @@ pip install .
 - create a Salesforce Marketing Cloud App,
 - authenticate it to your Exacttarget account, then
 - get client ID and secret. Save these -- you'll need them in the next step.
+- Find out if the sales force integration package is created (after 1st Aug, 2019) with only [OAuth2 support](https://help.salesforce.com/articleView?id=mc_rn_january_2019_platform_ip_enhanced_functionality_oauth2_0.htm&type=5)
 
 3. Create the config file.
 
-There is a template you can use at `config.json.example`, just copy it to `config.json` in the repo root and insert your client ID and secret.
+There is a template you can use at `config.json.example`, just copy it to `config.json` in the repo root and insert your client ID and secret and update use_oauth2 flag.
 
 4. Run the application to generate a catalog.
 
