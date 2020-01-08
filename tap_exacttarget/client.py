@@ -40,8 +40,17 @@ def get_auth_stub(config):
 
     if config.get('tenant_subdomain'):
         # For S10+ accounts: https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/your-subdomain-tenant-specific-endpoints.htm
-        params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com/v1/requestToken'
-                                       .format(config['tenant_subdomain']))
+        # Move to OAuth2: https://help.salesforce.com/articleView?id=mc_rn_january_2019_platform_ip_remove_legacy_package_create_ability.htm&type=5
+        if config.get('use_oauth2') == "True":
+            params['useOAuth2Authentication'] = "True"
+            params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com'
+                                           .format(config['tenant_subdomain']))
+        else:
+            params['useOAuth2Authentication'] = "False"
+            params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com/v1/requestToken'
+                                           .format(config['tenant_subdomain']))
+
+        LOGGER.debug(f"Authentication URL is: {params['authenticationurl']}")
         params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
                                   .format(config['tenant_subdomain']))
 
