@@ -8,7 +8,7 @@ from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 LOGGER = singer.get_logger()
 
 # Defined our own class whose parent is FuelSDK.ET_Client. We found that
-# the logic within FuelSDK.ET_Client.refresh_toke() wouldn't allow the refresh_token
+# the logic within FuelSDK.ET_Client.refresh_token() wouldn't allow the refresh_token
 # to be used correctly so we need to manually set self.refreshKey.
 class SFMCClient(FuelSDK.ET_Client):
     #pylint: disable=super-init-not-called
