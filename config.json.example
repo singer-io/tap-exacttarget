@@ -2,7 +2,7 @@
     "client_id": "",
     "client_secret": "",
     "tenant_subdomain": "",
-    "use_oauth2": "True",
+    "refresh_token": "",
     "start_date": "2014-01-01T00:00:00Z",
     "request_timeout": "900",
     "batch_size": 2500,

@@ -11,6 +11,7 @@ LOGGER = singer.get_logger()
 # the logic within FuelSDK.ET_Client.refresh_toke() wouldn't allow the refresh_token
 # to be used correctly so we need to manually set self.refreshKey.
 class SFMCClient(FuelSDK.ET_Client):
+    #pylint: disable=super-init-not-called
     def __init__(self, config, config_path):
         if config.get('refresh_token'):
             self.refreshKey = config['refresh_token']
