@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.0
+  * Add OAuth2 support [#43](https://github.com/singer-io/tap-exacttarget/pull/43)
+
 ## 1.5.1
   * Don't add duplicate metadata to catalog during discovery mode [#38](https://github.com/singer-io/tap-exacttarget/pull/38)
 
