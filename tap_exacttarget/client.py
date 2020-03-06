@@ -1,11 +1,60 @@
 import FuelSDK
 import singer
+import json
 
 from suds.transport.https import HttpAuthenticated
 from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 
 LOGGER = singer.get_logger()
 
+# Defined our own class whose parent is FuelSDK.ET_Client. We found that
+# the logic within FuelSDK.ET_Client.refresh_token() wouldn't allow the refresh_token
+# to be used correctly so we need to manually set self.refreshKey.
+class SFMCClient(FuelSDK.ET_Client):
+    #pylint: disable=super-init-not-called
+    def __init__(self, config, config_path):
+        if config.get('refresh_token'):
+            self.refreshKey = config['refresh_token']
+
+        self.config_path = config_path
+        self.config = config
+
+        params = {
+            'clientid': config['client_id'],
+            'clientsecret': config['client_secret']
+        }
+
+        if config.get('tenant_subdomain'):
+            # For S10+ accounts: https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/your-subdomain-tenant-specific-endpoints.htm
+            # Move to OAuth2: https://help.salesforce.com/articleView?id=mc_rn_january_2019_platform_ip_remove_legacy_package_create_ability.htm&type=5
+            if config.get('refresh_token'):
+                params['useOAuth2Authentication'] = "True"
+                params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com'
+                                               .format(config['tenant_subdomain']))
+            else:
+                params['useOAuth2Authentication'] = "False"
+                params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com/v1/requestToken'
+                                               .format(config['tenant_subdomain']))
+
+
+            LOGGER.debug("Authentication URL is: {}".format(params['authenticationurl']))
+            params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
+                                      .format(config['tenant_subdomain']))
+
+        # Call configure_client from the parent class
+        self.configure_client(False, params, None)
+
+
+    # Define our own refresh_token to capture when refresh_token is updated and write it back
+    # to the config file.
+    def refresh_token(self, force_refresh=False):
+        super().refresh_token()
+
+        if 'refresh_token' in self.config and self.config.get('refresh_token') != self.refreshKey:
+            LOGGER.info("Refresh Token changed during  refresh_token")
+            self.config['refresh_token'] = self.refreshKey
+            with open(self.config_path, 'w') as file:
+                json.dump(self.config, file, indent=2)
 
 def _get_response_items(response):
     items = response.results
@@ -22,7 +71,7 @@ __all__ = ['get_auth_stub', 'request', 'request_from_cursor']
 
 # PUBLIC FUNCTIONS
 
-def get_auth_stub(config):
+def get_auth_stub(config, config_path):
     """
     Given a config dict in the format:
 
@@ -33,19 +82,9 @@ def get_auth_stub(config):
     """
     LOGGER.info("Generating auth stub...")
 
-    params = {
-        'clientid': config['client_id'],
-        'clientsecret': config['client_secret']
-        }
+    # Create our SFMC Client which adds functionality to the library's version
+    auth_stub = SFMCClient(config, config_path)
 
-    if config.get('tenant_subdomain'):
-        # For S10+ accounts: https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/your-subdomain-tenant-specific-endpoints.htm
-        params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com/v1/requestToken'
-                                       .format(config['tenant_subdomain']))
-        params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
-                                  .format(config['tenant_subdomain']))
-
-    auth_stub = FuelSDK.ET_Client(params=params)
     transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 900)))
     auth_stub.soap_client.set_options(
         transport=transport)
