@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.1
+  * Add OAuth2 support but using server-to-server integrations [#47](https://github.com/singer-io/tap-exacttarget/pull/47)
+
 ## 1.6.0
   * Add OAuth2 support [#43](https://github.com/singer-io/tap-exacttarget/pull/43)
 
