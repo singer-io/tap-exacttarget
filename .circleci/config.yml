@@ -16,7 +16,7 @@ jobs:
           name: 'unittest'
           command: |
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
-            python3 -m unittest
+            nosetests tests/unittests
       - run:
           name: 'pylint'
           command: |
@@ -29,13 +29,13 @@ jobs:
             aws s3 cp s3://com-stitchdata-dev-deployment-assets/environments/tap-tester/sandbox dev_env.sh
             source dev_env.sh
             source /usr/local/share/virtualenvs/tap-tester/bin/activate
-            run-a-test --tap=tap-exacttarget \
+            run-test --tap=tap-exacttarget \
                        --target=target-stitch \
                        --orchestrator=stitch-orchestrator \
                        --email=harrison+sandboxtest@stitchdata.com \
                        --password=$SANDBOX_PASSWORD \
                        --client-id=50 \
-                       tap_tester.suites.exacttarget
+                       tests
 workflows:
   version: 2
   commit:

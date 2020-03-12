@@ -1,5 +1,5 @@
 import unittest
-
+import tap_exacttarget
 from tap_exacttarget.state import incorporate
 
 

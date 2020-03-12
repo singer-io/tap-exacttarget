@@ -57,7 +57,7 @@ def do_discover(args):
     config = args.config
     state = args.state
 
-    auth_stub = get_auth_stub(config, args.config_path)
+    auth_stub = get_auth_stub(config)
 
     catalog = []
 
@@ -86,7 +86,7 @@ def do_sync(args):
 
     success = True
 
-    auth_stub = get_auth_stub(config, args.config_path)
+    auth_stub = get_auth_stub(config)
 
     stream_accessors = []
 
