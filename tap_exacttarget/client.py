@@ -60,6 +60,7 @@ def get_auth_stub(config):
     except Exception as e:
         LOGGER.info('Failed to auth using V1 endpoint')
         if not config.get('tenant_subdomain'):
+            LOGGER.warning('No tenant_subdomain found, will not attempt to auth with V2 endpoint')
             raise e
 
     # Next try V2
