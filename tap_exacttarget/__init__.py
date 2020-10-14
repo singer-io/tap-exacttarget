@@ -72,9 +72,9 @@ def do_discover(args):
 
 def _is_selected(catalog_entry):
     mdata = metadata.to_map(catalog_entry['metadata'])
-    return singer.should_sync_field(metadata.get(mdata, (), 'inclusion'),
-                                    metadata.get(mdata, (), 'selected'),
-                                    default=False)
+    return catalog_entry.is_selected() or singer.should_sync_field(metadata.get(mdata, (), 'inclusion'),
+                                                                    metadata.get(mdata, (), 'selected'),
+                                                                    default=False)
 
 
 def do_sync(args):
