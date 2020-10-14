@@ -111,7 +111,6 @@ def do_sync(args):
 
         for available_stream_accessor in AVAILABLE_STREAM_ACCESSORS:
             if available_stream_accessor.matches_catalog(stream_catalog):
-                pass
                 stream_accessors.append(available_stream_accessor(
                     config, state, auth_stub, stream_catalog))
 
