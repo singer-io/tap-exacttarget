@@ -72,10 +72,7 @@ def do_discover(args):
 
 def _is_selected(catalog_entry):
     mdata = metadata.to_map(catalog_entry['metadata'])
-    return singer.should_sync_field(metadata.get(mdata, (), 'inclusion'),
-                                    metadata.get(mdata, (), 'selected'),
-                                    default=False)
-
+    return catalog_entry['schema'].get('selected', False)
 
 def do_sync(args):
     LOGGER.info("Starting sync.")
@@ -96,7 +93,7 @@ def do_sync(args):
 
     for stream_catalog in catalog.get('streams'):
         stream_accessor = None
-
+        
         if not _is_selected(stream_catalog):
             LOGGER.info("'{}' is not marked selected, skipping."
                         .format(stream_catalog.get('stream')))

@@ -59,8 +59,7 @@ class DataAccessObject():
             key_properties=self.catalog.get('key_properties'))
 
     def sync(self):
-        mdata = metadata.to_map(self.catalog['metadata'])
-        if not metadata.get(mdata, (), 'selected'):
+        if not self.catalog['schema'].get('selected', False):
             LOGGER.info('{} is not marked as selected, skipping.'
                         .format(self.catalog.get('stream')))
             return None
