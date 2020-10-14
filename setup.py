@@ -12,8 +12,8 @@ setup(
     py_modules=['tap_exacttarget'],
     install_requires=[
         'funcy==1.9.1',
-        'singer-python==5.9.0',
-        'python-dateutil==2.6.0',
+        'singer-python>=5.9.0',
+        'python-dateutil>=2.6.0',
         'voluptuous==0.10.5',
         'Salesforce-FuelSDK==1.3.0'
     ],
