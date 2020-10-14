@@ -83,7 +83,7 @@ def do_sync(args):
 
     success = True
 
-    #auth_stub = get_auth_stub(config)
+    auth_stub = get_auth_stub(config)
 
     stream_accessors = []
 
