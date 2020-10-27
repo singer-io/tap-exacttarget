@@ -11,6 +11,7 @@ LOGGER = singer.get_logger()
 def _get_catalog_schema(catalog):
     return catalog.get('schema', {}).get('properties')
 
+SENSITIVE_PROPERTIES = ('EmailAddress', 'SubscriberKey', 'Addresses', 'Attributes')
 
 class DataAccessObject():
 
@@ -51,6 +52,16 @@ class DataAccessObject():
 
     def parse_object(self, obj):
         return project(obj, self.get_catalog_keys())
+
+    def remove_sensitive_data(self, record):
+        # remove personally identifiable data if option is set to true
+        # check the list above to see properties that we don't record
+        record_parsed = {}
+        if self.config.get('remove_personally_identifiable_data', False):
+            for key, value in record.items():
+                record_parsed = {key: value for key, value in record.items() if key not in SENSITIVE_PROPERTIES}
+            return record_parsed
+        return record
 
     def write_schema(self):
         singer.write_schema(
