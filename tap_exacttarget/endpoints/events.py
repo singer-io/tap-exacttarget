@@ -101,7 +101,7 @@ class EventDataAccessObject(DataAccessObject):
                                             event.get('SendID'),
                                             event.get('EventDate')))
                         continue
-
+                    event = self.remove_sensitive_data(event)
                     singer.write_records(table, [event])
 
                 self.state = incorporate(self.state,

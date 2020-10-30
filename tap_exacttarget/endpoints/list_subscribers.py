@@ -130,7 +130,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                             table,
                             'ModifiedDate',
                             list_subscriber.get('ModifiedDate'))
-
+                    list_subscriber = self.remove_sensitive_data(list_subscriber)
                     singer.write_records(table, [list_subscriber])
 
                 if self.replicate_subscriber:

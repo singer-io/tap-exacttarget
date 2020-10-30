@@ -153,5 +153,5 @@ class SubscriberDataAccessObject(DataAccessObject):
 
         for subscriber in stream:
             subscriber = self.filter_keys_and_parse(subscriber)
-
+            subscriber = self.remove_sensitive_data(subscriber)
             singer.write_records(table, [subscriber])
