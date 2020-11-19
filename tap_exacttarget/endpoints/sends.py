@@ -114,6 +114,9 @@ class SendDataAccessObject(DataAccessObject):
                          self.auth_stub,
                          search_filter)
 
+        if self.replicate_listsend:
+            list_sends_dao.write_schema()
+
         for send in stream:
             send = self.filter_keys_and_parse(send)
             list_sends_dao.sync_data_by_sendID(send.get('ID'))
