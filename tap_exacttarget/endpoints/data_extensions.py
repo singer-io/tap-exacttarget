@@ -236,7 +236,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         replication_key = None
 
-        start = get_last_record_value_for_table(self.state, table)
+        start = get_last_record_value_for_table(self.state, table, self.config.get('start_date'))
 
         if start is None:
             start = self.config.get('start_date')
