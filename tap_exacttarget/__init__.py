@@ -89,7 +89,11 @@ def do_sync(args):
 
     subscriber_selected = False
     subscriber_catalog = None
+    listsend_selected = False
+    listsend_catalog = None
+
     list_subscriber_selected = False
+    send_selected = False
 
     for stream_catalog in catalog.get('streams'):
         stream_accessor = None
@@ -106,8 +110,18 @@ def do_sync(args):
                         "'list_subscriber'")
             continue
 
+        if ListSendDataAccessObject.matches_catalog(stream_catalog):
+            listsend_selected = True
+            listsend_catalog = stream_catalog
+            LOGGER.info("'list send' selected, will replicate via "
+                        "'send'")
+            continue
+
         if ListSubscriberDataAccessObject.matches_catalog(stream_catalog):
             list_subscriber_selected = True
+
+        if SendDataAccessObject.matches_catalog(stream_catalog):
+            send_selected = True
 
         for available_stream_accessor in AVAILABLE_STREAM_ACCESSORS:
             if available_stream_accessor.matches_catalog(stream_catalog):
@@ -122,11 +136,22 @@ def do_sync(args):
                      'and try again.')
         exit(1)
 
+    if listsend_selected and not send_selected:
+        LOGGER.fatal('Cannot replicate `list_send` without '
+                     '`send`. Please select `send` '
+                     'and try again.')
+        exit(1)
+
     for stream_accessor in stream_accessors:
         if isinstance(stream_accessor, ListSubscriberDataAccessObject) and \
            subscriber_selected:
             stream_accessor.replicate_subscriber = True
             stream_accessor.subscriber_catalog = subscriber_catalog
+
+        if isinstance(stream_accessor, SendDataAccessObject) and \
+           listsend_selected:
+            stream_accessor.replicate_listsend = True
+            stream_accessor.listsend_catalog = listsend_catalog
 
         try:
             stream_accessor.state = state

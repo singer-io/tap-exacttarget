@@ -103,32 +103,58 @@ class ListSendDataAccessObject(DataAccessObject):
         return super(ListSendDataAccessObject, self).parse_object(to_return)
 
     def sync_data(self):
+        pass
+        # table = self.__class__.TABLE
+        # selector = FuelSDK.ET_ListSend
+
+        # search_filter = None
+        # retrieve_all_since = get_last_record_value_for_table(self.state, table, self.config.get('start_date'))
+
+        # if retrieve_all_since is not None:
+        #     search_filter = {
+        #         'Property': 'ModifiedDate',
+        #         'SimpleOperator': 'greaterThan',
+        #         'Value': retrieve_all_since
+        #     }
+
+        # stream = request('ListSend',
+        #                  selector,
+        #                  self.auth_stub,
+        #                  search_filter)
+
+        # for list_send in stream:
+        #     LOGGER.debug(list_send)
+        #     list_send = self.filter_keys_and_parse(list_send)
+
+        #     self.state = incorporate(self.state,
+        #                              table,
+        #                              'ModifiedDate',
+        #                              list_send.get('ModifiedDate'))
+
+        #     singer.write_records(table, [list_send])
+
+        # save_state(self.state)
+
+    def sync_data_by_sendID(self, sendId):
+        if not sendId:
+            return
+
         table = self.__class__.TABLE
-        selector = FuelSDK.ET_ListSend
+        _filter = {}
 
-        search_filter = None
-        retrieve_all_since = get_last_record_value_for_table(self.state, table)
-
-        if retrieve_all_since is not None:
-            search_filter = {
-                'Property': 'ModifiedDate',
-                'SimpleOperator': 'greaterThan',
-                'Value': retrieve_all_since
+        if sendId:
+            _filter = {
+                'Property': 'SendID',
+                'SimpleOperator': 'equals',
+                'Value': sendId
             }
+        else:
+            LOGGER.info('No send id here, moving on')
+            return
 
-        stream = request('ListSend',
-                         selector,
-                         self.auth_stub,
-                         search_filter)
+        stream = request(
+            self.__class__.TABLE, FuelSDK.ET_ListSend, self.auth_stub, _filter)
 
         for list_send in stream:
             list_send = self.filter_keys_and_parse(list_send)
-
-            self.state = incorporate(self.state,
-                                     table,
-                                     'ModifiedDate',
-                                     list_send.get('ModifiedDate'))
-
             singer.write_records(table, [list_send])
-
-        save_state(self.state)

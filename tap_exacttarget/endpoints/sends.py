@@ -3,6 +3,7 @@ import singer
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.endpoints.list_sends import ListSendDataAccessObject
 from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
     CREATED_DATE_FIELD, MODIFIED_DATE_FIELD, with_properties
 from tap_exacttarget.state import incorporate, save_state, \
@@ -92,13 +93,18 @@ class SendDataAccessObject(DataAccessObject):
     def sync_data(self):
         table = self.__class__.TABLE
         selector = FuelSDK.ET_Send
-
+        list_sends_dao = ListSendDataAccessObject(
+            self.config,
+            self.state,
+            self.auth_stub,
+            self.listsend_catalog
+        )
         search_filter = None
-        retrieve_all_since = get_last_record_value_for_table(self.state, table)
+        retrieve_all_since = get_last_record_value_for_table(self.state, table, self.config.get('start_date'))
 
         if retrieve_all_since is not None:
             search_filter = {
-                'Property': 'ModifiedDate',
+                'Property': 'SentDate',
                 'SimpleOperator': 'greaterThan',
                 'Value': retrieve_all_since
             }
@@ -108,13 +114,20 @@ class SendDataAccessObject(DataAccessObject):
                          self.auth_stub,
                          search_filter)
 
+        if self.replicate_listsend:
+            list_sends_dao.write_schema()
+
         for send in stream:
             send = self.filter_keys_and_parse(send)
-
+            list_sends_dao.sync_data_by_sendID(send.get('ID'))
             self.state = incorporate(self.state,
                                      table,
-                                     'ModifiedDate',
-                                     send.get('ModifiedDate'))
+                                     'SentDate',
+                                     send.get('SentDate'))
+            self.state = incorporate(self.state,
+                                     'ListSend',
+                                     'SentDate',
+                                     send.get('SentDate'))
 
             singer.write_records(table, [send])
 

@@ -52,9 +52,9 @@ def get_auth_stub(config):
         LOGGER.info('Trying to authenticate using V1 endpoint')
         params['useOAuth2Authentication'] = "False"
         auth_stub = FuelSDK.ET_Client(params=params)
-        transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 900)))
+        transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 3600)))
         auth_stub.soap_client.set_options(
-            transport=transport)
+            transport=transport, timeout=3600)
         LOGGER.info("Success.")
         return auth_stub
     except Exception as e:
@@ -72,9 +72,9 @@ def get_auth_stub(config):
                                        .format(config['tenant_subdomain']))
         LOGGER.info("Authentication URL is: %s", params['authenticationurl'])
         auth_stub = FuelSDK.ET_Client(params=params)
-        transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 900)))
+        transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 3600)))
         auth_stub.soap_client.set_options(
-            transport=transport)
+            transport=transport, timeout=3600)
     except Exception as e:
         LOGGER.info('Failed to auth using V2 endpoint')
         raise e

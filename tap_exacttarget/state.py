@@ -19,13 +19,13 @@ STATE_SCHEMA = Schema({
 })
 
 
-def get_last_record_value_for_table(state, table):
+def get_last_record_value_for_table(state, table, start_date_default):
     raw = state.get('bookmarks', {}) \
                .get(table, {}) \
                .get('last_record')
 
     if raw is None:
-        return None
+        raw = start_date_default
 
     date_obj = datetime.datetime.strptime(raw, DATE_FORMAT)
     date_obj = date_obj - datetime.timedelta(days=1)
