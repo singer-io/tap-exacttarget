@@ -72,7 +72,7 @@ def get_auth_stub(config):
                                        .format(config['tenant_subdomain']))
         LOGGER.info("Authentication URL is: %s", params['authenticationurl'])
         auth_stub = FuelSDK.ET_Client(params=params)
-        transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 900)))
+        transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 3600)))
         auth_stub.soap_client.set_options(
             transport=transport)
     except Exception as e:
