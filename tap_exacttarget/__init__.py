@@ -68,6 +68,10 @@ def do_discover(args):
     catalog = []
 
     for available_stream_accessor in AVAILABLE_STREAM_ACCESSORS:
+        # option to sync data extension
+        if not config.get('discover_data_extension', False) and \
+            available_stream_accessor is DataExtensionDataAccessObject:
+            continue
         stream_accessor = available_stream_accessor(
             config, state, auth_stub, None)
 
@@ -131,11 +135,6 @@ def do_sync(args):
 
         for available_stream_accessor in AVAILABLE_STREAM_ACCESSORS:
             if available_stream_accessor.matches_catalog(stream_catalog):
-                # option to sync data extension
-                if not config.get('discover_data_extension', False) and \
-                    isinstance(available_stream_accessor, DataExtensionDataAccessObject):
-                    continue
-                    
                 stream_accessors.append(available_stream_accessor(
                     config, state, auth_stub, stream_catalog))
 
