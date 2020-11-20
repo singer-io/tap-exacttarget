@@ -18,7 +18,9 @@ from tap_exacttarget.endpoints.content_areas \
 from tap_exacttarget.endpoints.data_extensions \
     import DataExtensionDataAccessObject
 from tap_exacttarget.endpoints.emails import EmailDataAccessObject
-from tap_exacttarget.endpoints.events import EventDataAccessObject
+from tap_exacttarget.endpoints.events \
+    import ClickEventDataAccessObject, SentEventDataAccessObject, OpenEventDataAccessObject, \
+        BounceEventDataAccessObject, UnsubEventDataAccessObject
 from tap_exacttarget.endpoints.folders import FolderDataAccessObject
 from tap_exacttarget.endpoints.lists import ListDataAccessObject
 from tap_exacttarget.endpoints.list_sends import ListSendDataAccessObject
@@ -41,7 +43,11 @@ AVAILABLE_STREAM_ACCESSORS = [
     ContentAreaDataAccessObject,
     DataExtensionDataAccessObject,
     EmailDataAccessObject,
-    EventDataAccessObject,
+    ClickEventDataAccessObject, 
+    SentEventDataAccessObject,
+    OpenEventDataAccessObject,
+    BounceEventDataAccessObject,
+    UnsubEventDataAccessObject,
     FolderDataAccessObject,
     ListDataAccessObject,
     ListSendDataAccessObject,
@@ -125,6 +131,11 @@ def do_sync(args):
 
         for available_stream_accessor in AVAILABLE_STREAM_ACCESSORS:
             if available_stream_accessor.matches_catalog(stream_catalog):
+                # option to sync data extension
+                if not config.get('discover_data_extension', False) and \
+                    isinstance(available_stream_accessor, DataExtensionDataAccessObject):
+                    continue
+                    
                 stream_accessors.append(available_stream_accessor(
                     config, state, auth_stub, stream_catalog))
 
