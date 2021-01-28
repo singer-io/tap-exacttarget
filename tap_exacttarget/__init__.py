@@ -9,7 +9,9 @@ from singer import metadata
 
 from tap_exacttarget.state import save_state
 
-from tap_exacttarget.client import get_auth_stub
+from tap_exacttarget.client import get_auth_stub, change_retry_count
+from tap_exacttarget.client import change_min_retry_delay_seconds
+from tap_exacttarget.client import change_max_retry_delay_seconds
 
 from tap_exacttarget.endpoints.campaigns \
     import CampaignDataAccessObject
@@ -87,6 +89,10 @@ def do_sync(args):
     success = True
 
     auth_stub = get_auth_stub(config)
+
+    change_retry_count(config.get('retry_count', 5))
+    change_min_retry_delay_seconds(config.get('min_retry_delay_seconds', 5))
+    change_max_retry_delay_seconds(config.get('max_retry_delay_seconds', 600))
 
     stream_accessors = []
 
