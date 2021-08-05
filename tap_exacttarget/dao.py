@@ -1,7 +1,7 @@
-import singer
 import backoff
 import socket
 import functools
+import singer
 from singer import metadata
 
 from funcy import project
