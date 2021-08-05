@@ -2,7 +2,7 @@ import FuelSDK
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
     CREATED_DATE_FIELD, MODIFIED_DATE_FIELD, with_properties
 from tap_exacttarget.state import incorporate, save_state, \
@@ -82,6 +82,7 @@ class SendDataAccessObject(DataAccessObject):
     TABLE = 'send'
     KEY_PROPERTIES = ['ID']
 
+    @exacttarget_error_handling
     def parse_object(self, obj):
         to_return = obj.copy()
 

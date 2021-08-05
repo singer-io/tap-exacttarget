@@ -1,4 +1,7 @@
 import singer
+import backoff
+import socket
+import functools
 from singer import metadata
 
 from funcy import project
@@ -11,6 +14,12 @@ LOGGER = singer.get_logger()
 def _get_catalog_schema(catalog):
     return catalog.get('schema', {}).get('properties')
 
+def exacttarget_error_handling(fnc):
+    @backoff.on_exception(backoff.expo, (socket.timeout, ConnectionError), max_tries=5, factor=2)
+    @functools.wraps(fnc)
+    def wrapper(*args, **kwargs):
+        return fnc(*args, **kwargs)
+    return wrapper
 
 class DataAccessObject():
 
