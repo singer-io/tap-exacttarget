@@ -53,7 +53,6 @@ class FolderDataAccessObject(DataAccessObject):
     TABLE = 'folder'
     KEY_PROPERTIES = ['ID']
 
-    @exacttarget_error_handling
     def parse_object(self, obj):
         to_return = obj.copy()
 
@@ -61,6 +60,7 @@ class FolderDataAccessObject(DataAccessObject):
 
         return super(FolderDataAccessObject, self).parse_object(to_return)
 
+    @exacttarget_error_handling
     def sync_data(self):
         table = self.__class__.TABLE
         selector = FuelSDK.ET_Folder
