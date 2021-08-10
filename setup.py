@@ -21,7 +21,7 @@ setup(
         'dev': [
             'ipdb==0.11',
             'pylint==2.4.4',
-            'astroid==2.1.0',
+            'astroid==2.3.0',
             'nose'
         ]
     },
