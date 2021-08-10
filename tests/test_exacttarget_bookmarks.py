@@ -95,6 +95,7 @@ class ExactTargetBookmarks(ExactTargetBase):
                     for record in second_sync_messages:
 
                         # Verify the second sync bookmark value is the max replication key value for a given stream
+                        replication_key_value = record.get(replication_key)
                         self.assertLessEqual(
                             replication_key_value, second_bookmark_value_utc,
                             msg="Second sync bookmark was set incorrectly, a record with a greater replication-key value was synced."
