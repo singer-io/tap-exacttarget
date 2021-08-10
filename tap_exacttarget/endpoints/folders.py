@@ -68,6 +68,9 @@ class FolderDataAccessObject(DataAccessObject):
 
         retrieve_all_since = get_last_record_value_for_table(self.state, table)
 
+        if retrieve_all_since is None:
+            retrieve_all_since = self.config.get('start_date')
+
         if retrieve_all_since is not None:
             search_filter = {
                 'Property': 'ModifiedDate',
@@ -78,7 +81,8 @@ class FolderDataAccessObject(DataAccessObject):
         stream = request('Folder',
                          selector,
                          self.auth_stub,
-                         search_filter)
+                         search_filter,
+                         batch_size=int(self.config.get('batch_size', 2500)))
 
         for folder in stream:
             folder = self.filter_keys_and_parse(folder)

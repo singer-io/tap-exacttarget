@@ -107,6 +107,8 @@ def request(name, selector, auth_stub, search_filter=None, props=None, batch_siz
     """
     cursor = selector()
     cursor.auth_stub = auth_stub
+    # set batch size
+    cursor.options = {"BatchSize": batch_size}
 
     if props is not None:
         cursor.props = props
@@ -119,6 +121,8 @@ def request(name, selector, auth_stub, search_filter=None, props=None, batch_siz
             .format(name, search_filter))
 
     else:
+        cursor.search_filter = {}
+
         LOGGER.info(
             "Making RETRIEVE call to '{}' endpoint with no filters."
             .format(name))

@@ -41,7 +41,8 @@ class CampaignDataAccessObject(DataAccessObject):
         cursor = request(
             'Campaign',
             FuelSDK.ET_Campaign,
-            self.auth_stub)
+            self.auth_stub,
+            batch_size=int(self.config.get('batch_size', 2500)))
 
         for campaign in cursor:
             campaign = self.filter_keys_and_parse(campaign)

@@ -71,7 +71,8 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             'Property': 'ListName',
             'SimpleOperator': 'equals',
             'Value': 'All Subscribers',
-        })
+        },
+        batch_size=int(self.config.get('batch_size', 2500)))
 
         lists = list(result)
 
@@ -98,7 +99,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
         pagination_unit = self.config.get(
             'pagination__list_subscriber_interval_unit', 'days')
         pagination_quantity = self.config.get(
-            'pagination__list_subsctiber_interval_quantity', 1)
+            'pagination__list_subscriber_interval_quantity', 1)
 
         unit = {pagination_unit: int(pagination_quantity)}
 
@@ -112,7 +113,8 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                              self.auth_stub,
                              _get_list_subscriber_filter(
                                  all_subscribers_list,
-                                 start, unit))
+                                 start, unit),
+                             batch_size=int(self.config.get('batch_size', 2500)))
 
             batch_size = 100
 

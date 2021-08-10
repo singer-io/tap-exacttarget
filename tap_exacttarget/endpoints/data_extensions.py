@@ -94,7 +94,8 @@ class DataExtensionDataAccessObject(DataAccessObject):
         result = request(
             'DataExtensionField',
             FuelSDK.ET_DataExtension_Column,
-            self.auth_stub)
+            self.auth_stub,
+            batch_size=int(self.config.get('batch_size', 2500)))
 
         for field in result:
             extension_id = field.DataExtension.CustomerKey
@@ -265,7 +266,8 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 'SimpleOperator': 'equals',
                 'Value': customer_key,
             },
-            props=['CustomerKey', 'CategoryID'])
+            props=['CustomerKey', 'CategoryID'],
+            batch_size=int(self.config.get('batch_size', 2500)))
 
         parent_extension = next(parent_result)
         parent_category_id = parent_extension.CategoryID

@@ -1,56 +1,30 @@
-import datetime
+from base import ExactTargetBase
 import tap_tester.connections as connections
 import tap_tester.menagerie as menagerie
 import tap_tester.runner as runner
 import os
-import unittest
-import pdb
-import json
-import requests
 
-
-class ExactTargetDiscover(unittest.TestCase):
+class ExactTargetDiscover(ExactTargetBase):
 
     def name(self):
         return "tap_tester_exacttarget_discover_v1"
-
-    def tap_name(self):
-        return "tap-exacttarget"
-
-    def setUp(self):
-        required_env = {
-            "TAP_EXACTTARGET_CLIENT_ID",
-            "TAP_EXACTTARGET_CLIENT_SECRET",
-            "TAP_EXACTTARGET_TENANT_SUBDOMAIN",
-            "TAP_EXACTTARGET_V2_CLIENT_ID",
-            "TAP_EXACTTARGET_V2_CLIENT_SECRET",
-            "TAP_EXACTTARGET_V2_TENANT_SUBDOMAIN",
-        }
-        missing_envs = [v for v in required_env if not os.getenv(v)]
-        if missing_envs:
-            raise Exception("set " + ", ".join(missing_envs))
-
-    def get_type(self):
-        return "platform.exacttarget"
 
     def get_credentials(self):
         return {
             'client_secret': os.getenv('TAP_EXACTTARGET_CLIENT_SECRET')
         }
 
-    def get_properties(self):
-        yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
-        return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID')
-        }
+    def get_properties(self, *args, **kwargs):
+        props = super().get_properties(*args, **kwargs)
+        props.pop('tenant_subdomain')
+        return props
 
     def test_run(self):
         conn_id = connections.ensure_connection(self)
         runner.run_check_mode(self, conn_id)
 
-        found_catalog = menagerie.get_catalog(conn_id)
-        for catalog_entry in found_catalog['streams']:
+        found_catalog = menagerie.get_catalogs(conn_id)
+        for catalog_entry in found_catalog:
             field_names_in_schema = set([ k for k in catalog_entry['schema']['properties'].keys()])
             field_names_in_breadcrumbs = set([x['breadcrumb'][1] for x in catalog_entry['metadata'] if len(x['breadcrumb']) == 2])
             self.assertEqual(field_names_in_schema, field_names_in_breadcrumbs)
@@ -69,19 +43,10 @@ class ExactTargetDiscover2(ExactTargetDiscover):
     def name(self):
         return "tap_tester_exacttarget_discover_v1_with_subdomain"
 
-    def get_credentials(self):
-        return {
-            'client_secret': os.getenv('TAP_EXACTTARGET_CLIENT_SECRET')
-        }
-
-    def get_properties(self):
-        yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
-        return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID'),
-            'tenant_subdomain': os.getenv('TAP_EXACTTARGET_TENANT_SUBDOMAIN')
-        }
-
+    def get_properties(self, *args, **kwargs):
+        props = super().get_properties(*args, **kwargs)
+        props['tenant_subdomain'] = os.getenv('TAP_EXACTTARGET_TENANT_SUBDOMAIN')
+        return props
 
 class ExactTargetDiscover3(ExactTargetDiscover):
     def name(self):
@@ -92,10 +57,8 @@ class ExactTargetDiscover3(ExactTargetDiscover):
             'client_secret': os.getenv('TAP_EXACTTARGET_V2_CLIENT_SECRET')
         }
 
-    def get_properties(self):
-        yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
-        return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            'client_id': os.getenv('TAP_EXACTTARGET_V2_CLIENT_ID'),
-            'tenant_subdomain': os.getenv('TAP_EXACTTARGET_V2_TENANT_SUBDOMAIN')
-        }
+    def get_properties(self, *args, **kwargs):
+        props = super().get_properties(*args, **kwargs)
+        props['client_id'] = os.getenv('TAP_EXACTTARGET_V2_CLIENT_ID')
+        props['tenant_subdomain'] = os.getenv('TAP_EXACTTARGET_V2_TENANT_SUBDOMAIN')
+        return props
