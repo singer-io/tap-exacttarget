@@ -3,7 +3,8 @@ import tap_tester.connections as connections
 import tap_tester.menagerie as menagerie
 import tap_tester.runner as runner
 import os
-
+import singer
+LOGGER = singer.get_logger()
 class ExactTargetDiscover(ExactTargetBase):
 
     def name(self):
@@ -25,6 +26,7 @@ class ExactTargetDiscover(ExactTargetBase):
 
         found_catalog = menagerie.get_catalogs(conn_id)
         for catalog_entry in found_catalog:
+            LOGGER.info("*******************{}".format(catalog_entry))
             field_names_in_schema = set([ k for k in catalog_entry['schema']['properties'].keys()])
             field_names_in_breadcrumbs = set([x['breadcrumb'][1] for x in catalog_entry['metadata'] if len(x['breadcrumb']) == 2])
             self.assertEqual(field_names_in_schema, field_names_in_breadcrumbs)
