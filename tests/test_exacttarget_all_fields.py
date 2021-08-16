@@ -12,7 +12,7 @@ class ExactTargetAllFields(ExactTargetBase):
         conn_id = connections.ensure_connection(self)
         runner.run_check_mode(self, conn_id)
 
-        expected_streams = self.streams_to_select() - {'campaign', 'content_area'}
+        expected_streams = self.streams_to_select()
 
         found_catalogs = menagerie.get_catalogs(conn_id)
         self.select_found_catalogs(conn_id, found_catalogs, only_streams=expected_streams)
@@ -89,5 +89,16 @@ class ExactTargetAllFields(ExactTargetBase):
                     expected_all_keys.remove('ClonedFromID')
                     expected_all_keys.remove('__AdditionalEmailAttribute4')
                     expected_all_keys.remove('__AdditionalEmailAttribute2')
+                elif stream == 'content_area':
+                    # most of them are included in the 'Content' data
+                    expected_all_keys.remove('BackgroundColor')
+                    expected_all_keys.remove('Cellpadding')
+                    expected_all_keys.remove('HasFontSize')
+                    expected_all_keys.remove('BorderColor')
+                    expected_all_keys.remove('BorderWidth')
+                    expected_all_keys.remove('Width')
+                    expected_all_keys.remove('IsLocked')
+                    expected_all_keys.remove('Cellspacing')
+                    expected_all_keys.remove('FontFamily')
 
-                self.assertSetEqual(expected_all_keys, actual_all_keys) 
+                self.assertSetEqual(expected_all_keys, actual_all_keys)

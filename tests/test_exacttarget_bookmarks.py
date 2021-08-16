@@ -55,10 +55,6 @@ class ExactTargetBookmarks(ExactTargetBase):
 
         for stream in expected_streams:
             with self.subTest(stream=stream):
-
-                # expected values
-                expected_replication_method = self.expected_replication_method()[stream]
-
                 # collect information for assertions from syncs 1 & 2 base on expected values
                 first_sync_count = first_sync_record_count.get(stream, 0)
                 second_sync_count = second_sync_record_count.get(stream, 0)
@@ -71,7 +67,7 @@ class ExactTargetBookmarks(ExactTargetBase):
                 first_bookmark_key_value = first_sync_bookmarks.get('bookmarks', {stream: None}).get(stream)
                 second_bookmark_key_value = second_sync_bookmarks.get('bookmarks', {stream: None}).get(stream)
 
-                if expected_replication_method == 'INCREMENTAL':
+                if self.is_incremental(stream):
 
                     # collect information specific to incremental streams from syncs 1 & 2
                     replication_key = next(iter(self.expected_start_date_keys()[stream]))
@@ -114,9 +110,7 @@ class ExactTargetBookmarks(ExactTargetBase):
                     # Verify the number of records in the 2nd sync is less then or equal to the first
                     self.assertLessEqual(second_sync_count, first_sync_count)
 
-
-                elif expected_replication_method == 'FULL_TABLE':
-
+                else:
 
                     # Verify the syncs do not set a bookmark for full table streams
                     self.assertIsNone(first_bookmark_key_value)

@@ -45,21 +45,7 @@ class ExactTargetBase(unittest.TestCase):
         return_value = {
             'start_date': '2014-01-01T00:00:00Z',
             'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID'),
-            'tenant_subdomain': os.getenv('TAP_EXACTTARGET_TENANT_SUBDOMAIN'),
-            'pagination__sent_interval_unit': 'days',
-            'pagination__sent_interval_quantity': '100',
-            'pagination__click_interval_unit': 'days',
-            'pagination__click_interval_quantity': '100',
-            'pagination__open_interval_unit': 'days',
-            'pagination__open_interval_quantity': '100',
-            'pagination__bounce_interval_unit': 'days',
-            'pagination__bounce_interval_quantity': '100',
-            'pagination__unsub_interval_unit': 'days',
-            'pagination__unsub_interval_quantity': '100',
-            'pagination__data_extension_interval_unit': 'days',
-            'pagination__data_extension_interval_quantity': '7',
-            'pagination__list_subscriber_interval_unit': 'days',
-            'pagination__list_subscriber_interval_quantity': '100',
+            'tenant_subdomain': os.getenv('TAP_EXACTTARGET_TENANT_SUBDOMAIN')
         }
         if original:
             return return_value
@@ -123,7 +109,7 @@ class ExactTargetBase(unittest.TestCase):
         }
 
     def streams_to_select(self):
-        return set(self.expected_metadata().keys())
+        return set(self.expected_metadata().keys()) - {'event', 'list_subscriber', 'subscriber'}
 
     def expected_primary_keys(self):
         return {table: properties.get("pk", set())

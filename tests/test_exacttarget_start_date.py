@@ -14,7 +14,15 @@ class ExactTargetStartDate(ExactTargetBase):
         start_date_1_epoch = self.dt_to_ts(start_date_1)
         start_date_2_epoch = self.dt_to_ts(start_date_2)
 
+        ##########################################################################
+        ### Update Start Date for 1st sync
+        ##########################################################################
+
         self.START_DATE = start_date_1
+
+        ##########################################################################
+        ### Frist Sync
+        ##########################################################################
 
         expected_streams = self.streams_to_select() - {'list_send'}
 
@@ -28,7 +36,15 @@ class ExactTargetStartDate(ExactTargetBase):
 
         synced_records_1 = runner.get_records_from_target_output()
 
+        ##########################################################################
+        ### Update Start Date for 2nd sync
+        ##########################################################################
+
         self.START_DATE = start_date_2
+
+        ##########################################################################
+        ### Second Sync
+        ##########################################################################
 
         conn_id_2 = connections.ensure_connection(self, original_properties=False)
         runner.run_check_mode(self, conn_id_2)
