@@ -10,7 +10,7 @@ class ExactTargetPagination(ExactTargetBase):
 
     def get_properties(self, *args, **kwargs):
         props = super().get_properties(*args, **kwargs)
-        props['batch_size'] = 1
+        props['batch_size'] = '1'
         return props
 
     def test_run(self):

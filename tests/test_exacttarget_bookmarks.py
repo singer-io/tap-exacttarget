@@ -22,7 +22,7 @@ class ExactTargetBookmarks(ExactTargetBase):
         conn_id_1 = connections.ensure_connection(self)
         runner.run_check_mode(self, conn_id_1)
 
-        expected_streams = self.streams_to_select() - {'list_send'}
+        expected_streams = self.streams_to_select()
 
         found_catalogs_1 = menagerie.get_catalogs(conn_id_1)
         self.select_found_catalogs(conn_id_1, found_catalogs_1, only_streams=expected_streams)

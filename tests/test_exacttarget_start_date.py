@@ -24,7 +24,7 @@ class ExactTargetStartDate(ExactTargetBase):
         ### Frist Sync
         ##########################################################################
 
-        expected_streams = self.streams_to_select() - {'list_send'}
+        expected_streams = self.streams_to_select()
 
         conn_id_1 = connections.ensure_connection(self, original_properties=False)
         runner.run_check_mode(self, conn_id_1)

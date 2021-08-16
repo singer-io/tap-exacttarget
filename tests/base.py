@@ -109,7 +109,7 @@ class ExactTargetBase(unittest.TestCase):
         }
 
     def streams_to_select(self):
-        return set(self.expected_metadata().keys()) - {'event', 'list_subscriber', 'subscriber'}
+        return set(self.expected_metadata().keys()) - {'event', 'list_subscriber', 'subscriber', 'list_send'}
 
     def expected_primary_keys(self):
         return {table: properties.get("pk", set())
