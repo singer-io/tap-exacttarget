@@ -25,9 +25,9 @@ class ExactTargetDiscover(ExactTargetBase):
         runner.run_check_mode(self, conn_id)
 
         found_catalog = menagerie.get_catalogs(conn_id)
-        for catalog_entry in found_catalog:
-            LOGGER.info("*******************{}".format(catalog_entry))
-            field_names_in_schema = set([ k for k in catalog_entry['schema']['properties'].keys()])
+        for catalog in found_catalog:
+            catalog_entry = menagerie.get_annotated_schema(conn_id, catalog['stream_id'])
+            field_names_in_schema = set([ k for k in catalog_entry['annotated-schema']['properties'].keys()])
             field_names_in_breadcrumbs = set([x['breadcrumb'][1] for x in catalog_entry['metadata'] if len(x['breadcrumb']) == 2])
             self.assertEqual(field_names_in_schema, field_names_in_breadcrumbs)
 
