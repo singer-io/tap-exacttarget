@@ -80,17 +80,21 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         }
                     }
                 },
-                'metadata': [{'breadcrumb': (), 'metadata': {
-                                'inclusion':'available',
-                                'forced-replication-method': 'FULL_TABLE',
-                                "table-key-properties": [
-                                    "_CustomObjectKey"
-                                ]
-                             }},
-                             {'breadcrumb': ('properties', '_CustomObjectKey'),
-                              'metadata': {'inclusion':'automatic'}},
-                             {'breadcrumb': ('properties', 'CategoryID'),
-                              'metadata': {'inclusion':'available'}}]
+                'metadata': [
+                    {
+                        'breadcrumb': (),
+                        'metadata': {
+                            'inclusion':'available',
+                            'forced-replication-method': 'FULL_TABLE',
+                            "table-key-properties": [
+                                "_CustomObjectKey"
+                            ]
+                        }
+                    },
+                    {'breadcrumb': ('properties', '_CustomObjectKey'),
+                    'metadata': {'inclusion':'automatic'}},
+                    {'breadcrumb': ('properties', 'CategoryID'),
+                    'metadata': {'inclusion':'available'}}]
             }
 
         return to_return
