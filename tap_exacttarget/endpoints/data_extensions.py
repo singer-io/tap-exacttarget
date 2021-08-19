@@ -91,10 +91,13 @@ class DataExtensionDataAccessObject(DataAccessObject):
                             ]
                         }
                     },
-                    {'breadcrumb': ('properties', '_CustomObjectKey'),
-                    'metadata': {'inclusion':'automatic'}},
-                    {'breadcrumb': ('properties', 'CategoryID'),
-                    'metadata': {'inclusion':'available'}}]
+                    {
+                        'breadcrumb': ('properties', '_CustomObjectKey'),
+                        'metadata': {'inclusion':'automatic'}},
+                    {
+                        'breadcrumb': ('properties', 'CategoryID'),
+                        'metadata': {'inclusion':'available'}}
+                ]
             }
 
         return to_return
