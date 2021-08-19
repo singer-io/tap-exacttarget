@@ -42,7 +42,7 @@ class ExactTargetDiscover(ExactTargetBase):
 
                 # Verify ensure the catalog is found for a given stream
                 catalog = next(iter([catalog for catalog in found_catalogs
-                                     if catalog["stream"] == stream]))
+                                     if catalog["stream_name"] == stream]))
                 self.assertIsNotNone(catalog)
 
                 # collecting expected values

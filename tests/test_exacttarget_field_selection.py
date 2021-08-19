@@ -37,7 +37,7 @@ class ExactTargetFieldSelection(ExactTargetBase):
 
         found_catalogs = menagerie.get_catalogs(conn_id)
         for catalog in found_catalogs:
-            stream_name = catalog['stream']
+            stream_name = catalog['stream_name']
             if not stream_name in expected_streams:
                 continue
             # select catalog fields
