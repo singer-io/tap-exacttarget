@@ -1,5 +1,6 @@
 import FuelSDK
 import singer
+from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -94,6 +95,8 @@ class ListSendDataAccessObject(DataAccessObject):
 
     TABLE = 'list_send'
     KEY_PROPERTIES = ['ListID', 'SendID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
     def parse_object(self, obj):
         to_return = obj.copy()
@@ -129,6 +132,9 @@ class ListSendDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      list_send.get('ModifiedDate'))
 
-            singer.write_records(table, [list_send])
+            with Transformer() as transformer:
+                for rec in [list_send]:
+                    rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                    singer.write_record(table, rec)
 
         save_state(self.state)

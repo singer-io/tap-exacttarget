@@ -1,5 +1,6 @@
 import FuelSDK
 import singer
+from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -52,6 +53,8 @@ class FolderDataAccessObject(DataAccessObject):
 
     TABLE = 'folder'
     KEY_PROPERTIES = ['ID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
     def parse_object(self, obj):
         to_return = obj.copy()
@@ -88,6 +91,9 @@ class FolderDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      folder.get('ModifiedDate'))
 
-            singer.write_records(table, [folder])
+            with Transformer() as transformer:
+                for rec in [folder]:
+                    rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                    singer.write_record(table, rec)
 
         save_state(self.state)

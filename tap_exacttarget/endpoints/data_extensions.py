@@ -1,5 +1,6 @@
 import FuelSDK
 import singer
+from singer import Transformer, metadata
 
 from funcy import set_in, update_in, merge
 
@@ -79,9 +80,15 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         }
                     }
                 },
-                'metadata': [{'breadcrumb': (), 'metadata': {'inclusion':'available'}},
+                'metadata': [{'breadcrumb': (), 'metadata': {
+                                'inclusion':'available',
+                                'forced-replication-method': 'FULL_TABLE',
+                                "table-key-properties": [
+                                    "_CustomObjectKey"
+                                ]
+                             }},
                              {'breadcrumb': ('properties', '_CustomObjectKey'),
-                              'metadata': {'inclusion':'available'}},
+                              'metadata': {'inclusion':'automatic'}},
                              {'breadcrumb': ('properties', 'CategoryID'),
                               'metadata': {'inclusion':'available'}}]
             }
@@ -97,11 +104,13 @@ class DataExtensionDataAccessObject(DataAccessObject):
             self.auth_stub)
 
         for field in result:
+            is_primary_key = False
             extension_id = field.DataExtension.CustomerKey
             field = sudsobj_to_dict(field)
             field_name = field['Name']
 
             if field.get('IsPrimaryKey'):
+                is_primary_key = True
                 to_return = _merge_in(
                     to_return,
                     [extension_id, 'key_properties'],
@@ -120,12 +129,23 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 [extension_id, 'schema', 'properties', field_name],
                 field_schema)
 
+            if is_primary_key:
+                for mdata in to_return[extension_id]['metadata']:
+                    if not mdata.get('breadcrumb'):
+                        mdata.get('metadata').get('table-key-properties').append(field_name)
+
             # These fields are defaulted into the schema, do not add to metadata again.
             if field_name not in {'_CustomObjectKey', 'CategoryID'}:
-                to_return[extension_id]['metadata'].append({
-                    'breadcrumb': ('properties', field_name),
-                    'metadata': {'inclusion': 'available'}
-                })
+                if is_primary_key:
+                    to_return[extension_id]['metadata'].append({
+                        'breadcrumb': ('properties', field_name),
+                        'metadata': {'inclusion': 'automatic'}
+                    })
+                else:
+                    to_return[extension_id]['metadata'].append({
+                        'breadcrumb': ('properties', field_name),
+                        'metadata': {'inclusion': 'available'}
+                    })
 
         return to_return
 
@@ -215,7 +235,10 @@ class DataExtensionDataAccessObject(DataAccessObject):
                                      replication_key,
                                      row.get(replication_key))
 
-            singer.write_records(table, [row])
+            with Transformer() as transformer:
+                for rec in [row]:
+                    rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                    singer.write_record(table, rec)
 
         if partial:
             self.state = incorporate(self.state,

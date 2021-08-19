@@ -1,5 +1,6 @@
 import FuelSDK
 import singer
+from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -45,6 +46,8 @@ class EventDataAccessObject(DataAccessObject):
 
     TABLE = 'event'
     KEY_PROPERTIES = ['SendID', 'EventType', 'SubscriberKey', 'EventDate']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['EventDate']
 
     def sync_data(self):
         table = self.__class__.TABLE
@@ -102,7 +105,10 @@ class EventDataAccessObject(DataAccessObject):
                                             event.get('EventDate')))
                         continue
 
-                    singer.write_records(table, [event])
+                    with Transformer() as transformer:
+                        for rec in [event]:
+                            rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                            singer.write_record(table, rec)
 
                 self.state = incorporate(self.state,
                                          event_name,

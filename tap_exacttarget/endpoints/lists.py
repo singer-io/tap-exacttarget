@@ -1,5 +1,6 @@
 import FuelSDK
 import singer
+from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -49,6 +50,8 @@ class ListDataAccessObject(DataAccessObject):
 
     TABLE = 'list'
     KEY_PROPERTIES = ['ID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
     def sync_data(self):
         table = self.__class__.TABLE
@@ -77,6 +80,9 @@ class ListDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      _list.get('ModifiedDate'))
 
-            singer.write_records(table, [_list])
+            with Transformer() as transformer:
+                for rec in [_list]:
+                    rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                    singer.write_record(table, rec)
 
         save_state(self.state)

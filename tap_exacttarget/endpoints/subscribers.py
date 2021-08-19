@@ -1,5 +1,6 @@
 import FuelSDK
 import singer
+from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -102,6 +103,8 @@ class SubscriberDataAccessObject(DataAccessObject):
     SCHEMA = SCHEMA
     TABLE = 'subscriber'
     KEY_PROPERTIES = ['ID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
     def parse_object(self, obj):
         to_return = obj.copy()
@@ -154,4 +157,7 @@ class SubscriberDataAccessObject(DataAccessObject):
         for subscriber in stream:
             subscriber = self.filter_keys_and_parse(subscriber)
 
-            singer.write_records(table, [subscriber])
+            with Transformer() as transformer:
+                for rec in [subscriber]:
+                    rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                    singer.write_record(table, rec)

@@ -1,87 +1,115 @@
-import datetime
+from base import ExactTargetBase
 import tap_tester.connections as connections
 import tap_tester.menagerie as menagerie
 import tap_tester.runner as runner
 import os
-import unittest
-import pdb
-import json
-import requests
 
-
-class ExactTargetDiscover(unittest.TestCase):
+class ExactTargetDiscover(ExactTargetBase):
 
     def name(self):
         return "tap_tester_exacttarget_discover_v1"
-
-    def tap_name(self):
-        return "tap-exacttarget"
-
-    def setUp(self):
-        required_env = {
-            "TAP_EXACTTARGET_CLIENT_ID",
-            "TAP_EXACTTARGET_CLIENT_SECRET",
-            "TAP_EXACTTARGET_TENANT_SUBDOMAIN",
-            "TAP_EXACTTARGET_V2_CLIENT_ID",
-            "TAP_EXACTTARGET_V2_CLIENT_SECRET",
-            "TAP_EXACTTARGET_V2_TENANT_SUBDOMAIN",
-        }
-        missing_envs = [v for v in required_env if not os.getenv(v)]
-        if missing_envs:
-            raise Exception("set " + ", ".join(missing_envs))
-
-    def get_type(self):
-        return "platform.exacttarget"
 
     def get_credentials(self):
         return {
             'client_secret': os.getenv('TAP_EXACTTARGET_CLIENT_SECRET')
         }
 
-    def get_properties(self):
-        yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
-        return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID')
-        }
+    def get_properties(self, *args, **kwargs):
+        props = super().get_properties(*args, **kwargs)
+        props.pop('tenant_subdomain')
+        return props
 
     def test_run(self):
+        """
+        Testing that discovery creates the appropriate catalog with valid metadata.
+            • Verify number of actual streams discovered match expected
+            • Verify the stream names discovered were what we expect
+            streams should only have lowercase alphas and underscores
+            • verify there is only 1 top level breadcrumb
+            • verify primary key(s)
+            • verify replication key(s)
+            • verify that primary keys and replication keys are given the inclusion of automatic.
+            • verify that all other fields have inclusion of available in metadata.
+        """
         conn_id = connections.ensure_connection(self)
         runner.run_check_mode(self, conn_id)
 
-        found_catalog = menagerie.get_catalog(conn_id)
-        for catalog_entry in found_catalog['streams']:
-            field_names_in_schema = set([ k for k in catalog_entry['schema']['properties'].keys()])
-            field_names_in_breadcrumbs = set([x['breadcrumb'][1] for x in catalog_entry['metadata'] if len(x['breadcrumb']) == 2])
-            self.assertEqual(field_names_in_schema, field_names_in_breadcrumbs)
+        streams_to_test = self.streams_to_select()
+        found_catalogs = menagerie.get_catalogs(conn_id)
 
-            inclusions_set = set([(x['breadcrumb'][1], x['metadata']['inclusion'])
-                                  for x in catalog_entry['metadata']
-                                  if len(x['breadcrumb']) == 2])
-            # Validate that all fields are in metadata
-            self.assertEqual(len(inclusions_set), len(field_names_in_schema))
-            self.assertEqual(set([i[0] for i in inclusions_set]), field_names_in_schema)
-            # Validate that all metadata['inclusion'] are 'available'
-            unique_inclusions = set([i[1] for i in inclusions_set])
-            self.assertTrue(len(unique_inclusions) == 1 and 'available' in unique_inclusions)
+        for stream in streams_to_test:
+            with self.subTest(stream=stream):
+
+                # Verify ensure the catalog is found for a given stream
+                catalog = next(iter([catalog for catalog in found_catalogs
+                                     if catalog["stream"] == stream]))
+                self.assertIsNotNone(catalog)
+
+                # collecting expected values
+                expected_primary_keys = self.expected_primary_keys()[stream]
+                expected_replication_keys = self.expected_replication_keys()[stream]
+
+                # add primary keys and replication keys in automatically replicated keys to check
+                expected_automatic_fields = expected_primary_keys | expected_replication_keys
+
+                # collecting actual values...
+                schema_and_metadata = menagerie.get_annotated_schema(conn_id, catalog['stream_id'])
+                metadata = schema_and_metadata["metadata"]
+                stream_properties = [item for item in metadata if item.get("breadcrumb") == []]
+                actual_primary_keys = set(
+                    stream_properties[0].get(
+                        "metadata", {"table-key-properties": []}).get("table-key-properties", [])
+                )
+                actual_replication_keys = set(
+                    stream_properties[0].get(
+                        "metadata", {"valid-replication-keys": []}).get("valid-replication-keys", [])
+                )
+                actual_automatic_fields = set(
+                    item.get("breadcrumb", ["properties", None])[1] for item in metadata
+                    if item.get("metadata").get("inclusion") == "automatic"
+                )
+
+                ##########################################################################
+                ### metadata assertions
+                ##########################################################################
+
+                # verify there is only 1 top level breadcrumb in metadata
+                self.assertTrue(len(stream_properties) == 1,
+                                msg="There is NOT only one top level breadcrumb for {}".format(stream) + \
+                                "\nstream_properties | {}".format(stream_properties))
+
+                # verify primary key(s) match expectations
+                self.assertSetEqual(
+                    expected_primary_keys, actual_primary_keys,
+                )
+
+                # verify replication key(s) match expectations
+                self.assertSetEqual(
+                    expected_replication_keys, actual_replication_keys,
+                )
+
+                # verify that primary keys
+                # are given the inclusion of automatic in metadata.
+                self.assertSetEqual(expected_automatic_fields, actual_automatic_fields)
+
+                # verify that all other fields have inclusion of available
+                # This assumes there are no unsupported fields for SaaS sources
+                self.assertTrue(
+                    all({item.get("metadata").get("inclusion") == "available"
+                         for item in metadata
+                         if item.get("breadcrumb", []) != []
+                         and item.get("breadcrumb", ["properties", None])[1]
+                         not in actual_automatic_fields}),
+                    msg="Not all non key properties are set to available in metadata")
 
 class ExactTargetDiscover2(ExactTargetDiscover):
     def name(self):
         return "tap_tester_exacttarget_discover_v1_with_subdomain"
 
-    def get_credentials(self):
-        return {
-            'client_secret': os.getenv('TAP_EXACTTARGET_CLIENT_SECRET')
-        }
-
-    def get_properties(self):
-        yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
-        return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID'),
-            'tenant_subdomain': os.getenv('TAP_EXACTTARGET_TENANT_SUBDOMAIN')
-        }
-
+    def get_properties(self, *args, **kwargs):
+        props = super().get_properties(*args, **kwargs)
+        props['tenant_subdomain'] = os.getenv('TAP_EXACTTARGET_TENANT_SUBDOMAIN')
+        return props
 
 class ExactTargetDiscover3(ExactTargetDiscover):
     def name(self):
@@ -92,10 +120,8 @@ class ExactTargetDiscover3(ExactTargetDiscover):
             'client_secret': os.getenv('TAP_EXACTTARGET_V2_CLIENT_SECRET')
         }
 
-    def get_properties(self):
-        yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
-        return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            'client_id': os.getenv('TAP_EXACTTARGET_V2_CLIENT_ID'),
-            'tenant_subdomain': os.getenv('TAP_EXACTTARGET_V2_TENANT_SUBDOMAIN')
-        }
+    def get_properties(self, *args, **kwargs):
+        props = super().get_properties(*args, **kwargs)
+        props['client_id'] = os.getenv('TAP_EXACTTARGET_V2_CLIENT_ID')
+        props['tenant_subdomain'] = os.getenv('TAP_EXACTTARGET_V2_TENANT_SUBDOMAIN')
+        return props
