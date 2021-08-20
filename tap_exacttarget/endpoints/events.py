@@ -59,10 +59,7 @@ class EventDataAccessObject(DataAccessObject):
         for event_name, selector in endpoints.items():
             search_filter = None
 
-            start = get_last_record_value_for_table(self.state, event_name)
-
-            if start is None:
-                start = self.config.get('start_date')
+            start = get_last_record_value_for_table(self.state, event_name, self.config)
 
             if start is None:
                 raise RuntimeError('start_date not defined!')

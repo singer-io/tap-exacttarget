@@ -236,10 +236,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         replication_key = None
 
-        start = get_last_record_value_for_table(self.state, table)
-
-        if start is None:
-            start = self.config.get('start_date')
+        start = get_last_record_value_for_table(self.state, table, self.config)
 
         for key in ['ModifiedDate', 'JoinDate']:
             if key in keys:

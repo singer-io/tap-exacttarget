@@ -90,15 +90,12 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             self.auth_stub,
             self.subscriber_catalog)
 
-        start = get_last_record_value_for_table(self.state, table)
-
-        if start is None:
-            start = self.config.get('start_date')
+        start = get_last_record_value_for_table(self.state, table, self.config)
 
         pagination_unit = self.config.get(
             'pagination__list_subscriber_interval_unit', 'days')
         pagination_quantity = self.config.get(
-            'pagination__list_subsctiber_interval_quantity', 1)
+            'pagination__list_subscriber_interval_quantity', 1)
 
         unit = {pagination_unit: int(pagination_quantity)}
 
