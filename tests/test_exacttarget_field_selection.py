@@ -38,6 +38,7 @@ class ExactTargetFieldSelection(ExactTargetBase):
         found_catalogs = menagerie.get_catalogs(conn_id)
         for catalog in found_catalogs:
             stream_name = catalog['stream_name']
+            catalog_entry = menagerie.get_annotated_schema(conn_id, catalog['stream_id'])
             if not stream_name in expected_streams:
                 continue
             # select catalog fields
@@ -48,10 +49,13 @@ class ExactTargetFieldSelection(ExactTargetBase):
                 deselect_all_fields=True if only_automatic_fields else False,
                 non_selected_props=[] if only_automatic_fields else self.non_selected_fields[stream_name])
             # add expected fields for assertion
+            fields_from_field_level_md = [md_entry['breadcrumb'][1]
+                                          for md_entry in catalog_entry['metadata']
+                                          if md_entry['breadcrumb'] != []]
             if only_automatic_fields:
                 expected_stream_fields[stream_name] = self.expected_primary_keys()[stream_name] | self.expected_replication_keys()[stream_name]
             else:
-                expected_stream_fields[stream_name] = set(catalog.get('schema').get('properties').keys()) - set(self.non_selected_fields[stream_name])
+                expected_stream_fields[stream_name] = set(fields_from_field_level_md) - set(self.non_selected_fields[stream_name])
 
         self.run_and_verify_sync(conn_id)
         synced_records = runner.get_records_from_target_output()
