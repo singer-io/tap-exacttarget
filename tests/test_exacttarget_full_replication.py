@@ -40,6 +40,9 @@ class FullReplicationTest(ExactTargetBase):
         conn_id_2 = connections.ensure_connection(self, original_properties=False)
         runner.run_check_mode(self, conn_id_2)
 
+        found_catalogs = menagerie.get_catalogs(conn_id_2)
+        our_catalogs = [catalog for catalog in found_catalogs if
+                        catalog.get('stream_name') in full_streams]
         self.select_found_catalogs(conn_id_2, our_catalogs, full_streams)
 
         # Run a second sync job
