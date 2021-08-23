@@ -89,8 +89,7 @@ class ExactTargetBase(unittest.TestCase):
             },
             "list_send":{
                 "pk": {"ListID", "SendID"},
-                "replication": "INCREMENTAL",
-                "replication-key": {"ModifiedDate"},
+                "replication": "FULL_TABLE"
             },
             "list_subscriber":{
                 "pk": {"SubscriberKey", "ListID"},
@@ -106,11 +105,11 @@ class ExactTargetBase(unittest.TestCase):
                 "pk": {"ID"},
                 "replication": "INCREMENTAL",
                 "replication-key": {"ModifiedDate"},
-            } 
+            }
         }
 
     def streams_to_select(self):
-        return set(self.expected_metadata().keys()) - {'event', 'list_subscriber', 'subscriber', 'list_send'}
+        return set(self.expected_metadata().keys()) - {'event', 'list_subscriber', 'subscriber'}
 
     def expected_replication_keys(self):
         return {table: properties.get("replication-key", set())
@@ -124,11 +123,6 @@ class ExactTargetBase(unittest.TestCase):
 
     def expected_replication_method(self):
         return {table: properties.get("replication", set())
-                for table, properties
-                in self.expected_metadata().items()}
-
-    def expected_start_date_keys(self):
-        return {table: properties.get("replication-key", set())
                 for table, properties
                 in self.expected_metadata().items()}
 
