@@ -37,7 +37,7 @@ class FullReplicationTest(ExactTargetBase):
         # set future start date, which validates that stream is syncing 'FULL_TABLE'
         self.START_DATE = datetime.datetime.strftime(datetime.datetime.today() + datetime.timedelta(days=1), "%Y-%m-%dT00:00:00Z")
 
-        conn_id_2 = connections.ensure_connection(self)
+        conn_id_2 = connections.ensure_connection(self, original_properties=False)
         runner.run_check_mode(self, conn_id_2)
 
         self.select_found_catalogs(conn_id_2, our_catalogs, full_streams)
