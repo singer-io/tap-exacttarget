@@ -38,10 +38,15 @@ class CampaignDataAccessObject(DataAccessObject):
     KEY_PROPERTIES = ['id']
 
     def sync_data(self):
+        batch_size = int(self.config.get('batch_size', 2500))
+
         cursor = request(
             'Campaign',
             FuelSDK.ET_Campaign,
-            self.auth_stub)
+            self.auth_stub,
+            # use $pageSize and $page in the props for
+            # this stream as it calls using REST API
+            props={"$pageSize": batch_size, "$page": 1, "page": 1})
 
         for campaign in cursor:
             campaign = self.filter_keys_and_parse(campaign)

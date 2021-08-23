@@ -137,7 +137,8 @@ class EmailDataAccessObject(DataAccessObject):
         stream = request('Email',
                          selector,
                          self.auth_stub,
-                         search_filter)
+                         search_filter,
+                         batch_size=int(self.config.get('batch_size', 2500)))
 
         for email in stream:
             email = self.filter_keys_and_parse(email)

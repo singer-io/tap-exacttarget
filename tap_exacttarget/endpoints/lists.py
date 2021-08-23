@@ -67,7 +67,8 @@ class ListDataAccessObject(DataAccessObject):
         stream = request('List',
                          selector,
                          self.auth_stub,
-                         search_filter)
+                         search_filter,
+                         batch_size=int(self.config.get('batch_size', 2500)))
 
         for _list in stream:
             _list = self.filter_keys_and_parse(_list)

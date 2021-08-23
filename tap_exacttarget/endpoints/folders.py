@@ -78,7 +78,8 @@ class FolderDataAccessObject(DataAccessObject):
         stream = request('Folder',
                          selector,
                          self.auth_stub,
-                         search_filter)
+                         search_filter,
+                         batch_size=int(self.config.get('batch_size', 2500)))
 
         for folder in stream:
             folder = self.filter_keys_and_parse(folder)

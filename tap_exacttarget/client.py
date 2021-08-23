@@ -107,6 +107,8 @@ def request(name, selector, auth_stub, search_filter=None, props=None, batch_siz
     """
     cursor = selector()
     cursor.auth_stub = auth_stub
+    # set batch size
+    cursor.options = {"BatchSize": batch_size}
 
     if props is not None:
         cursor.props = props
@@ -119,6 +121,8 @@ def request(name, selector, auth_stub, search_filter=None, props=None, batch_siz
             .format(name, search_filter))
 
     else:
+        cursor.search_filter = {}
+
         LOGGER.info(
             "Making RETRIEVE call to '{}' endpoint with no filters."
             .format(name))
@@ -148,10 +152,16 @@ def request_from_cursor(name, cursor, batch_size):
     while response.more_results:
         LOGGER.info("Getting more results from '{}' endpoint".format(name))
 
-        # Override call to getMoreResults to add a batch_size parameter
-        # response = cursor.getMoreResults()
-        response = tap_exacttarget__getMoreResults(cursor, batch_size=batch_size)
-        LOGGER.info("Fetched {} results from '{}' endpoint".format(len(response.results), name))
+        if isinstance(cursor, FuelSDK.ET_Campaign):
+            # use 'getMoreResults' for campaigns as it does not use
+            # batch_size, rather it uses $page and $pageSize and REST Call
+            response = cursor.getMoreResults()
+            LOGGER.info("Fetched {} results from '{}' endpoint".format(len(response.results.get('items')), name))
+        else:
+            # Override call to getMoreResults to add a batch_size parameter
+            # response = cursor.getMoreResults()
+            response = tap_exacttarget__getMoreResults(cursor, batch_size=batch_size)
+            LOGGER.info("Fetched {} results from '{}' endpoint".format(len(response.results), name))
 
         if not response.status:
             raise RuntimeError("Request failed with '{}'"
