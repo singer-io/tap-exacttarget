@@ -3,6 +3,7 @@ import tap_tester.connections as connections
 import tap_tester.menagerie as menagerie
 import tap_tester.runner as runner
 import json
+import datetime
 
 class FullReplicationTest(ExactTargetBase):
     """Test tap gets all records for streams with full replication"""
@@ -11,30 +12,38 @@ class FullReplicationTest(ExactTargetBase):
         return "tap_tester_exacttarget_full_replication"
 
     def test_run(self):
-        conn_id = connections.ensure_connection(self)
-        runner.run_check_mode(self, conn_id)
+        conn_id_1 = connections.ensure_connection(self)
+        runner.run_check_mode(self, conn_id_1)
 
         # Select streams
-        found_catalogs = menagerie.get_catalogs(conn_id)
+        found_catalogs = menagerie.get_catalogs(conn_id_1)
         full_streams = {key for key, value in self.expected_replication_method().items()
                         if value == "FULL_TABLE"}
         our_catalogs = [catalog for catalog in found_catalogs if
                         catalog.get('stream_name') in full_streams]
-        self.select_found_catalogs(conn_id, our_catalogs, full_streams)
+        self.select_found_catalogs(conn_id_1, our_catalogs, full_streams)
 
         # Run a sync job
-        first_sync_record_count = self.run_and_verify_sync(conn_id)
+        first_sync_record_count = self.run_and_verify_sync(conn_id_1)
 
         # verify that the sync only sent records to the target for selected streams (catalogs)
         self.assertEqual(set(first_sync_record_count.keys()), full_streams)
 
-        first_sync_state = menagerie.get_state(conn_id)
+        first_sync_state = menagerie.get_state(conn_id_1)
 
         # Get the set of records from a first sync
         first_sync_records = runner.get_records_from_target_output()
 
+        # set future start date, which validates that stream is syncing 'FULL_TABLE'
+        self.START_DATE = datetime.datetime.strftime(datetime.datetime.today() + datetime.timedelta(days=1), "%Y-%m-%dT00:00:00Z")
+
+        conn_id_2 = connections.ensure_connection(self)
+        runner.run_check_mode(self, conn_id_2)
+
+        self.select_found_catalogs(conn_id_2, our_catalogs, full_streams)
+
         # Run a second sync job
-        second_sync_record_count = self.run_and_verify_sync(conn_id)
+        second_sync_record_count = self.run_and_verify_sync(conn_id_2)
 
         # Get the set of records from a second sync
         second_sync_records = runner.get_records_from_target_output()
