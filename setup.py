@@ -12,7 +12,7 @@ setup(
     py_modules=['tap_exacttarget'],
     install_requires=[
         'funcy==1.9.1',
-        'singer-python==5.9.0',
+        'singer-python==5.12.1',
         'python-dateutil==2.6.0',
         'voluptuous==0.10.5',
         'Salesforce-FuelSDK==1.3.0'
@@ -20,8 +20,8 @@ setup(
     extras_require={
         'dev': [
             'ipdb==0.11',
-            'pylint==2.1.1',
-            'astroid==2.1.0',
+            'pylint==2.4.4',
+            'astroid==2.3.0',
             'nose'
         ]
     },
