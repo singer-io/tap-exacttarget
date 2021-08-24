@@ -21,7 +21,7 @@ jobs:
           name: 'pylint'
           command: |
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
-            pylint tap_exacttarget -d no-else-return,wrong-import-order,pointless-string-statement,invalid-name,deprecated-method,bad-whitespace,line-too-long
+            pylint tap_exacttarget -d no-else-return,wrong-import-order,pointless-string-statement,invalid-name,deprecated-method,bad-whitespace,line-too-long,consider-using-sys-exit
       - add_ssh_keys
       - run:
           name: 'Integration Tests'
