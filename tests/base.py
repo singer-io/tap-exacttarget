@@ -110,7 +110,7 @@ class ExactTargetBase(unittest.TestCase):
         }
 
     def streams_to_select(self):
-        return set(self.expected_metadata().keys()) - {'event', 'list_subscriber', 'subscriber', 'list_send'}
+        return set(self.expected_metadata().keys()) - {'event', 'list_send'}
 
     def expected_replication_keys(self):
         return {table: properties.get("replication-key", set())
