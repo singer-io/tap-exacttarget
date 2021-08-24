@@ -34,7 +34,7 @@ class ExactTargetBookmarks(ExactTargetBase):
         ### Update Start Date
         ##########################################################################
 
-        self.START_DATE = '2019-01-01T00:00:00Z'
+        self.START_DATE = '2021-01-01T00:00:00Z'
 
         ##########################################################################
         ### Second Sync
@@ -52,6 +52,10 @@ class ExactTargetBookmarks(ExactTargetBase):
         second_sync_bookmarks = menagerie.get_state(conn_id_2)
 
         for stream in expected_streams:
+            # skip "subscriber" stream as replication key is not retrievable
+            if stream == "subscriber":
+                continue
+
             with self.subTest(stream=stream):
                 # collect information for assertions from syncs 1 & 2 base on expected values
                 first_sync_count = first_sync_record_count.get(stream, 0)

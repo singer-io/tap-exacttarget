@@ -9,11 +9,8 @@ class ExactTargetSync(ExactTargetBase):
         return "tap_tester_exacttarget_sync"
 
     def test_run(self):
-        self.run_test('2014-01-01T00:00:00Z', self.streams_to_select() - {'event', 'list_subscriber', 'subscriber'})
-
-    def run_test(self, start_date, expected_streams):
-        self.START_DATE = start_date
-        conn_id = connections.ensure_connection(self, original_properties=False)
+        expected_streams = self.streams_to_select()
+        conn_id = connections.ensure_connection(self)
         runner.run_check_mode(self, conn_id)
 
         found_catalogs = menagerie.get_catalogs(conn_id)
