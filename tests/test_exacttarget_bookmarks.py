@@ -68,7 +68,7 @@ class ExactTargetBookmarks(ExactTargetBase):
                 if self.is_incremental(stream):
 
                     # collect information specific to incremental streams from syncs 1 & 2
-                    replication_key = next(iter(self.expected_start_date_keys()[stream]))
+                    replication_key = next(iter(self.expected_replication_keys()[stream]))
                     first_bookmark_value = first_bookmark_key_value.get('last_record')
                     second_bookmark_value = second_bookmark_key_value.get('last_record')
                     first_bookmark_value_utc = self.convert_state_to_utc(first_bookmark_value)
