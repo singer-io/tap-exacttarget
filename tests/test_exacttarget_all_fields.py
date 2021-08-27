@@ -5,6 +5,57 @@ import tap_tester.runner as runner
 
 class ExactTargetAllFields(ExactTargetBase):
 
+    # Note: some fields are not retrievable as discussed below
+    #   https://salesforce.stackexchange.com/questions/354332/not-getting-modifieddate-for-listsend-endpoint
+    #   so we have to remove them
+    fields_to_remove = {
+        'list': [
+            'SendClassification', # not retrievable
+            'PartnerProperties'], # not retrievable
+        'subscriber': [
+            'CustomerKey', # not retrievable
+            'PartnerType', # not retrievable
+            'UnsubscribedDate',
+            'PrimarySMSAddress', # not retrievable
+            'PrimaryEmailAddress', # not retrievable
+            'PartnerProperties', # not retrievable
+            'SubscriberTypeDefinition', # not retrievable
+            'Addresses', # not retrievable
+            'ListIDs',
+            'Locale', # not retrievable
+            'PrimarySMSPublicationStatus', # not retrievable
+            'ModifiedDate'], # not retrievable
+        'list_send': [
+            'CreatedDate', # not retrievable
+            'CustomerKey', # not retrievable
+            'ID',
+            'PartnerProperties', # not retrievable
+            'ModifiedDate'], # not retrievable
+        'folder': [
+            'Type',
+            'PartnerProperties'],
+        'email': [
+            '__AdditionalEmailAttribute1', # not retrievable
+            '__AdditionalEmailAttribute3', # not retrievable
+            'SyncTextWithHTML', # not retrievable
+            'PartnerProperties', # not retrievable
+            '__AdditionalEmailAttribute5', # not retrievable
+            'ClonedFromID',
+            '__AdditionalEmailAttribute4', # not retrievable
+            '__AdditionalEmailAttribute2'], # not retrievable
+        'content_area': [
+            # most of them are included in the 'Content' data
+            'BackgroundColor', # not retrievable
+            'Cellpadding', # not retrievable
+            'HasFontSize', # not retrievable
+            'BorderColor', # not retrievable
+            'BorderWidth', # not retrievable
+            'Width', # not retrievable
+            'IsLocked', # not retrievable
+            'Cellspacing', # not retrievable
+            'FontFamily'] # not retrievable
+    }
+
     def name(self):
         return "tap_tester_exacttarget_all_fields"
 
@@ -41,9 +92,7 @@ class ExactTargetAllFields(ExactTargetBase):
         for stream in expected_streams:
             with self.subTest(stream=stream):
 
-                # # expected values
-                # expected_automatic_keys = self.expected_automatic_fields().get(stream)
-                # # get all expected keys
+                # get all expected keys
                 expected_all_keys = stream_to_all_catalog_fields[stream]
 
                 # collect actual values
@@ -55,50 +104,8 @@ class ExactTargetAllFields(ExactTargetBase):
                 self.assertGreater(record_count_by_stream.get(stream, -1), 0)
 
                 # remove some fields as data cannot be generated / retrieved
-                if stream == 'list':
-                    expected_all_keys.remove('SendClassification') # not retrievable
-                    expected_all_keys.remove('PartnerProperties') # not retrievable
-                elif stream == 'subscriber':
-                    expected_all_keys.remove('CustomerKey') # not retrievable
-                    expected_all_keys.remove('PartnerType') # not retrievable
-                    expected_all_keys.remove('UnsubscribedDate') 
-                    expected_all_keys.remove('PrimarySMSAddress') # not retrievable
-                    expected_all_keys.remove('PrimaryEmailAddress') # not retrievable
-                    expected_all_keys.remove('PartnerProperties') # not retrievable
-                    expected_all_keys.remove('SubscriberTypeDefinition') # not retrievable
-                    expected_all_keys.remove('Addresses') # not retrievable
-                    expected_all_keys.remove('ListIDs')
-                    expected_all_keys.remove('Locale') # not retrievable
-                    expected_all_keys.remove('PrimarySMSPublicationStatus') # not retrievable
-                    expected_all_keys.remove('ModifiedDate') # not retrievable
-                elif stream == 'list_send':
-                    expected_all_keys.remove('CreatedDate') # not retrievable
-                    expected_all_keys.remove('CustomerKey') # not retrievable
-                    expected_all_keys.remove('ID')
-                    expected_all_keys.remove('PartnerProperties') # not retrievable
-                    expected_all_keys.remove('ModifiedDate') # not retrievable
-                elif stream == 'folder':
-                    expected_all_keys.remove('Type')
-                    expected_all_keys.remove('PartnerProperties')
-                elif stream == 'email':
-                    expected_all_keys.remove('__AdditionalEmailAttribute1') # not retrievable
-                    expected_all_keys.remove('__AdditionalEmailAttribute3') # not retrievable
-                    expected_all_keys.remove('SyncTextWithHTML') # not retrievable
-                    expected_all_keys.remove('PartnerProperties') # not retrievable
-                    expected_all_keys.remove('__AdditionalEmailAttribute5') # not retrievable
-                    expected_all_keys.remove('ClonedFromID')
-                    expected_all_keys.remove('__AdditionalEmailAttribute4') # not retrievable
-                    expected_all_keys.remove('__AdditionalEmailAttribute2') # not retrievable
-                elif stream == 'content_area':
-                    # most of them are included in the 'Content' data
-                    expected_all_keys.remove('BackgroundColor') # not retrievable
-                    expected_all_keys.remove('Cellpadding') # not retrievable
-                    expected_all_keys.remove('HasFontSize') # not retrievable
-                    expected_all_keys.remove('BorderColor') # not retrievable
-                    expected_all_keys.remove('BorderWidth') # not retrievable
-                    expected_all_keys.remove('Width') # not retrievable
-                    expected_all_keys.remove('IsLocked') # not retrievable
-                    expected_all_keys.remove('Cellspacing') # not retrievable
-                    expected_all_keys.remove('FontFamily') # not retrievable
+                fields = self.fields_to_remove.get(stream)
+                for field in fields:
+                    expected_all_keys.remove(field)
 
                 self.assertSetEqual(expected_all_keys, actual_all_keys)
