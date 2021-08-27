@@ -104,7 +104,7 @@ class ExactTargetAllFields(ExactTargetBase):
                 self.assertGreater(record_count_by_stream.get(stream, -1), 0)
 
                 # remove some fields as data cannot be generated / retrieved
-                fields = self.fields_to_remove.get(stream)
+                fields = self.fields_to_remove.get(stream) or []
                 for field in fields:
                     expected_all_keys.remove(field)
 
