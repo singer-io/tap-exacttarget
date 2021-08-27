@@ -38,7 +38,6 @@ class CampaignDataAccessObject(DataAccessObject):
     KEY_PROPERTIES = ['id']
 
     def sync_data(self):
-        batch_size = int(self.config.get('batch_size', 2500))
 
         cursor = request(
             'Campaign',
