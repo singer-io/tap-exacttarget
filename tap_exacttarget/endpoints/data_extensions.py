@@ -50,7 +50,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
             FuelSDK.ET_DataExtension,
             self.auth_stub,
             props=['CustomerKey', 'Name'],
-            batch_size=int(self.config.get('batch_size', 2500))
+            batch_size=self.batch_size
         )
 
         to_return = {}
@@ -95,7 +95,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
             'DataExtensionField',
             FuelSDK.ET_DataExtension_Column,
             self.auth_stub,
-            batch_size=int(self.config.get('batch_size', 2500)))
+            batch_size=self.batch_size)
 
         for field in result:
             extension_id = field.DataExtension.CustomerKey
@@ -203,9 +203,8 @@ class DataExtensionDataAccessObject(DataAccessObject):
                                                  start,
                                                  unit)
 
-        batch_size = int(self.config.get('batch_size', 2500))
         result = request_from_cursor('DataExtensionObject', cursor,
-                                     batch_size=batch_size)
+                                     batch_size=self.batch_size)
 
         for row in result:
             row = self.filter_keys_and_parse(row)
@@ -267,7 +266,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 'Value': customer_key,
             },
             props=['CustomerKey', 'CategoryID'],
-            batch_size=int(self.config.get('batch_size', 2500)))
+            batch_size=self.batch_size)
 
         parent_extension = next(parent_result)
         parent_category_id = parent_extension.CategoryID

@@ -71,7 +71,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             'Property': 'ListName',
             'SimpleOperator': 'equals',
             'Value': 'All Subscribers',
-        }, batch_size=int(self.config.get('batch_size', 2500)))
+        }, batch_size=self.batch_size)
 
         lists = list(result)
 
@@ -113,7 +113,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                              _get_list_subscriber_filter(
                                  all_subscribers_list,
                                  start, unit),
-                             batch_size=int(self.config.get('batch_size', 2500)))
+                             batch_size=self.batch_size)
 
             batch_size = 100
 

@@ -46,7 +46,7 @@ class CampaignDataAccessObject(DataAccessObject):
             self.auth_stub,
             # use $pageSize and $page in the props for
             # this stream as it calls using REST API
-            props={"$pageSize": batch_size, "$page": 1, "page": 1})
+            props={"$pageSize": self.batch_size, "$page": 1, "page": 1})
 
         for campaign in cursor:
             campaign = self.filter_keys_and_parse(campaign)
