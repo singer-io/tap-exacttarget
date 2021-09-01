@@ -98,7 +98,7 @@ class ExactTargetStartDate(ExactTargetBase):
 
                     # Verify the number of records replicated in sync 1 is greater than the number
                     # of records replicated in sync 2 for stream
-                    self.assertGreaterEqual(record_count_sync_1, record_count_sync_2)
+                    self.assertGreater(record_count_sync_1, record_count_sync_2)
 
                     # Verify the records replicated in sync 2 were also replicated in sync 1
                     self.assertTrue(primary_keys_sync_2.issubset(primary_keys_sync_1))
