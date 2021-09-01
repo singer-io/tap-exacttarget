@@ -1,4 +1,5 @@
 import FuelSDK
+import copy
 import singer
 from singer import Transformer, metadata
 from tap_exacttarget.client import request
@@ -44,10 +45,12 @@ class CampaignDataAccessObject(DataAccessObject):
             FuelSDK.ET_Campaign,
             self.auth_stub)
 
+        catalog_copy = copy.deepcopy(self.catalog)
+
         for campaign in cursor:
             campaign = self.filter_keys_and_parse(campaign)
 
             with Transformer() as transformer:
                 for rec in [campaign]:
-                    rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                    rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
                     singer.write_record(self.__class__.TABLE, rec)

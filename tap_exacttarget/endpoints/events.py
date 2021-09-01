@@ -1,4 +1,5 @@
 import FuelSDK
+import copy
 import singer
 from singer import Transformer, metadata
 
@@ -90,6 +91,8 @@ class EventDataAccessObject(DataAccessObject):
                                  self.auth_stub,
                                  search_filter)
 
+                catalog_copy = copy.deepcopy(self.catalog)
+
                 for event in stream:
                     event = self.filter_keys_and_parse(event)
 
@@ -107,7 +110,7 @@ class EventDataAccessObject(DataAccessObject):
 
                     with Transformer() as transformer:
                         for rec in [event]:
-                            rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                            rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
                             singer.write_record(table, rec)
 
                 self.state = incorporate(self.state,

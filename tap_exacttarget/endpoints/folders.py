@@ -1,4 +1,5 @@
 import FuelSDK
+import copy
 import singer
 from singer import Transformer, metadata
 
@@ -83,6 +84,8 @@ class FolderDataAccessObject(DataAccessObject):
                          self.auth_stub,
                          search_filter)
 
+        catalog_copy = copy.deepcopy(self.catalog)
+
         for folder in stream:
             folder = self.filter_keys_and_parse(folder)
 
@@ -93,7 +96,7 @@ class FolderDataAccessObject(DataAccessObject):
 
             with Transformer() as transformer:
                 for rec in [folder]:
-                    rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                    rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
                     singer.write_record(table, rec)
 
         save_state(self.state)

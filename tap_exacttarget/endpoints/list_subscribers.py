@@ -1,4 +1,5 @@
 import FuelSDK
+import copy
 import singer
 from singer import Transformer, metadata
 
@@ -122,6 +123,8 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             if self.replicate_subscriber:
                 subscriber_dao.write_schema()
 
+            catalog_copy = copy.deepcopy(self.catalog)
+
             for list_subscribers_batch in partition_all(stream, batch_size):
                 for list_subscriber in list_subscribers_batch:
                     list_subscriber = self.filter_keys_and_parse(
@@ -136,7 +139,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
 
                     with Transformer() as transformer:
                         for rec in [list_subscriber]:
-                            rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                            rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
                             singer.write_record(table, rec)
 
                 if self.replicate_subscriber:

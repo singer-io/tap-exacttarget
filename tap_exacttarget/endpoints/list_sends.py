@@ -1,4 +1,5 @@
 import FuelSDK
+import copy
 import singer
 from singer import Transformer, metadata
 
@@ -112,10 +113,12 @@ class ListSendDataAccessObject(DataAccessObject):
                          selector,
                          self.auth_stub)
 
+        catalog_copy = copy.deepcopy(self.catalog)
+
         for list_send in stream:
             list_send = self.filter_keys_and_parse(list_send)
 
             with Transformer() as transformer:
                 for rec in [list_send]:
-                    rec = transformer.transform(rec, self.catalog.get('schema'), metadata.to_map(self.catalog.get('metadata')))
+                    rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
                     singer.write_record(table, rec)
