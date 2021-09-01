@@ -51,6 +51,5 @@ class CampaignDataAccessObject(DataAccessObject):
             campaign = self.filter_keys_and_parse(campaign)
 
             with Transformer() as transformer:
-                for rec in [campaign]:
-                    rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                    singer.write_record(self.__class__.TABLE, rec)
+                rec = transformer.transform(campaign, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(self.__class__.TABLE, rec)

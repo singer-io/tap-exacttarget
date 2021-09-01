@@ -154,8 +154,7 @@ class EmailDataAccessObject(DataAccessObject):
                                      email.get('ModifiedDate'))
 
             with Transformer() as transformer:
-                for rec in [email]:
-                    rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                    singer.write_record(table, rec)
+                rec = transformer.transform(email, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(table, rec)
 
         save_state(self.state)

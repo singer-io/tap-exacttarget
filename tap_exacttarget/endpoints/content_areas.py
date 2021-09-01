@@ -138,8 +138,7 @@ class ContentAreaDataAccessObject(DataAccessObject):
                                      content_area.get('ModifiedDate'))
 
             with Transformer() as transformer:
-                for rec in [content_area]:
-                    rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                    singer.write_record(table, rec)
+                rec = transformer.transform(content_area, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(table, rec)
 
         save_state(self.state)

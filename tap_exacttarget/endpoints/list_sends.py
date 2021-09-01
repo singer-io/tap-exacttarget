@@ -119,6 +119,5 @@ class ListSendDataAccessObject(DataAccessObject):
             list_send = self.filter_keys_and_parse(list_send)
 
             with Transformer() as transformer:
-                for rec in [list_send]:
-                    rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                    singer.write_record(table, rec)
+                rec = transformer.transform(list_send, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(table, rec)

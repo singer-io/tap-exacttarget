@@ -161,6 +161,5 @@ class SubscriberDataAccessObject(DataAccessObject):
             subscriber = self.filter_keys_and_parse(subscriber)
 
             with Transformer() as transformer:
-                for rec in [subscriber]:
-                    rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                    singer.write_record(table, rec)
+                rec = transformer.transform(subscriber, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(table, rec)

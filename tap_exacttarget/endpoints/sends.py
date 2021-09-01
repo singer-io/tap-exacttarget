@@ -123,8 +123,7 @@ class SendDataAccessObject(DataAccessObject):
                                      send.get('ModifiedDate'))
 
             with Transformer() as transformer:
-                for rec in [send]:
-                    rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                    singer.write_record(table, rec)
+                rec = transformer.transform(send, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(table, rec)
 
         save_state(self.state)

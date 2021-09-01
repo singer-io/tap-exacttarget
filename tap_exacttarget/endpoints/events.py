@@ -109,9 +109,8 @@ class EventDataAccessObject(DataAccessObject):
                         continue
 
                     with Transformer() as transformer:
-                        for rec in [event]:
-                            rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                            singer.write_record(table, rec)
+                        rec = transformer.transform(event, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                        singer.write_record(table, rec)
 
                 self.state = incorporate(self.state,
                                          event_name,

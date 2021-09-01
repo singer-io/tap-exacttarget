@@ -138,9 +138,8 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                             list_subscriber.get('ModifiedDate'))
 
                     with Transformer() as transformer:
-                        for rec in [list_subscriber]:
-                            rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                            singer.write_record(table, rec)
+                        rec = transformer.transform(list_subscriber, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                        singer.write_record(table, rec)
 
                 if self.replicate_subscriber:
                     subscriber_keys = list(map(

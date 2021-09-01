@@ -84,8 +84,7 @@ class ListDataAccessObject(DataAccessObject):
                                      _list.get('ModifiedDate'))
 
             with Transformer() as transformer:
-                for rec in [_list]:
-                    rec = transformer.transform(rec, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                    singer.write_record(table, rec)
+                rec = transformer.transform(_list, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(table, rec)
 
         save_state(self.state)
