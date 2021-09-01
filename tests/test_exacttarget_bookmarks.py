@@ -40,7 +40,7 @@ class ExactTargetBookmarks(ExactTargetBase):
             if self.is_incremental(stream):
                 new_state['bookmarks'][stream] = dict()
                 new_state['bookmarks'][stream]['field'] = next(iter(replication_keys[stream]))
-                new_state['bookmarks'][stream]['last_record'] = '2021-01-01T00:00:00Z'
+                new_state['bookmarks'][stream]['last_record'] = '2019-01-14T00:00:00Z'
 
         # Set state for next sync
         menagerie.set_state(conn_id, new_state)
@@ -48,12 +48,6 @@ class ExactTargetBookmarks(ExactTargetBase):
         ##########################################################################
         ### Second Sync
         ##########################################################################
-
-        conn_id = connections.ensure_connection(self, original_properties=False)
-        runner.run_check_mode(self, conn_id)
-
-        found_catalogs_2 = menagerie.get_catalogs(conn_id)
-        self.select_found_catalogs(conn_id, found_catalogs_2, only_streams=expected_streams)
 
         # Run a sync job using orchestrator
         second_sync_record_count = self.run_and_verify_sync(conn_id)
