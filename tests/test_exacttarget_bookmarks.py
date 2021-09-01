@@ -38,6 +38,7 @@ class ExactTargetBookmarks(ExactTargetBase):
         replication_keys = self.expected_replication_keys()
         for stream in expected_streams:
             if self.is_incremental(stream):
+                new_state['bookmarks'][stream] = dict()
                 new_state['bookmarks'][stream]['field'] = next(iter(replication_keys[stream]))
                 new_state['bookmarks'][stream]['last_record'] = '2021-01-01T00:00:00Z'
 
