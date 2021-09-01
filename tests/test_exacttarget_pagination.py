@@ -30,7 +30,7 @@ class ExactTargetPagination(ExactTargetBase):
         for stream in expected_streams:
             with self.subTest(stream=stream):
                 # expected values
-                expected_primary_keys = self.expected_primary_keys()
+                expected_primary_keys = self.expected_primary_keys()[stream]
 
                 # collect information for assertions from sync based on expected values
                 record_count_sync = sync_record_count.get(stream, 0)
