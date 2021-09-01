@@ -17,39 +17,47 @@ class ExactTargetBookmarks(ExactTargetBase):
         return datetime.datetime.strftime(date_object_utc, "%Y-%m-%dT%H:%M:%SZ")
 
     def test_run(self):
-        conn_id_1 = connections.ensure_connection(self)
-        runner.run_check_mode(self, conn_id_1)
+        conn_id = connections.ensure_connection(self)
+        runner.run_check_mode(self, conn_id)
 
         expected_streams = self.streams_to_select()
 
-        found_catalogs_1 = menagerie.get_catalogs(conn_id_1)
-        self.select_found_catalogs(conn_id_1, found_catalogs_1, only_streams=expected_streams)
+        found_catalogs_1 = menagerie.get_catalogs(conn_id)
+        self.select_found_catalogs(conn_id, found_catalogs_1, only_streams=expected_streams)
 
         # Run a sync job using orchestrator
-        first_sync_record_count = self.run_and_verify_sync(conn_id_1)
+        first_sync_record_count = self.run_and_verify_sync(conn_id)
         first_sync_records = runner.get_records_from_target_output()
-        first_sync_bookmarks = menagerie.get_state(conn_id_1)
+        first_sync_bookmarks = menagerie.get_state(conn_id)
 
         ##########################################################################
-        ### Update Start Date
+        ### Update State
         ##########################################################################
 
-        self.START_DATE = '2021-01-01T00:00:00Z'
+        new_state = {'bookmarks': dict()}
+        replication_keys = self.expected_replication_keys()
+        for stream in expected_streams:
+            if self.is_incremental(stream):
+                new_state['bookmarks'][stream]['field'] = replication_keys.get(stream)
+                new_state['bookmarks'][stream]['last_record'] = '2021-01-01T00:00:00Z'
+
+        # Set state for next sync
+        menagerie.set_state(conn_id, new_state)
 
         ##########################################################################
         ### Second Sync
         ##########################################################################
 
-        conn_id_2 = connections.ensure_connection(self, original_properties=False)
-        runner.run_check_mode(self, conn_id_2)
+        conn_id = connections.ensure_connection(self, original_properties=False)
+        runner.run_check_mode(self, conn_id)
 
-        found_catalogs_2 = menagerie.get_catalogs(conn_id_2)
-        self.select_found_catalogs(conn_id_2, found_catalogs_2, only_streams=expected_streams)
+        found_catalogs_2 = menagerie.get_catalogs(conn_id)
+        self.select_found_catalogs(conn_id, found_catalogs_2, only_streams=expected_streams)
 
         # Run a sync job using orchestrator
-        second_sync_record_count = self.run_and_verify_sync(conn_id_2)
+        second_sync_record_count = self.run_and_verify_sync(conn_id)
         second_sync_records = runner.get_records_from_target_output()
-        second_sync_bookmarks = menagerie.get_state(conn_id_2)
+        second_sync_bookmarks = menagerie.get_state(conn_id)
 
         for stream in expected_streams:
             # skip "subscriber" stream as replication key is not retrievable
