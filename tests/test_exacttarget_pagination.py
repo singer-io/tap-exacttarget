@@ -34,7 +34,7 @@ class ExactTargetPagination(ExactTargetBase):
 
                 # collect information for assertions from sync based on expected values
                 record_count_sync = sync_record_count.get(stream, 0)
-                primary_keys_list = [(message.get('data').get(expected_pk) for expected_pk in expected_primary_keys)
+                primary_keys_list = [tuple([message.get('data').get(expected_pk) for expected_pk in expected_primary_keys])
                                        for message in synced_records.get(stream).get('messages')
                                        if message.get('action') == 'upsert']
 
