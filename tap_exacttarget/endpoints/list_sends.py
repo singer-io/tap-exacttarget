@@ -113,6 +113,8 @@ class ListSendDataAccessObject(DataAccessObject):
                          selector,
                          self.auth_stub)
 
+        catalog_copy = copy.deepcopy(self.catalog)
+
         for list_send in stream:
             list_send = self.filter_keys_and_parse(list_send)
 
