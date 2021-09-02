@@ -104,8 +104,7 @@ class ExactTargetBase(unittest.TestCase):
             },
             "list_send":{
                 self.PRIMARY_KEYS: {"ListID", "SendID"},
-                self.REPLICATION_METHOD: self.INCREMENTAL,
-                self.REPLICATION_KEYS: {"ModifiedDate"},
+                self.REPLICATION_METHOD: self.FULL_TABLE,
             },
             "list_subscriber":{
                 self.PRIMARY_KEYS: {"SubscriberKey", "ListID"},

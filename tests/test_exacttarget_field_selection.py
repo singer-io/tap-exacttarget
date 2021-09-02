@@ -9,6 +9,9 @@ class ExactTargetFieldSelection(ExactTargetBase):
     non_selected_fields = {
             "campaign": ["createdDate", "campaignCode", "description"],
             "content_area": ["Name"],
+            "data_extension.test emails": ["name", "email"],
+            "data_extension.This is a test": ["Birthday"],
+            "data_extension.my_test": ["Address"],
             "email": ["Name", "CharacterSet", "HasDynamicSubjectLine", "EmailType"],
             "event": ["EventType"],
             "folder": ["Name", "ContentType", "Description", "ObjectID"],
