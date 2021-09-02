@@ -1,5 +1,7 @@
 import FuelSDK
+import copy
 import singer
+from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -114,4 +116,6 @@ class ListSendDataAccessObject(DataAccessObject):
         for list_send in stream:
             list_send = self.filter_keys_and_parse(list_send)
 
-            singer.write_records(table, [list_send])
+            with Transformer() as transformer:
+                rec = transformer.transform(list_send, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(table, rec)

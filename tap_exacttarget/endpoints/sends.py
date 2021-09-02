@@ -1,5 +1,7 @@
 import FuelSDK
+import copy
 import singer
+from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -110,6 +112,8 @@ class SendDataAccessObject(DataAccessObject):
                          self.auth_stub,
                          search_filter)
 
+        catalog_copy = copy.deepcopy(self.catalog)
+
         for send in stream:
             send = self.filter_keys_and_parse(send)
 
@@ -118,6 +122,8 @@ class SendDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      send.get('ModifiedDate'))
 
-            singer.write_records(table, [send])
+            with Transformer() as transformer:
+                rec = transformer.transform(send, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(table, rec)
 
         save_state(self.state)

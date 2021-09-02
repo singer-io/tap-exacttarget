@@ -1,5 +1,7 @@
 import FuelSDK
+import copy
 import singer
+from singer import Transformer, metadata
 
 from funcy import set_in, update_in, merge
 
@@ -232,6 +234,8 @@ class DataExtensionDataAccessObject(DataAccessObject):
         result = request_from_cursor('DataExtensionObject', cursor,
                                      batch_size=batch_size)
 
+        catalog_copy = copy.deepcopy(self.catalog)
+
         for row in result:
             row = self.filter_keys_and_parse(row)
             row['CategoryID'] = parent_category_id
@@ -241,7 +245,9 @@ class DataExtensionDataAccessObject(DataAccessObject):
                                      replication_key,
                                      row.get(replication_key))
 
-            singer.write_records(table, [row])
+            with Transformer() as transformer:
+                rec = transformer.transform(row, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(table, rec)
 
         if partial:
             self.state = incorporate(self.state,

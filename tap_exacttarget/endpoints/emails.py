@@ -1,5 +1,7 @@
 import FuelSDK
+import copy
 import singer
+from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -141,6 +143,8 @@ class EmailDataAccessObject(DataAccessObject):
                          self.auth_stub,
                          search_filter)
 
+        catalog_copy = copy.deepcopy(self.catalog)
+
         for email in stream:
             email = self.filter_keys_and_parse(email)
 
@@ -149,6 +153,8 @@ class EmailDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      email.get('ModifiedDate'))
 
-            singer.write_records(table, [email])
+            with Transformer() as transformer:
+                rec = transformer.transform(email, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
+                singer.write_record(table, rec)
 
         save_state(self.state)
