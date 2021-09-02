@@ -6,8 +6,6 @@ from tap_exacttarget.dao import DataAccessObject
 from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
     CREATED_DATE_FIELD, CUSTOMER_KEY_FIELD, OBJECT_ID_FIELD, \
     MODIFIED_DATE_FIELD, with_properties
-from tap_exacttarget.state import incorporate, save_state, \
-    get_last_record_value_for_table
 
 LOGGER = singer.get_logger()
 
