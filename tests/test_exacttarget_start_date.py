@@ -9,8 +9,14 @@ class ExactTargetStartDate(ExactTargetBase):
         return "tap_tester_exacttarget_start_date"
 
     def test_run(self):
-        start_date_1 = '2014-01-01T00:00:00Z'
-        start_date_2 = '2019-01-01T00:00:00Z'
+        self.run_test('2014-01-01T00:00:00Z', '2021-08-01T00:00:00Z', self.streams_to_select() - {'email', 'content_area', 'send'})
+        self.run_test('2019-01-14T00:00:00Z', '2019-01-14T11:55:00Z', {'email'})
+        self.run_test('2021-08-10T00:00:00Z', '2021-08-11T00:00:00Z', {'content_area'})
+        self.run_test('2021-08-10T00:00:00Z', '2021-08-15T00:00:00Z', {'send'})
+
+    def run_test(self, start_dt_1, start_dt_2, streams):
+        start_date_1 = start_dt_1
+        start_date_2 = start_dt_2
         start_date_1_epoch = self.dt_to_ts(start_date_1)
         start_date_2_epoch = self.dt_to_ts(start_date_2)
 
@@ -24,7 +30,7 @@ class ExactTargetStartDate(ExactTargetBase):
         ### Frist Sync
         ##########################################################################
 
-        expected_streams = self.streams_to_select()
+        expected_streams = streams
 
         conn_id_1 = connections.ensure_connection(self, original_properties=False)
         runner.run_check_mode(self, conn_id_1)
