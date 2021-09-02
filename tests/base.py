@@ -72,6 +72,18 @@ class ExactTargetBase(unittest.TestCase):
                 self.REPLICATION_METHOD: self.INCREMENTAL,
                 self.REPLICATION_KEYS: {"ModifiedDate"},
             },
+            "data_extension.test emails":{
+                self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
+                self.REPLICATION_METHOD: self.FULL_TABLE,
+            },
+            "data_extension.This is a test":{
+                self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
+                self.REPLICATION_METHOD: self.FULL_TABLE,
+            },
+            "data_extension.my_test":{
+                self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
+                self.REPLICATION_METHOD: self.FULL_TABLE,
+            },
             "email":{
                 self.PRIMARY_KEYS: {"ID"},
                 self.REPLICATION_METHOD: self.INCREMENTAL,
@@ -135,7 +147,7 @@ class ExactTargetBase(unittest.TestCase):
     def select_found_catalogs(self, conn_id, catalogs, only_streams=None, deselect_all_fields: bool = False, non_selected_props=[]):
         """Select all streams and all fields within streams"""
         for catalog in catalogs:
-            if only_streams and catalog["tap_stream_id"] not in only_streams:
+            if only_streams and catalog["stream_name"] not in only_streams:
                 continue
             schema = menagerie.get_annotated_schema(conn_id, catalog['stream_id'])
 
