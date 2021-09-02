@@ -13,6 +13,11 @@ class ExactTargetBase(unittest.TestCase):
         "%Y-%m-%d %H:%M:%S",
         "%Y-%m-%dT%H:%M:%S.%fZ"
     }
+    PRIMARY_KEYS = "table-key-properties"
+    REPLICATION_METHOD = "forced-replication-method"
+    REPLICATION_KEYS = "valid-replication-keys"
+    FULL_TABLE = "FULL_TABLE"
+    INCREMENTAL = "INCREMENTAL"
 
     def name(self):
         return "tap_tester_exacttarget_base"
@@ -55,81 +60,92 @@ class ExactTargetBase(unittest.TestCase):
         return return_value
 
     def expected_metadata(self):
-        # Note: Custom streams failed on our account with an error on
-        # `_CustomObjectKey` not being valid
         return {
             "campaign": {
-                "pk": {"id"},
-                "replication": "FULL_TABLE"
+                self.PRIMARY_KEYS: {"id"},
+                self.REPLICATION_METHOD: self.FULL_TABLE
             },
             "content_area":{
-                "pk": {"ID"},
-                "replication": "INCREMENTAL",
-                "replication-key": {"ModifiedDate"},
+                self.PRIMARY_KEYS: {"ID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"ModifiedDate"},
+            },
+            "data_extension.test emails":{
+                self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
+                self.REPLICATION_METHOD: self.FULL_TABLE,
+            },
+            "data_extension.This is a test":{
+                self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
+                self.REPLICATION_METHOD: self.FULL_TABLE,
+            },
+            "data_extension.my_test":{
+                self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
+                self.REPLICATION_METHOD: self.FULL_TABLE,
             },
             "email":{
-                "pk": {"ID"},
-                "replication": "INCREMENTAL",
-                "replication-key": {"ModifiedDate"},
+                self.PRIMARY_KEYS: {"ID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"ModifiedDate"},
             },
             "event": {
-                "pk": {"SendID", "EventType", "SubscriberKey", "EventDate"},
-                "replication": "INCREMENTAL",
-                "replication-key": {"EventDate"},
+                self.PRIMARY_KEYS: {"SendID", "EventType", "SubscriberKey", "EventDate"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"EventDate"},
             },
             "folder":{
-                "pk": {"ID"},
-                "replication": "INCREMENTAL",
-                "replication-key": {"ModifiedDate"},
+                self.PRIMARY_KEYS: {"ID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"ModifiedDate"},
             },
             "list":{
-                "pk": {"ID"},
-                "replication": "INCREMENTAL",
-                "replication-key": {"ModifiedDate"},
+                self.PRIMARY_KEYS: {"ID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"ModifiedDate"},
             },
             "list_send":{
-                "pk": {"ListID", "SendID"},
-                "replication": "FULL_TABLE"
+                self.PRIMARY_KEYS: {"ListID", "SendID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"ModifiedDate"},
             },
             "list_subscriber":{
-                "pk": {"SubscriberKey", "ListID"},
-                "replication": "INCREMENTAL",
-                "replication-key": {"ModifiedDate"},
+                self.PRIMARY_KEYS: {"SubscriberKey", "ListID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"ModifiedDate"},
             },
             "send":{
-                "pk": {"ID"},
-                "replication": "INCREMENTAL",
-                "replication-key": {"ModifiedDate"},
+                self.PRIMARY_KEYS: {"ID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"ModifiedDate"},
             },
             "subscriber":{
-                "pk": {"ID"},
-                "replication": "INCREMENTAL",
-                "replication-key": {"ModifiedDate"},
-            }
+                self.PRIMARY_KEYS: {"ID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"ModifiedDate"},
+            } 
         }
 
     def streams_to_select(self):
         return set(self.expected_metadata().keys()) - {'event', 'list_subscriber', 'subscriber'}
 
     def expected_replication_keys(self):
-        return {table: properties.get("replication-key", set())
+        return {table: properties.get(self.REPLICATION_KEYS, set())
                 for table, properties
                 in self.expected_metadata().items()}
 
     def expected_primary_keys(self):
-        return {table: properties.get("pk", set())
+        return {table: properties.get(self.PRIMARY_KEYS, set())
                 for table, properties
                 in self.expected_metadata().items()}
 
     def expected_replication_method(self):
-        return {table: properties.get("replication", set())
+        return {table: properties.get(self.REPLICATION_METHOD, set())
                 for table, properties
                 in self.expected_metadata().items()}
 
     def select_found_catalogs(self, conn_id, catalogs, only_streams=None, deselect_all_fields: bool = False, non_selected_props=[]):
         """Select all streams and all fields within streams"""
         for catalog in catalogs:
-            if only_streams and catalog["tap_stream_id"] not in only_streams:
+            if only_streams and catalog["stream_name"] not in only_streams:
                 continue
             schema = menagerie.get_annotated_schema(conn_id, catalog['stream_id'])
 
@@ -173,4 +189,4 @@ class ExactTargetBase(unittest.TestCase):
                 continue
 
     def is_incremental(self, stream):
-        return self.expected_metadata()[stream]["replication"] == "INCREMENTAL"
+        return self.expected_metadata()[stream][self.REPLICATION_METHOD] == self.INCREMENTAL
