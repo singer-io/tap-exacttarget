@@ -36,6 +36,7 @@ class CampaignDataAccessObject(DataAccessObject):
 
     TABLE = 'campaign'
     KEY_PROPERTIES = ['id']
+    REPLICATION_METHOD = 'FULL_TABLE'
 
     def sync_data(self):
         cursor = request(

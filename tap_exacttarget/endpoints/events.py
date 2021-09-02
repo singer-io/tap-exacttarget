@@ -45,6 +45,8 @@ class EventDataAccessObject(DataAccessObject):
 
     TABLE = 'event'
     KEY_PROPERTIES = ['SendID', 'EventType', 'SubscriberKey', 'EventDate']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['EventDate']
 
     def sync_data(self):
         table = self.__class__.TABLE

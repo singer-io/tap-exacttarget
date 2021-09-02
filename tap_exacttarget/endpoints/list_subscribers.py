@@ -55,6 +55,8 @@ class ListSubscriberDataAccessObject(DataAccessObject):
 
     TABLE = 'list_subscriber'
     KEY_PROPERTIES = ['SubscriberKey', 'ListID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
     def __init__(self, config, state, auth_stub, catalog):
         super(ListSubscriberDataAccessObject, self).__init__(
