@@ -82,6 +82,11 @@ class ExactTargetBase(unittest.TestCase):
                 self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
                 self.REPLICATION_METHOD: self.FULL_TABLE,
             },
+            "data_extension.test 1":{
+                self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"JoinDate"},
+            },
             "email":{
                 self.PRIMARY_KEYS: {"ID"},
                 self.REPLICATION_METHOD: self.INCREMENTAL,
