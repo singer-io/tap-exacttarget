@@ -10,7 +10,8 @@ from tap_exacttarget.pagination import get_date_page, before_now, \
 from tap_exacttarget.state import incorporate, save_state, \
     get_last_record_value_for_table
 from tap_exacttarget.util import sudsobj_to_dict
-from tap_exacttarget.fuel_overrides import TapExacttarget__ET_DataExtension_Row
+from tap_exacttarget.fuel_overrides import TapExacttarget__ET_DataExtension_Row, \
+    TapExacttarget__ET_DataExtension_Column
 
 LOGGER = singer.get_logger()  # noqa
 
@@ -94,7 +95,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         result = request(
             'DataExtensionField',
-            FuelSDK.ET_DataExtension_Column,
+            TapExacttarget__ET_DataExtension_Column,
             self.auth_stub,
             batch_size=self.batch_size)
 

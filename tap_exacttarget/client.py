@@ -7,13 +7,13 @@ from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 LOGGER = singer.get_logger()
 
 
-def _get_response_items(response):
+def _get_response_items(response, name):
     items = response.results
 
     if 'count' in response.results:
-        LOGGER.info('Got {} results.'.format(response.results.get('count')))
         items = response.results.get('items')
 
+    LOGGER.info('Got {} results from {} endpoint.'.format(len(items), name))
     return items
 
 
@@ -145,7 +145,7 @@ def request_from_cursor(name, cursor, batch_size):
         raise RuntimeError("Request failed with '{}'"
                            .format(response.message))
 
-    for item in _get_response_items(response):
+    for item in _get_response_items(response, name):
         yield item
 
     while response.more_results:
@@ -155,18 +155,16 @@ def request_from_cursor(name, cursor, batch_size):
             # use 'getMoreResults' for campaigns as it does not use
             # batch_size, rather it uses $page and $pageSize and REST Call
             response = cursor.getMoreResults()
-            LOGGER.info("Fetched {} results from '{}' endpoint".format(len(response.results.get('items')), name))
         else:
             # Override call to getMoreResults to add a batch_size parameter
             # response = cursor.getMoreResults()
             response = tap_exacttarget__getMoreResults(cursor, batch_size=batch_size)
-            LOGGER.info("Fetched {} results from '{}' endpoint".format(len(response.results), name))
 
         if not response.status:
             raise RuntimeError("Request failed with '{}'"
                                .format(response.message))
 
-        for item in _get_response_items(response):
+        for item in _get_response_items(response, name):
             yield item
 
     LOGGER.info("Done retrieving results from '{}' endpoint".format(name))
