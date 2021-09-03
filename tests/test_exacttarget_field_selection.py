@@ -12,6 +12,7 @@ class ExactTargetFieldSelection(ExactTargetBase):
             "data_extension.test emails": ["name", "email"],
             "data_extension.This is a test": ["Birthday"],
             "data_extension.my_test": ["Address"],
+            "data_extension.test 1": ["name"],
             "email": ["Name", "CharacterSet", "HasDynamicSubjectLine", "EmailType"],
             "event": ["EventType"],
             "folder": ["Name", "ContentType", "Description", "ObjectID"],
