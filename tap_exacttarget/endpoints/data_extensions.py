@@ -104,7 +104,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         return to_return
 
-    def _get_fields(self, extensions):
+    def _get_fields(self, extensions): # pylint: disable=too-many-branches
         to_return = extensions.copy()
 
         result = request(
