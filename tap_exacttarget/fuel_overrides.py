@@ -46,7 +46,7 @@ class TapExacttarget__ET_DataExtension_Row(FuelSDK.ET_DataExtension_Row):
         end
         '''
 
-        if self.props is not None and type(self.props) is dict:
+        if self.props is not None and type(self.props) is dict: # pylint:disable=unidiomatic-typecheck
             self.props = self.props.keys()
 
         '''
