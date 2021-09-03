@@ -87,7 +87,8 @@ class DataExtensionDataAccessObject(DataAccessObject):
                             'forced-replication-method': 'FULL_TABLE',
                             "table-key-properties": [
                                 "_CustomObjectKey"
-                            ]
+                            ],
+                            "valid-replication-keys": []
                         }
                     },
                     {
@@ -110,6 +111,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
             self.auth_stub)
 
         for field in result:
+            is_replication_key = False
             is_primary_key = False
             extension_id = field.DataExtension.CustomerKey
             field = sudsobj_to_dict(field)
@@ -121,6 +123,9 @@ class DataExtensionDataAccessObject(DataAccessObject):
                     to_return,
                     [extension_id, 'key_properties'],
                     field_name)
+
+            if field_name in ['ModifiedDate', 'JoinDate']:
+                is_replication_key = True
 
             field_schema = {
                 'type': [
@@ -140,9 +145,15 @@ class DataExtensionDataAccessObject(DataAccessObject):
                     if not mdata.get('breadcrumb'):
                         mdata.get('metadata').get('table-key-properties').append(field_name)
 
+            if is_replication_key:
+                for mdata in to_return[extension_id]['metadata']:
+                    if not mdata.get('breadcrumb'):
+                        mdata.get('metadata')['forced-replication-method'] = "INCREMENTAL"
+                        mdata.get('metadata').get('valid-replication-keys').append(field_name)
+
             # These fields are defaulted into the schema, do not add to metadata again.
             if field_name not in {'_CustomObjectKey', 'CategoryID'}:
-                if is_primary_key:
+                if is_primary_key or is_replication_key:
                     to_return[extension_id]['metadata'].append({
                         'breadcrumb': ('properties', field_name),
                         'metadata': {'inclusion': 'automatic'}
@@ -153,6 +164,11 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         'metadata': {'inclusion': 'available'}
                     })
 
+        for catalog in to_return.values():
+            for mdata in catalog.get('metadata'):
+                if not mdata.get('breadcrumb'):
+                    if not mdata.get('metadata').get('valid-replication-keys'):
+                        del mdata.get('metadata')['valid-replication-keys']
         return to_return
 
     def generate_catalog(self):
