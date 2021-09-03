@@ -10,6 +10,7 @@ from tap_exacttarget.pagination import get_date_page, before_now, \
 from tap_exacttarget.state import incorporate, save_state, \
     get_last_record_value_for_table
 from tap_exacttarget.util import sudsobj_to_dict
+from tap_exacttarget.fuel_overrides import TapExacttarget__ET_DataExtension_Row
 
 LOGGER = singer.get_logger()  # noqa
 
@@ -193,10 +194,12 @@ class DataExtensionDataAccessObject(DataAccessObject):
             LOGGER.info("Fetching {} from {} to {}"
                         .format(table, start, end))
 
-        cursor = FuelSDK.ET_DataExtension_Row()
+        # use custom class to apply 'batch_size'
+        cursor = TapExacttarget__ET_DataExtension_Row()
         cursor.auth_stub = self.auth_stub
         cursor.CustomerKey = customer_key
         cursor.props = keys
+        cursor.options = {"BatchSize": self.batch_size}
 
         if partial:
             cursor.search_filter = get_date_page(replication_key,

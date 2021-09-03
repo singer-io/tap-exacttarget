@@ -121,7 +121,6 @@ def request(name, selector, auth_stub, search_filter=None, props=None, batch_siz
             .format(name, search_filter))
 
     else:
-        cursor.search_filter = {}
 
         LOGGER.info(
             "Making RETRIEVE call to '{}' endpoint with no filters."
