@@ -48,7 +48,7 @@ class ExactTargetBase(unittest.TestCase):
 
     def get_properties(self, original: bool = True):
         return_value = {
-            'start_date': '2014-01-01T00:00:00Z',
+            'start_date': '2019-01-01T00:00:00Z',
             'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID'),
             'tenant_subdomain': os.getenv('TAP_EXACTTARGET_TENANT_SUBDOMAIN')
         }
@@ -81,6 +81,11 @@ class ExactTargetBase(unittest.TestCase):
             "data_extension.my_test":{
                 self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
                 self.REPLICATION_METHOD: self.FULL_TABLE,
+            },
+            "data_extension.test 1":{
+                self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"JoinDate"},
             },
             "email":{
                 self.PRIMARY_KEYS: {"ID"},

@@ -1,4 +1,5 @@
 from base import ExactTargetBase
+from dateutil.parser import parse
 import tap_tester.connections as connections
 import tap_tester.menagerie as menagerie
 import tap_tester.runner as runner
@@ -13,6 +14,7 @@ class ExactTargetStartDate(ExactTargetBase):
         self.run_test('2019-01-14T00:00:00Z', '2019-01-14T11:55:00Z', {'email'})
         self.run_test('2021-08-10T00:00:00Z', '2021-08-11T00:00:00Z', {'content_area'})
         self.run_test('2021-08-10T00:00:00Z', '2021-08-15T00:00:00Z', {'send'})
+        self.run_test('2021-07-25T00:00:00Z', '2021-08-25T00:00:00Z', {'data_extension.test 1'})
 
     def run_test(self, start_dt_1, start_dt_2, streams):
         start_date_1 = start_dt_1
@@ -96,11 +98,13 @@ class ExactTargetStartDate(ExactTargetBase):
 
                     # Verify bookmark key values are greater than or equal to start date of sync 1
                     for start_date_key_value in start_date_key_sync_1:
-                        self.assertGreaterEqual(self.dt_to_ts(start_date_key_value), start_date_1_epoch)
+                        start_date_key_value_parsed = parse(start_date_key_value).strftime("%Y-%m-%dT%H:%M:%SZ")
+                        self.assertGreaterEqual(self.dt_to_ts(start_date_key_value_parsed), start_date_1_epoch)
 
                     # Verify bookmark key values are greater than or equal to start date of sync 2
                     for start_date_key_value in start_date_key_sync_2:
-                        self.assertGreaterEqual(self.dt_to_ts(start_date_key_value), start_date_2_epoch)
+                        start_date_key_value_parsed = parse(start_date_key_value).strftime("%Y-%m-%dT%H:%M:%SZ")
+                        self.assertGreaterEqual(self.dt_to_ts(start_date_key_value_parsed), start_date_2_epoch)
 
                     # Verify the number of records replicated in sync 1 is greater than the number
                     # of records replicated in sync 2 for stream
