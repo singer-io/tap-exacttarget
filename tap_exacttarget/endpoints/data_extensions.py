@@ -218,7 +218,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
             singer.write_records(table, [row])
 
-        # if partial:
+        if partial:
         #     LOGGER.info("***** inside replicate partial {}".format(start))
         #     self.state = incorporate(self.state,
         #                              table,
