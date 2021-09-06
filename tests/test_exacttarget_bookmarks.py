@@ -21,7 +21,8 @@ class ExactTargetBookmarks(ExactTargetBase):
         conn_id = connections.ensure_connection(self)
         runner.run_check_mode(self, conn_id)
 
-        expected_streams = self.streams_to_select()
+        # expected_streams = self.streams_to_select()
+        expected_streams = {"data_extension.test 1"}
 
         found_catalogs_1 = menagerie.get_catalogs(conn_id)
         self.select_found_catalogs(conn_id, found_catalogs_1, only_streams=expected_streams)
