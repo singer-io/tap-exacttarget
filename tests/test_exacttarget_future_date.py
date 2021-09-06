@@ -9,7 +9,7 @@ class ExactTargetFutureDate(ExactTargetBase):
     def name(self):
         return "tap_tester_exacttarget_future_date"
 
-    def test_run(self):
+    def test_future_date_in_state(self):
         conn_id = connections.ensure_connection(self)
 
         expected_streams = self.streams_to_select()
@@ -38,6 +38,25 @@ class ExactTargetFutureDate(ExactTargetBase):
         # get the state after running sync mode
         latest_state = menagerie.get_state(conn_id)
 
-        # verify state passed before sync and
-        # state got after sync are same
+        # verify that the state passed before sync
+        # and the state we got after sync are same
         self.assertEquals(latest_state, state)
+
+    def test_future_date_as_start_date(self):
+        self.START_DATE = datetime.datetime.strftime(datetime.datetime.today() + datetime.timedelta(days=1), "%Y-%m-%dT00:00:00Z")
+
+        conn_id = connections.ensure_connection(self, original_properties=False)
+
+        expected_streams = self.streams_to_select()
+        runner.run_check_mode(self, conn_id)
+
+        found_catalogs = menagerie.get_catalogs(conn_id)
+        self.select_found_catalogs(conn_id, found_catalogs, only_streams=expected_streams)
+
+        # run sync mode
+        sync_record_count = self.run_and_verify_sync(conn_id)
+
+        for stream in expected_streams:
+            if self.is_incremental(stream):
+                # verify that we got no record for incremental streams
+                self.assertIsNone(sync_record_count.get(stream))
