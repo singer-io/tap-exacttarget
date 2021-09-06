@@ -218,14 +218,14 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
             singer.write_records(table, [row])
 
-        if partial:
-            LOGGER.info("***** inside replicate partial {}".format(start))
-            self.state = incorporate(self.state,
-                                     table,
-                                     replication_key,
-                                     start)
+        # if partial:
+        #     LOGGER.info("***** inside replicate partial {}".format(start))
+        #     self.state = incorporate(self.state,
+        #                              table,
+        #                              replication_key,
+        #                              start)
 
-            save_state(self.state)
+        #     save_state(self.state)
 
     def sync_data(self):
         tap_stream_id = self.catalog.get('tap_stream_id')
@@ -287,13 +287,13 @@ class DataExtensionDataAccessObject(DataAccessObject):
             if replication_key is None:
                 return
 
-            LOGGER.info("***** inside sync data {}".format(start))
-            self.state = incorporate(self.state,
-                                     table,
-                                     replication_key,
-                                     start)
+            # LOGGER.info("***** inside sync data {}".format(start))
+            # self.state = incorporate(self.state,
+            #                          table,
+            #                          replication_key,
+            #                          start)
 
-            save_state(self.state)
+            # save_state(self.state)
 
             start = end
             end = increment_date(start, unit)
