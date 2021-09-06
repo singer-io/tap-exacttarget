@@ -95,7 +95,6 @@ class ListSendDataAccessObject(DataAccessObject):
     TABLE = 'list_send'
     KEY_PROPERTIES = ['ListID', 'SendID']
 
-    @exacttarget_error_handling
     def parse_object(self, obj):
         to_return = obj.copy()
 
@@ -103,6 +102,7 @@ class ListSendDataAccessObject(DataAccessObject):
 
         return super(ListSendDataAccessObject, self).parse_object(to_return)
 
+    @exacttarget_error_handling
     def sync_data(self):
         table = self.__class__.TABLE
         selector = FuelSDK.ET_ListSend

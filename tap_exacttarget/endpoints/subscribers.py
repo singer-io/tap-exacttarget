@@ -121,10 +121,10 @@ class SubscriberDataAccessObject(DataAccessObject):
 
         return super(SubscriberDataAccessObject, self).parse_object(obj)
 
-    @exacttarget_error_handling
     def sync_data(self):
         pass
 
+    @exacttarget_error_handling
     def pull_subscribers_batch(self, subscriber_keys):
         if not subscriber_keys:
             return
