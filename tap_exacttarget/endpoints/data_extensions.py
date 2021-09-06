@@ -225,7 +225,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
         #                              replication_key,
         #                              start)
 
-        #     save_state(self.state)
+            save_state(self.state)
 
     def sync_data(self):
         tap_stream_id = self.catalog.get('tap_stream_id')
