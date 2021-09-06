@@ -60,8 +60,6 @@ class ExactTargetBase(unittest.TestCase):
         return return_value
 
     def expected_metadata(self):
-        # Note: Custom streams failed on our account with an error on
-        # `_CustomObjectKey` not being valid
         return {
             "campaign": {
                 self.PRIMARY_KEYS: {"id"},
@@ -83,6 +81,11 @@ class ExactTargetBase(unittest.TestCase):
             "data_extension.my_test":{
                 self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
                 self.REPLICATION_METHOD: self.FULL_TABLE,
+            },
+            "data_extension.test 1":{
+                self.PRIMARY_KEYS: {"_CustomObjectKey", "ID"},
+                self.REPLICATION_METHOD: self.INCREMENTAL,
+                self.REPLICATION_KEYS: {"JoinDate"},
             },
             "email":{
                 self.PRIMARY_KEYS: {"ID"},

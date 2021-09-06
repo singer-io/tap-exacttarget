@@ -1,4 +1,5 @@
 import datetime
+from dateutil.parser import parse
 from base import ExactTargetBase
 import tap_tester.connections as connections
 import tap_tester.menagerie as menagerie
@@ -40,7 +41,7 @@ class ExactTargetBookmarks(ExactTargetBase):
             if self.is_incremental(stream):
                 new_state['bookmarks'][stream] = dict()
                 new_state['bookmarks'][stream]['field'] = next(iter(replication_keys[stream]))
-                new_state['bookmarks'][stream]['last_record'] = '2019-01-14T00:00:00Z'
+                new_state['bookmarks'][stream]['last_record'] = '2021-08-24T00:00:00Z' if stream == 'data_extension.test 1' else '2019-01-14T00:00:00Z'
 
         # Set state for next sync
         menagerie.set_state(conn_id, new_state)
@@ -97,8 +98,9 @@ class ExactTargetBookmarks(ExactTargetBase):
 
                         # Verify the second sync bookmark value is the max replication key value for a given stream
                         replication_key_value = record.get(replication_key)
+                        replication_key_value_parsed = parse(replication_key_value).strftime("%Y-%m-%dT%H:%M:%SZ")
                         self.assertLessEqual(
-                            replication_key_value, second_bookmark_value_utc,
+                            replication_key_value_parsed, second_bookmark_value_utc,
                             msg="Second sync bookmark was set incorrectly, a record with a greater replication-key value was synced."
                         )
 
@@ -106,8 +108,9 @@ class ExactTargetBookmarks(ExactTargetBase):
 
                         # Verify the first sync bookmark value is the max replication key value for a given stream
                         replication_key_value = record.get(replication_key)
+                        replication_key_value_parsed = parse(replication_key_value).strftime("%Y-%m-%dT%H:%M:%SZ")
                         self.assertLessEqual(
-                            replication_key_value, first_bookmark_value_utc,
+                            replication_key_value_parsed, first_bookmark_value_utc,
                             msg="First sync bookmark was set incorrectly, a record with a greater replication-key value was synced."
                         )
 
