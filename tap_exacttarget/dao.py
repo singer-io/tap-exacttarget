@@ -1,5 +1,5 @@
 import singer
-from singer import metadata
+from singer import metadata, Transformer
 
 from funcy import project
 
@@ -58,6 +58,12 @@ class DataAccessObject():
 
     def parse_object(self, obj):
         return project(obj, self.get_catalog_keys())
+
+    # a function to write records with applying transformation
+    def write_records(self, record, catalog, table):
+        with Transformer() as transformer:
+            rec = transformer.transform(record, catalog.get('schema'), metadata.to_map(catalog.get('metadata')))
+            singer.write_record(table, rec)
 
     def write_schema(self):
         singer.write_schema(

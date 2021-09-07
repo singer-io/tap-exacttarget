@@ -1,7 +1,6 @@
 import FuelSDK
 import copy
 import singer
-from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -94,8 +93,6 @@ class FolderDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      folder.get('ModifiedDate'))
 
-            with Transformer() as transformer:
-                rec = transformer.transform(folder, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                singer.write_record(table, rec)
+            self.write_records(folder, catalog_copy, table)
 
         save_state(self.state)

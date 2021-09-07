@@ -1,7 +1,6 @@
 import FuelSDK
 import copy
 import singer
-from singer import Transformer, metadata
 
 from funcy import set_in, update_in, merge
 
@@ -295,9 +294,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
                                      replication_key,
                                      row.get(replication_key))
 
-            with Transformer() as transformer:
-                rec = transformer.transform(row, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                singer.write_record(table, rec)
+            self.write_records(row, catalog_copy, table)
 
         if partial:
             self.state = incorporate(self.state,

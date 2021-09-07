@@ -1,7 +1,6 @@
 import FuelSDK
 import copy
 import singer
-from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -137,9 +136,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                             'ModifiedDate',
                             list_subscriber.get('ModifiedDate'))
 
-                    with Transformer() as transformer:
-                        rec = transformer.transform(list_subscriber, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                        singer.write_record(table, rec)
+                    self.write_records(list_subscriber, catalog_copy, table)
 
                 if self.replicate_subscriber:
                     subscriber_keys = list(map(

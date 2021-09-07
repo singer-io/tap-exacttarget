@@ -1,7 +1,6 @@
 import FuelSDK
 import copy
 import singer
-from singer import Transformer, metadata
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import DataAccessObject
@@ -51,6 +50,4 @@ class CampaignDataAccessObject(DataAccessObject):
         for campaign in cursor:
             campaign = self.filter_keys_and_parse(campaign)
 
-            with Transformer() as transformer:
-                rec = transformer.transform(campaign, catalog_copy.get('schema'), metadata.to_map(catalog_copy.get('metadata')))
-                singer.write_record(self.__class__.TABLE, rec)
+            self.write_records(campaign, catalog_copy, self.__class__.TABLE)
