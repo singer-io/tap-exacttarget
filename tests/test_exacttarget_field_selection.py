@@ -5,6 +5,54 @@ import tap_tester.runner as runner
 
 class ExactTargetFieldSelection(ExactTargetBase):
 
+    fields_to_remove = {
+        'list': [
+            'SendClassification', # not retrievable
+            'PartnerProperties'], # not retrievable
+        'subscriber': [
+            'CustomerKey', # not retrievable
+            'PartnerType', # not retrievable
+            'UnsubscribedDate',
+            'PrimarySMSAddress', # not retrievable
+            'PrimaryEmailAddress', # not retrievable
+            'PartnerProperties', # not retrievable
+            'SubscriberTypeDefinition', # not retrievable
+            'Addresses', # not retrievable
+            'ListIDs',
+            'Locale', # not retrievable
+            'PrimarySMSPublicationStatus', # not retrievable
+            'ModifiedDate'], # not retrievable
+        'list_send': [
+            'CreatedDate', # not retrievable
+            'CustomerKey', # not retrievable
+            'ID',
+            'PartnerProperties', # not retrievable
+            'ModifiedDate'], # not retrievable
+        'folder': [
+            'Type',
+            'PartnerProperties'],
+        'email': [
+            '__AdditionalEmailAttribute1', # not retrievable
+            '__AdditionalEmailAttribute3', # not retrievable
+            'SyncTextWithHTML', # not retrievable
+            'PartnerProperties', # not retrievable
+            '__AdditionalEmailAttribute5', # not retrievable
+            'ClonedFromID',
+            '__AdditionalEmailAttribute4', # not retrievable
+            '__AdditionalEmailAttribute2'], # not retrievable
+        'content_area': [
+            # most of them are included in the 'Content' data
+            'BackgroundColor', # not retrievable
+            'Cellpadding', # not retrievable
+            'HasFontSize', # not retrievable
+            'BorderColor', # not retrievable
+            'BorderWidth', # not retrievable
+            'Width', # not retrievable
+            'IsLocked', # not retrievable
+            'Cellspacing', # not retrievable
+            'FontFamily'] # not retrievable
+    }
+
     # fields not to select
     non_selected_fields = {
             "campaign": ["createdDate", "campaignCode", "description"],
@@ -77,57 +125,8 @@ class ExactTargetFieldSelection(ExactTargetBase):
                 actual_keys = [set(message['data'].keys()) for message in messages['messages']
                                    if message['action'] == 'upsert'][0]
 
-                if stream == 'list':
-                    expected_keys = expected_keys - {
-                        'SendClassification',
-                        'PartnerProperties'}
-                elif stream == 'subscriber':
-                    expected_keys = expected_keys - {
-                        'CustomerKey',
-                        'PartnerType',
-                        'UnsubscribedDate',
-                        'PrimarySMSAddress',
-                        'PrimaryEmailAddress',
-                        'PartnerProperties',
-                        'SubscriberTypeDefinition',
-                        'Addresses',
-                        'ListIDs',
-                        'Locale',
-                        'PrimarySMSPublicationStatus',
-                        'ModifiedDate'}
-                elif stream == 'list_send':
-                    expected_keys = expected_keys - {
-                        'CreatedDate',
-                        'CustomerKey',
-                        'ID',
-                        'PartnerProperties',
-                        'ModifiedDate'}
-                elif stream == 'folder':
-                    expected_keys = expected_keys - {
-                        'Type',
-                        'PartnerProperties'}
-                elif stream == 'email':
-                    expected_keys = expected_keys - {
-                        '__AdditionalEmailAttribute1',
-                        '__AdditionalEmailAttribute3',
-                        'SyncTextWithHTML',
-                        'PartnerProperties',
-                        '__AdditionalEmailAttribute5',
-                        'ClonedFromID',
-                        '__AdditionalEmailAttribute4',
-                        '__AdditionalEmailAttribute2'}
-                elif stream == 'content_area':
-                    # most of them are included in the 'Content' data
-                    expected_keys = expected_keys - {
-                        'BackgroundColor',
-                        'Cellpadding',
-                        'HasFontSize',
-                        'BorderColor',
-                        'BorderWidth',
-                        'Width',
-                        'IsLocked',
-                        'Cellspacing',
-                        'FontFamily'}
+                fields = self.fields_to_remove.get(stream) or []
+                expected_keys = expected_keys - set(fields)
 
                 # verify expected and actual fields
                 self.assertEqual(expected_keys, actual_keys,
