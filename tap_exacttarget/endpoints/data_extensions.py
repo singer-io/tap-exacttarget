@@ -85,10 +85,10 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         'metadata': {
                             'inclusion':'available',
                             'forced-replication-method': 'FULL_TABLE',
-                            "table-key-properties": [
-                                "_CustomObjectKey"
+                            'table-key-properties': [
+                                '_CustomObjectKey'
                             ],
-                            "valid-replication-keys": []
+                            'valid-replication-keys': []
                         }
                     },
                     {
@@ -110,6 +110,14 @@ class DataExtensionDataAccessObject(DataAccessObject):
             FuelSDK.ET_DataExtension_Column,
             self.auth_stub)
 
+        # iterate through all the fields and determine if it is primary key
+        # or replication key and update the catalog file accordingly:
+        #   is_primary_key:
+        #       update catalog file by appending that field in 'table-key-properties'
+        #   is_replication_key:
+        #       update value of 'forced-replication-method' as INCREMENTAL
+        #       update catalog file by appending that field in 'valid-replication-keys'
+        #   add 'AUTOMATIC' replication method for both primary and replication keys
         for field in result:
             is_replication_key = False
             is_primary_key = False
@@ -164,7 +172,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         'metadata': {'inclusion': 'available'}
                     })
 
-        # to_return =
+        # the structure of 'to_return' is like:
         # {
         #     'de1': {
         #         'tap_stream_id': 'data_extension.de1',
