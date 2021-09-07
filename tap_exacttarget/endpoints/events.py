@@ -107,7 +107,7 @@ class EventDataAccessObject(DataAccessObject):
                                             event.get('EventDate')))
                         continue
 
-                    self.write_records(event, catalog_copy, table)
+                    self.write_records_with_transform(event, catalog_copy, table)
 
                 self.state = incorporate(self.state,
                                          event_name,

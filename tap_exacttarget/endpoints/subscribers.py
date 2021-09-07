@@ -159,4 +159,4 @@ class SubscriberDataAccessObject(DataAccessObject):
         for subscriber in stream:
             subscriber = self.filter_keys_and_parse(subscriber)
 
-            self.write_records(subscriber, catalog_copy, table)
+            self.write_records_with_transform(subscriber, catalog_copy, table)

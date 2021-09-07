@@ -137,6 +137,6 @@ class ContentAreaDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      content_area.get('ModifiedDate'))
 
-            self.write_records(content_area, catalog_copy, table)
+            self.write_records_with_transform(content_area, catalog_copy, table)
 
         save_state(self.state)

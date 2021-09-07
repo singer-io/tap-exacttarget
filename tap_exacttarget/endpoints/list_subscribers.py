@@ -136,7 +136,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                             'ModifiedDate',
                             list_subscriber.get('ModifiedDate'))
 
-                    self.write_records(list_subscriber, catalog_copy, table)
+                    self.write_records_with_transform(list_subscriber, catalog_copy, table)
 
                 if self.replicate_subscriber:
                     subscriber_keys = list(map(

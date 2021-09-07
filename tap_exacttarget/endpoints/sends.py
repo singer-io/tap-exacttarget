@@ -121,6 +121,6 @@ class SendDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      send.get('ModifiedDate'))
 
-            self.write_records(send, catalog_copy, table)
+            self.write_records_with_transform(send, catalog_copy, table)
 
         save_state(self.state)

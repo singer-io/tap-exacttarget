@@ -152,6 +152,6 @@ class EmailDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      email.get('ModifiedDate'))
 
-            self.write_records(email, catalog_copy, table)
+            self.write_records_with_transform(email, catalog_copy, table)
 
         save_state(self.state)

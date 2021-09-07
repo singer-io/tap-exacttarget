@@ -117,4 +117,4 @@ class ListSendDataAccessObject(DataAccessObject):
         for list_send in stream:
             list_send = self.filter_keys_and_parse(list_send)
 
-            self.write_records(list_send, catalog_copy, table)
+            self.write_records_with_transform(list_send, catalog_copy, table)

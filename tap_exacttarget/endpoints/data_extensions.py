@@ -294,7 +294,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
                                      replication_key,
                                      row.get(replication_key))
 
-            self.write_records(row, catalog_copy, table)
+            self.write_records_with_transform(row, catalog_copy, table)
 
         if partial:
             self.state = incorporate(self.state,

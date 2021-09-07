@@ -93,6 +93,6 @@ class FolderDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      folder.get('ModifiedDate'))
 
-            self.write_records(folder, catalog_copy, table)
+            self.write_records_with_transform(folder, catalog_copy, table)
 
         save_state(self.state)

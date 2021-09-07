@@ -82,6 +82,6 @@ class ListDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      _list.get('ModifiedDate'))
 
-            self.write_records(_list, catalog_copy, table)
+            self.write_records_with_transform(_list, catalog_copy, table)
 
         save_state(self.state)
