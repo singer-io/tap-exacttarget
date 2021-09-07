@@ -164,6 +164,32 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         'metadata': {'inclusion': 'available'}
                     })
 
+        # to_return =
+        # {
+        #     'de1': {
+        #         'tap_stream_id': 'data_extension.de1',
+        #         'stream': 'data_extension.de1',
+        #         'key_properties': ['_CustomObjectKey'],
+        #         'schema': {
+        #             'type': 'object',
+        #             'properties': {...}
+        #         },
+        #         'metadata': [...]
+        #     },
+        #    'de2': {
+        #         'tap_stream_id': 'data_extension.de2',
+        #         'stream': 'data_extension.de2',
+        #         'key_properties': ['_CustomObjectKey'],
+        #         'schema': {
+        #             'type': 'object',
+        #             'properties': {...}
+        #         },
+        #         'metadata': [...]
+        #     }
+        # }
+
+        # loop through all the data extension catalog in 'to_return'
+        # and remove empty 'valid-replication-keys' present in metadata
         for catalog in to_return.values():
             for mdata in catalog.get('metadata'):
                 if not mdata.get('breadcrumb'):
