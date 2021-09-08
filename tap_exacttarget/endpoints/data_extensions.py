@@ -210,7 +210,6 @@ class DataExtensionDataAccessObject(DataAccessObject):
             row = self.filter_keys_and_parse(row)
             row['CategoryID'] = parent_category_id
 
-            LOGGER.info("***** inside replicate {}".format(row.get(replication_key)))
             self.state = incorporate(self.state,
                                      table,
                                      replication_key,
@@ -219,11 +218,10 @@ class DataExtensionDataAccessObject(DataAccessObject):
             singer.write_records(table, [row])
 
         if partial:
-        #     LOGGER.info("***** inside replicate partial {}".format(start))
-        #     self.state = incorporate(self.state,
-        #                              table,
-        #                              replication_key,
-        #                              start)
+            self.state = incorporate(self.state,
+                                     table,
+                                     replication_key,
+                                     start)
 
             save_state(self.state)
 
@@ -287,13 +285,12 @@ class DataExtensionDataAccessObject(DataAccessObject):
             if replication_key is None:
                 return
 
-            # LOGGER.info("***** inside sync data {}".format(start))
-            # self.state = incorporate(self.state,
-            #                          table,
-            #                          replication_key,
-            #                          start)
+            self.state = incorporate(self.state,
+                                     table,
+                                     replication_key,
+                                     start)
 
-            # save_state(self.state)
+            save_state(self.state)
 
             start = end
             end = increment_date(start, unit)

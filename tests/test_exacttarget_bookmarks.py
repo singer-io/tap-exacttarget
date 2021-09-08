@@ -18,11 +18,16 @@ class ExactTargetBookmarks(ExactTargetBase):
         return datetime.datetime.strftime(date_object_utc, "%Y-%m-%dT%H:%M:%SZ")
 
     def test_run(self):
-        conn_id = connections.ensure_connection(self)
+        self.run_test(self.streams_to_select() - {'data_extension.test 1'}, '2019-01-01T00:00:00Z')
+        self.run_test({'data_extension.test 1'}, '2021-08-01T00:00:00Z')
+
+    def run_test(self, streams, start_date):
+        self.START_DATE = start_date
+
+        conn_id = connections.ensure_connection(self, original_properties=False)
         runner.run_check_mode(self, conn_id)
 
-        # expected_streams = self.streams_to_select()
-        expected_streams = {"data_extension.test 1", "data_extension.my_test", "data_extension.This is a test", "data_extension.test emails"}
+        expected_streams = streams
 
         found_catalogs_1 = menagerie.get_catalogs(conn_id)
         self.select_found_catalogs(conn_id, found_catalogs_1, only_streams=expected_streams)
@@ -42,7 +47,7 @@ class ExactTargetBookmarks(ExactTargetBase):
             if self.is_incremental(stream):
                 new_state['bookmarks'][stream] = dict()
                 new_state['bookmarks'][stream]['field'] = next(iter(replication_keys[stream]))
-                new_state['bookmarks'][stream]['last_record'] = '2021-08-24T00:00:00Z' if stream == 'data_extension.test 1' else '2019-01-14T00:00:00Z'
+                new_state['bookmarks'][stream]['last_record'] = '2021-08-23T00:00:00Z' if stream == 'data_extension.test 1' else '2019-01-14T00:00:00Z'
 
         # Set state for next sync
         menagerie.set_state(conn_id, new_state)

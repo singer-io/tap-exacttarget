@@ -48,8 +48,7 @@ class ExactTargetBase(unittest.TestCase):
 
     def get_properties(self, original: bool = True):
         return_value = {
-            # 'start_date': '2019-01-01T00:00:00Z',
-            'start_date': '2021-08-01T00:00:00Z',
+            'start_date': '2019-01-01T00:00:00Z',
             'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID'),
             'tenant_subdomain': os.getenv('TAP_EXACTTARGET_TENANT_SUBDOMAIN')
         }
