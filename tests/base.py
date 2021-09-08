@@ -129,6 +129,11 @@ class ExactTargetBase(unittest.TestCase):
         }
 
     def streams_to_select(self):
+        # events: there are 5 events and the API call window is of 10 minutes
+        #   so there will be a lot of API calls for every test
+        # list_subscriber: the API window is of 1 day, as there are 5-6 test cases
+        #   it will consume lots of time
+        # subscriber: it is the child stream of 'list_subscriber'
         return set(self.expected_metadata().keys()) - {'event', 'list_subscriber', 'subscriber'}
 
     def expected_replication_keys(self):
