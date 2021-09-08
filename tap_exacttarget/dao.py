@@ -60,7 +60,8 @@ class DataAccessObject():
         return project(obj, self.get_catalog_keys())
 
     # a function to write records with applying transformation
-    def write_records_with_transform(self, record, catalog, table): # pylint: disable=no-self-use
+    @staticmethod
+    def write_records_with_transform(record, catalog, table):
         with Transformer() as transformer:
             rec = transformer.transform(record, catalog.get('schema'), metadata.to_map(catalog.get('metadata')))
             singer.write_record(table, rec)
