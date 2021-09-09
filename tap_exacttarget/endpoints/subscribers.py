@@ -119,7 +119,7 @@ class SubscriberDataAccessObject(DataAccessObject):
         if to_return.get('PartnerProperties') is None:
             to_return['PartnerProperties'] = []
 
-        return super(SubscriberDataAccessObject, self).parse_object(obj)
+        return super().parse_object(obj)
 
     def sync_data(self):
         pass
