@@ -61,4 +61,4 @@ class ExactTargetPagination(ExactTargetBase):
                                            for primary_key in expected_primary_keys])
                                     for message in sync_messages]
                 self.assertCountEqual(records_pks_set, records_pks_list,
-                                      msg=f"We have duplicate records for {stream}")
+                                      msg="We have duplicate records for {}".format(stream))
