@@ -38,6 +38,8 @@ class ExactTargetPagination(ExactTargetBase):
                                        for message in synced_records.get(stream).get('messages')
                                        if message.get('action') == 'upsert']
 
+                sync_messages = synced_records.get(stream, {'messages': []}).get('messages')
+
                 # verify records are more than page size so multiple page is working
                 self.assertGreater(record_count_sync, page_size)
 
@@ -50,3 +52,13 @@ class ExactTargetPagination(ExactTargetBase):
 
                     # Verify by private keys that data is unique for page
                     self.assertTrue(primary_keys_page_1.isdisjoint(primary_keys_page_2))
+
+                # Verify we did not duplicate any records across pages
+                records_pks_set = {tuple([message.get('data').get(primary_key)
+                                          for primary_key in expected_primary_keys])
+                                   for message in sync_messages}
+                records_pks_list = [tuple([message.get('data').get(primary_key)
+                                           for primary_key in expected_primary_keys])
+                                    for message in sync_messages]
+                self.assertCountEqual(records_pks_set, records_pks_list,
+                                      msg=f"We have duplicate records for {stream}")
