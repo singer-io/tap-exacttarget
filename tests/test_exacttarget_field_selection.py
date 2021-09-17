@@ -115,6 +115,8 @@ class ExactTargetFieldSelection(ExactTargetBase):
         for stream in expected_streams:
             with self.subTest(stream=stream):
 
+                expected_primary_keys = self.expected_primary_keys()[stream]
+
                 # get expected keys
                 expected_keys = expected_stream_fields[stream]
 
@@ -131,3 +133,13 @@ class ExactTargetFieldSelection(ExactTargetBase):
                 # verify expected and actual fields
                 self.assertEqual(expected_keys, actual_keys,
                                  msg='Selected keys in catalog is not as expected')
+
+                # Verify we did not duplicate any records across pages
+                records_pks_set = {tuple([message.get('data').get(primary_key)
+                                          for primary_key in expected_primary_keys])
+                                   for message in messages.get('messages')}
+                records_pks_list = [tuple([message.get('data').get(primary_key)
+                                           for primary_key in expected_primary_keys])
+                                    for message in messages.get('messages')]
+                self.assertCountEqual(records_pks_set, records_pks_list,
+                                      msg="We have duplicate records for {}".format(stream))
