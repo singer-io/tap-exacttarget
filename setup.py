@@ -18,11 +18,13 @@ setup(
         'Salesforce-FuelSDK==1.3.0'
     ],
     extras_require={
-        'dev': [
-            'ipdb==0.11',
+        'test': [
             'pylint==2.10.2',
             'astroid==2.7.3',
             'nose'
+        ],
+        'dev': [
+            'ipdb==0.11'
         ]
     },
     entry_points='''
