@@ -3,6 +3,7 @@ import tap_tester.connections as connections
 import tap_tester.menagerie as menagerie
 import tap_tester.runner as runner
 import os
+import re
 
 class ExactTargetDiscover(ExactTargetBase):
 
@@ -36,6 +37,17 @@ class ExactTargetDiscover(ExactTargetBase):
 
         streams_to_test = self.streams_to_select()
         found_catalogs = menagerie.get_catalogs(conn_id)
+
+        # verify the stream names discovered were what we expect
+        # streams should only have lowercase alphas and underscores
+
+        # skipped 'data_extension' streams, because they are the custom
+        # tables we create in marketing cloud UI and, the stream name
+        # will be the table name we set in the UI, as seen in our
+        # instance the table name is 'This is a test'
+        found_catalog_names = {c['tap_stream_id'] for c in found_catalogs if 'data_extension.' not in c['tap_stream_id']}
+        self.assertTrue(all([re.fullmatch(r"[a-z_]+",  name) for name in found_catalog_names]),
+                        msg="One or more streams don't follow standard naming")
 
         for stream in streams_to_test:
             with self.subTest(stream=stream):
