@@ -70,11 +70,9 @@ class ExactTargetBookmarks(ExactTargetBase):
                 # collect information for assertions from syncs 1 & 2 base on expected values
                 first_sync_count = first_sync_record_count.get(stream, 0)
                 second_sync_count = second_sync_record_count.get(stream, 0)
-                first_sync_messages = [record.get('data') for record in
-                                       first_sync_records.get(stream).get('messages')
+                first_sync_messages = [record.get('data') for record in first_sync_records.get(stream).get('messages')
                                        if record.get('action') == 'upsert']
-                second_sync_messages = [record.get('data') for record in
-                                        second_sync_records.get(stream).get('messages')
+                second_sync_messages = [record.get('data') for record in second_sync_records.get(stream).get('messages')
                                         if record.get('action') == 'upsert']
                 first_bookmark_key_value = first_sync_bookmarks.get('bookmarks', {stream: None}).get(stream)
                 second_bookmark_key_value = second_sync_bookmarks.get('bookmarks', {stream: None}).get(stream)
@@ -105,21 +103,16 @@ class ExactTargetBookmarks(ExactTargetBase):
                         # Verify the second sync bookmark value is the max replication key value for a given stream
                         replication_key_value = record.get(replication_key)
                         replication_key_value_parsed = parse(replication_key_value).strftime("%Y-%m-%dT%H:%M:%SZ")
-                        self.assertLessEqual(
-                            replication_key_value_parsed, second_bookmark_value_utc,
-                            msg="Second sync bookmark was set incorrectly, a record with a greater replication-key value was synced."
-                        )
+                        self.assertLessEqual(replication_key_value_parsed, second_bookmark_value_utc,
+                                             msg="Second sync bookmark was set incorrectly, a record with a greater replication-key value was synced.")
 
                     for record in first_sync_messages:
 
                         # Verify the first sync bookmark value is the max replication key value for a given stream
                         replication_key_value = record.get(replication_key)
                         replication_key_value_parsed = parse(replication_key_value).strftime("%Y-%m-%dT%H:%M:%SZ")
-                        self.assertLessEqual(
-                            replication_key_value_parsed, first_bookmark_value_utc,
-                            msg="First sync bookmark was set incorrectly, a record with a greater replication-key value was synced."
-                        )
-
+                        self.assertLessEqual(replication_key_value_parsed, first_bookmark_value_utc,
+                                             msg="First sync bookmark was set incorrectly, a record with a greater replication-key value was synced.")
 
                     # Verify the number of records in the 2nd sync is less then or equal to the first
                     self.assertLessEqual(second_sync_count, first_sync_count)
