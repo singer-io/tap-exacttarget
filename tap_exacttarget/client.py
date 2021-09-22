@@ -61,8 +61,8 @@ def get_auth_stub(config):
         LOGGER.info('Failed to auth using V1 endpoint')
         if not config.get('tenant_subdomain'):
             LOGGER.warning('No tenant_subdomain found, will not attempt to auth with V2 endpoint')
-            message = "{}. Please check your \'client_id\', \'client_secret\' or try adding the \'tenant_subdomain\'."
-            raise Exception(message.format(str(e))) from None
+            message = f"{str(e)}. Please check your \'client_id\', \'client_secret\' or try adding the \'tenant_subdomain\'."
+            raise Exception(message) from None
 
     # Next try V2
     # Move to OAuth2: https://help.salesforce.com/articleView?id=mc_rn_january_2019_platform_ip_remove_legacy_package_create_ability.htm&type=5
@@ -78,8 +78,8 @@ def get_auth_stub(config):
             transport=transport)
     except Exception as e:
         LOGGER.info('Failed to auth using V2 endpoint')
-        message = "{}. Please check your \'client_id\', \'client_secret\' or \'tenant_subdomain\'."
-        raise Exception(message.format(str(e))) from None
+        message = f"{str(e)}. Please check your \'client_id\', \'client_secret\' or \'tenant_subdomain\'."
+        raise Exception(message) from None
 
     LOGGER.info("Success.")
     return auth_stub
