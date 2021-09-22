@@ -35,9 +35,9 @@ def tap_exacttarget__getMoreResults(cursor, batch_size=2500):
 
     return obj
 
+# extend 'get' from 'ET_DataExtension_Row' and add 'options' parameter to set 'batch_size'
 class TapExacttarget__ET_DataExtension_Row(FuelSDK.ET_DataExtension_Row):
 
-    # extend 'get' from 'ET_DataExtension_Row'
     def get(self):
         self.getName()
         '''
@@ -61,9 +61,9 @@ class TapExacttarget__ET_DataExtension_Row(FuelSDK.ET_DataExtension_Row):
 
         return obj
 
+# extend 'get' from 'ET_DataExtension_Column' and add 'options' parameter to set 'batch_size'
 class TapExacttarget__ET_DataExtension_Column(FuelSDK.ET_DataExtension_Column):
 
-    # extend 'get' from 'ET_DataExtension_Column'
     def get(self):
         '''
         if props and props.is_a? Array then
@@ -91,6 +91,7 @@ class TapExacttarget__ET_DataExtension_Column(FuelSDK.ET_DataExtension_Column):
         end
         '''
 
+        # add 'options' parameter to set 'batch_size'
         obj = FuelSDK.ET_Get(self.auth_stub, self.obj, self.props, self.search_filter, self.options)
         self.last_request_id = obj.request_id
 

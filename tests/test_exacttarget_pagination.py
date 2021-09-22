@@ -54,11 +54,9 @@ class ExactTargetPagination(ExactTargetBase):
                     self.assertTrue(primary_keys_page_1.isdisjoint(primary_keys_page_2))
 
                 # Verify we did not duplicate any records across pages
-                records_pks_set = {tuple([message.get('data').get(primary_key)
-                                          for primary_key in expected_primary_keys])
+                records_pks_set = {tuple([message.get('data').get(primary_key) for primary_key in expected_primary_keys])
                                    for message in sync_messages}
-                records_pks_list = [tuple([message.get('data').get(primary_key)
-                                           for primary_key in expected_primary_keys])
+                records_pks_list = [tuple([message.get('data').get(primary_key) for primary_key in expected_primary_keys])
                                     for message in sync_messages]
                 self.assertCountEqual(records_pks_set, records_pks_list,
                                       msg="We have duplicate records for {}".format(stream))

@@ -149,8 +149,7 @@ class SubscriberDataAccessObject(DataAccessObject):
             return
 
         stream = request(
-            'Subscriber', FuelSDK.ET_Subscriber, self.auth_stub, _filter,
-            batch_size=self.batch_size)
+            'Subscriber', FuelSDK.ET_Subscriber, self.auth_stub, _filter, batch_size=self.batch_size)
 
         for subscriber in stream:
             subscriber = self.filter_keys_and_parse(subscriber)

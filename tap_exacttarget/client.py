@@ -13,7 +13,7 @@ def _get_response_items(response, name):
     if 'count' in response.results:
         items = response.results.get('items')
 
-    LOGGER.info('Got {} results from {} endpoint.'.format(len(items), name))
+    LOGGER.info('Got %s results from %s endpoint.', len(items), name)
     return items
 
 
@@ -121,7 +121,6 @@ def request(name, selector, auth_stub, search_filter=None, props=None, batch_siz
             .format(name, search_filter))
 
     else:
-
         LOGGER.info(
             "Making RETRIEVE call to '{}' endpoint with no filters."
             .format(name))
