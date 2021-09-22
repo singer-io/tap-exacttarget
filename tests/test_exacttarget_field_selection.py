@@ -94,15 +94,13 @@ class ExactTargetFieldSelection(ExactTargetBase):
             if not stream_name in expected_streams:
                 continue
             # select catalog fields
-            self.select_found_catalogs(
-                conn_id,
-                [catalog],
-                only_streams=[stream_name],
-                deselect_all_fields=True if only_automatic_fields else False,
-                non_selected_props=[] if only_automatic_fields else self.non_selected_fields[stream_name])
+            self.select_found_catalogs(conn_id,
+                                       [catalog],
+                                       only_streams=[stream_name],
+                                       deselect_all_fields=True if only_automatic_fields else False,
+                                       non_selected_props=[] if only_automatic_fields else self.non_selected_fields[stream_name])
             # add expected fields for assertion
-            fields_from_field_level_md = [md_entry['breadcrumb'][1]
-                                          for md_entry in catalog_entry['metadata']
+            fields_from_field_level_md = [md_entry['breadcrumb'][1] for md_entry in catalog_entry['metadata']
                                           if md_entry['breadcrumb'] != []]
             if only_automatic_fields:
                 expected_stream_fields[stream_name] = self.expected_primary_keys()[stream_name] | self.expected_replication_keys()[stream_name]
@@ -135,11 +133,9 @@ class ExactTargetFieldSelection(ExactTargetBase):
                                  msg='Selected keys in catalog is not as expected')
 
                 # Verify we did not duplicate any records across pages
-                records_pks_set = {tuple([message.get('data').get(primary_key)
-                                          for primary_key in expected_primary_keys])
+                records_pks_set = {tuple([message.get('data').get(primary_key) for primary_key in expected_primary_keys])
                                    for message in messages.get('messages')}
-                records_pks_list = [tuple([message.get('data').get(primary_key)
-                                           for primary_key in expected_primary_keys])
+                records_pks_list = [tuple([message.get('data').get(primary_key) for primary_key in expected_primary_keys])
                                     for message in messages.get('messages')]
                 self.assertCountEqual(records_pks_set, records_pks_list,
                                       msg="We have duplicate records for {}".format(stream))

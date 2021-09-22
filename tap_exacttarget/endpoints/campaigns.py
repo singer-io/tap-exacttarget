@@ -50,4 +50,4 @@ class CampaignDataAccessObject(DataAccessObject):
         for campaign in cursor:
             campaign = self.filter_keys_and_parse(campaign)
 
-            self.write_records_with_transform(campaign, catalog_copy, self.__class__.TABLE)
+            self.write_records_with_transform(campaign, catalog_copy, self.TABLE)
