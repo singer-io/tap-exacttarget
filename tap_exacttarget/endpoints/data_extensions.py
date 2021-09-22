@@ -86,18 +86,18 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         'metadata': {
                             'inclusion':'available',
                             'forced-replication-method': 'FULL_TABLE',
-                            'table-key-properties': [
-                                '_CustomObjectKey'
-                            ],
+                            'table-key-properties': ['_CustomObjectKey'],
                             'valid-replication-keys': []
                         }
                     },
                     {
                         'breadcrumb': ('properties', '_CustomObjectKey'),
-                        'metadata': {'inclusion':'automatic'}},
+                        'metadata': {'inclusion':'automatic'}
+                    },
                     {
                         'breadcrumb': ('properties', 'CategoryID'),
-                        'metadata': {'inclusion':'available'}}
+                        'metadata': {'inclusion':'available'}
+                    }
                 ]
             }
 

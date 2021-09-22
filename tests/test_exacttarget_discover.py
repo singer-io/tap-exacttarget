@@ -25,7 +25,7 @@ class ExactTargetDiscover(ExactTargetBase):
         Testing that discovery creates the appropriate catalog with valid metadata.
             • Verify number of actual streams discovered match expected
             • Verify the stream names discovered were what we expect
-            streams should only have lowercase alphas and underscores
+                streams should only have lowercase alphas and underscores
             • verify there is only 1 top level breadcrumb
             • verify primary key(s)
             • verify replication key(s)
@@ -91,14 +91,10 @@ class ExactTargetDiscover(ExactTargetBase):
                                 "\nstream_properties | {}".format(stream_properties))
 
                 # verify primary key(s) match expectations
-                self.assertSetEqual(
-                    expected_primary_keys, actual_primary_keys,
-                )
+                self.assertSetEqual(expected_primary_keys, actual_primary_keys)
 
                 # verify replication key(s) match expectations
-                self.assertSetEqual(
-                    expected_replication_keys, actual_replication_keys,
-                )
+                self.assertSetEqual(expected_replication_keys, actual_replication_keys)
 
                 # verify that primary keys
                 # are given the inclusion of automatic in metadata.
