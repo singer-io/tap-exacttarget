@@ -20,7 +20,7 @@ class TestGetResponseItems(unittest.TestCase):
         }]
         items = _client._get_response_items(Mockresponse(json), "TestDataAccessObject")
         self.assertEquals(items, json)
-        mocked_logger.assert_called_with("Got {} results from {} endpoint.".format(2, "TestDataAccessObject"))
+        mocked_logger.assert_called_with("Got %s results from %s endpoint.", 2, "TestDataAccessObject")
 
     @mock.patch("tap_exacttarget.client.LOGGER.info")
     def test_result_with_count(self, mocked_logger):
@@ -37,4 +37,4 @@ class TestGetResponseItems(unittest.TestCase):
         }
         items = _client._get_response_items(Mockresponse(json), "TestDataAccessObject")
         self.assertEquals(items, json.get("items"))
-        mocked_logger.assert_called_with("Got {} results from {} endpoint.".format(2, "TestDataAccessObject"))
+        mocked_logger.assert_called_with("Got %s results from %s endpoint.", 2, "TestDataAccessObject")
