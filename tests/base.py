@@ -48,7 +48,7 @@ class ExactTargetBase(unittest.TestCase):
 
     def get_properties(self, original: bool = True):
         return_value = {
-            'start_date': '2014-01-01T00:00:00Z',
+            'start_date': '2019-01-01T00:00:00Z',
             'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID'),
             'tenant_subdomain': os.getenv('TAP_EXACTTARGET_TENANT_SUBDOMAIN')
         }
@@ -131,45 +131,44 @@ class ExactTargetBase(unittest.TestCase):
     def streams_to_select(self):
         # events: there are 5 events and the API call window is of 10 minutes
         #   so there will be a lot of API calls for every test
-        # list_subscriber: the API window is of 1 day, as there are 5-6 test cases
-        #   it will consume lots of time
+        # list_subscriber: as the API window is of 1 day, the tests took
+        #   30 minutes to run 3 tests, the test run time will be increased
+        #   when all the tests are combined
         # subscriber: it is the child stream of 'list_subscriber'
         return set(self.expected_metadata().keys()) - {'event', 'list_subscriber', 'subscriber'}
 
     def expected_replication_keys(self):
         return {table: properties.get(self.REPLICATION_KEYS, set())
-                for table, properties
-                in self.expected_metadata().items()}
+                for table, properties in self.expected_metadata().items()}
 
     def expected_primary_keys(self):
         return {table: properties.get(self.PRIMARY_KEYS, set())
-                for table, properties
-                in self.expected_metadata().items()}
+                for table, properties in self.expected_metadata().items()}
 
     def expected_replication_method(self):
         return {table: properties.get(self.REPLICATION_METHOD, set())
-                for table, properties
-                in self.expected_metadata().items()}
+                for table, properties in self.expected_metadata().items()}
 
     def select_found_catalogs(self, conn_id, catalogs, only_streams=None, deselect_all_fields: bool = False, non_selected_props=[]):
         """Select all streams and all fields within streams"""
         for catalog in catalogs:
             if only_streams and catalog["stream_name"] not in only_streams:
                 continue
+
             schema = menagerie.get_annotated_schema(conn_id, catalog['stream_id'])
 
             non_selected_properties = non_selected_props if not deselect_all_fields else []
             if deselect_all_fields:
                 # get a list of all properties so that none are selected
-                non_selected_properties = schema.get('annotated-schema', {}).get(
-                    'properties', {})
+                non_selected_properties = schema.get('annotated-schema', {}).get('properties', {})
                 non_selected_properties = non_selected_properties.keys()
-            additional_md = []
 
-            connections.select_catalog_and_fields_via_metadata(
-                conn_id, catalog, schema, additional_md=additional_md,
-                non_selected_fields=non_selected_properties
-            )
+            additional_md = []
+            connections.select_catalog_and_fields_via_metadata(conn_id,
+                                                               catalog,
+                                                               schema,
+                                                               additional_md=additional_md,
+                                                               non_selected_fields=non_selected_properties)
 
     def run_and_verify_sync(self, conn_id):
         sync_job_name = runner.run_sync_mode(self, conn_id)
@@ -178,8 +177,10 @@ class ExactTargetBase(unittest.TestCase):
         exit_status = menagerie.get_exit_status(conn_id, sync_job_name)
         menagerie.verify_sync_exit_status(self, exit_status, sync_job_name)
 
-        sync_record_count = runner.examine_target_output_file(
-            self, conn_id, self.streams_to_select(), self.expected_primary_keys())
+        sync_record_count = runner.examine_target_output_file(self,
+                                                              conn_id,
+                                                              self.streams_to_select(),
+                                                              self.expected_primary_keys())
 
         self.assertGreater(
             sum(sync_record_count.values()), 0,
