@@ -148,11 +148,14 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 [extension_id, 'schema', 'properties', field_name],
                 field_schema)
 
+            # add primary key in 'table-key-properties'
             if is_primary_key:
                 for mdata in to_return[extension_id]['metadata']:
                     if not mdata.get('breadcrumb'):
                         mdata.get('metadata').get('table-key-properties').append(field_name)
 
+            # add replication key in 'valid-replication-keys'
+            # and change 'forced-replication-method' to INCREMENTAL
             if is_replication_key:
                 for mdata in to_return[extension_id]['metadata']:
                     if not mdata.get('breadcrumb'):
@@ -161,6 +164,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
             # These fields are defaulted into the schema, do not add to metadata again.
             if field_name not in {'_CustomObjectKey', 'CategoryID'}:
+                # if primary of replication key, then mark it as automatic
                 if is_primary_key or is_replication_key:
                     to_return[extension_id]['metadata'].append({
                         'breadcrumb': ('properties', field_name),
