@@ -38,7 +38,6 @@ class CampaignDataAccessObject(DataAccessObject):
     KEY_PROPERTIES = ['id']
 
     def sync_data(self):
-
         cursor = request(
             'Campaign',
             FuelSDK.ET_Campaign,

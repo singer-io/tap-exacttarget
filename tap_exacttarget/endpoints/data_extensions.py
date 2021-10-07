@@ -95,6 +95,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         result = request(
             'DataExtensionField',
+            # use custom class to apply 'batch_size'
             TapExacttarget__ET_DataExtension_Column,
             self.auth_stub,
             batch_size=self.batch_size)
