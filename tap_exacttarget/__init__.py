@@ -76,7 +76,7 @@ def _is_selected(catalog_entry):
                                     metadata.get(mdata, (), 'selected'),
                                     default=False)
 
-# run sunc mode
+# run sync mode
 def do_sync(args):
     LOGGER.info("Starting sync.")
 
