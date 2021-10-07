@@ -50,7 +50,7 @@ AVAILABLE_STREAM_ACCESSORS = [
     SubscriberDataAccessObject,
 ]
 
-
+# run discover mode
 def do_discover(args):
     LOGGER.info("Starting discovery.")
 
@@ -69,14 +69,14 @@ def do_discover(args):
 
     print(json.dumps({'streams': catalog}, indent=4))
 
-
+# check if the stream is selected or not
 def _is_selected(catalog_entry):
     mdata = metadata.to_map(catalog_entry['metadata'])
     return singer.should_sync_field(metadata.get(mdata, (), 'inclusion'),
                                     metadata.get(mdata, (), 'selected'),
                                     default=False)
 
-
+# run sunc mode
 def do_sync(args):
     LOGGER.info("Starting sync.")
 
@@ -102,6 +102,8 @@ def do_sync(args):
                         .format(stream_catalog.get('stream')))
             continue
 
+        # for 'subscriber' stream if it is selected, add values for 'subscriber_catalog' and
+        # 'subscriber_selected', and it will replicated via 'list_subscribers' stream
         if SubscriberDataAccessObject.matches_catalog(stream_catalog):
             subscriber_selected = True
             subscriber_catalog = stream_catalog
@@ -119,6 +121,7 @@ def do_sync(args):
 
                 break
 
+    # do not replicate 'subscriber' stream without selecting 'list_subscriber' stream
     if subscriber_selected and not list_subscriber_selected:
         LOGGER.fatal('Cannot replicate `subscriber` without '
                      '`list_subscriber`. Please select `list_subscriber` '

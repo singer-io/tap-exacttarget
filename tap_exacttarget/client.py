@@ -6,7 +6,7 @@ from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 
 LOGGER = singer.get_logger()
 
-
+# get results from response and return the results
 def _get_response_items(response):
     items = response.results
 

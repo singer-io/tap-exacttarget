@@ -18,7 +18,7 @@ STATE_SCHEMA = Schema({
     }
 })
 
-
+# get the start date / bookmark date for the stream
 def get_last_record_value_for_table(state, table):
     raw = state.get('bookmarks', {}) \
                .get(table, {}) \
@@ -32,7 +32,7 @@ def get_last_record_value_for_table(state, table):
 
     return date_obj.strftime(DATE_FORMAT)
 
-
+# updated the state file with the provided value
 def incorporate(state, table, field, value):
     if value is None:
         return state
@@ -53,7 +53,7 @@ def incorporate(state, table, field, value):
 
     return new_state
 
-
+# save the state
 def save_state(state):
     if not state:
         return

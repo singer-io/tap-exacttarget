@@ -24,6 +24,7 @@ class DataAccessObject():
     def matches_catalog(cls, catalog):
         return catalog.get('stream') == cls.TABLE
 
+    # generate schema and metadata for adding in catalog file
     def generate_catalog(self):
         cls = self.__class__
 
@@ -40,11 +41,13 @@ class DataAccessObject():
             'metadata': metadata.to_list(mdata)
         }]
 
+    # convert suds object to dictionary
     def filter_keys_and_parse(self, obj):
         to_return = sudsobj_to_dict(obj)
 
         return self.parse_object(to_return)
 
+    # get the list for keys present in the schema
     def get_catalog_keys(self):
         return list(
             self.catalog.get('schema', {}).get('properties', {}).keys())
@@ -58,6 +61,7 @@ class DataAccessObject():
             self.catalog.get('schema'),
             key_properties=self.catalog.get('key_properties'))
 
+    # main 'sync' function
     def sync(self):
         mdata = metadata.to_map(self.catalog['metadata'])
         if not metadata.get(mdata, (), 'selected'):
@@ -79,5 +83,6 @@ class DataAccessObject():
     TABLE = None
     KEY_PROPERTIES = None
 
+    # function to be overridden by the respective stream files and implement sync
     def sync_data(self):  # pylint: disable=no-self-use
         raise RuntimeError('sync_data is not implemented!')

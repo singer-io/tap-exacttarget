@@ -1,7 +1,7 @@
 import datetime
 import suds
 
-
+# divide the collection (date) in the chunk_size
 def partition_all(collection, chunk_size):
     to_yield = []
 
@@ -14,7 +14,7 @@ def partition_all(collection, chunk_size):
 
     yield to_yield
 
-
+# convert suds object to dictionary
 def sudsobj_to_dict(obj):
     if isinstance(obj, list):
         return [sudsobj_to_dict(item) for item in obj]

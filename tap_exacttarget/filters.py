@@ -1,4 +1,6 @@
-
+"""
+    create the filter for syncing date based on the requirements
+"""
 
 def simple(field, operator, value):
     return {

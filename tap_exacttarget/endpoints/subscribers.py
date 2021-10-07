@@ -124,6 +124,7 @@ class SubscriberDataAccessObject(DataAccessObject):
     def sync_data(self):
         pass
 
+    # fetch subscriber records based in the 'subscriber_keys' provided
     def pull_subscribers_batch(self, subscriber_keys):
         if not subscriber_keys:
             return

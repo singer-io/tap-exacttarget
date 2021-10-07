@@ -18,6 +18,7 @@ LOGGER = singer.get_logger()
 
 
 def _get_subscriber_key(list_subscriber):
+    # return the 'SubscriberKey' of the subscriber
     return list_subscriber.SubscriberKey
 
 
@@ -134,9 +135,11 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                     singer.write_records(table, [list_subscriber])
 
                 if self.replicate_subscriber:
+                    # make the list of subscriber keys
                     subscriber_keys = list(map(
                         _get_subscriber_key, list_subscribers_batch))
 
+                    # pass the list of 'subscriber_keys' to fetch subscriber details
                     subscriber_dao.pull_subscribers_batch(subscriber_keys)
 
             save_state(self.state)

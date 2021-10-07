@@ -13,7 +13,8 @@ from tap_exacttarget.util import sudsobj_to_dict
 
 LOGGER = singer.get_logger()  # noqa
 
-
+# add 'new_item' in 'collection' (dict) at the 'path'
+# update_in({"a": {}}, ["a", "cnt"], 1) -> {"a": {"cnt": 1}}
 def _merge_in(collection, path, new_item):
     return update_in(collection, path, lambda x: merge(x, [new_item]))
 
@@ -44,6 +45,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
     def matches_catalog(cls, catalog):
         return 'data_extension.' in catalog.get('stream')
 
+    # get list of all the data extensions created by the user
     def _get_extensions(self):
         result = request(
             'DataExtension',
@@ -59,6 +61,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
             extension_name = str(extension.Name)
             customer_key = str(extension.CustomerKey)
 
+            # create a basic catalog dict for all data extensions
             to_return[customer_key] = {
                 'tap_stream_id': 'data_extension.{}'.format(customer_key),
                 'stream': 'data_extension.{}'.format(extension_name),
@@ -88,6 +91,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         return to_return
 
+    # get all the fields in all the data extensions
     def _get_fields(self, extensions):
         to_return = extensions.copy()
 
@@ -97,11 +101,13 @@ class DataExtensionDataAccessObject(DataAccessObject):
             self.auth_stub)
 
         for field in result:
+            # the date extension in which the fields is present
             extension_id = field.DataExtension.CustomerKey
             field = sudsobj_to_dict(field)
             field_name = field['Name']
 
             if field.get('IsPrimaryKey'):
+                # add primary key in 'key_properties' list
                 to_return = _merge_in(
                     to_return,
                     [extension_id, 'key_properties'],
