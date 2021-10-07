@@ -14,6 +14,7 @@ LOGGER = singer.get_logger()
 def _get_catalog_schema(catalog):
     return catalog.get('schema', {}).get('properties')
 
+# decorator for retrying on error
 def exacttarget_error_handling(fnc):
     @backoff.on_exception(backoff.expo, (socket.timeout, ConnectionError), max_tries=5, factor=2)
     @functools.wraps(fnc)
