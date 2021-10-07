@@ -61,7 +61,7 @@ class DataAccessObject():
     def parse_object(self, obj):
         return project(obj, self.get_catalog_keys())
 
-    # a function to write records with applying transformation
+    # a function to write records by applying transformation
     @staticmethod
     def write_records_with_transform(record, catalog, table):
         with Transformer() as transformer:
