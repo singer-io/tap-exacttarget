@@ -24,6 +24,7 @@ def get_last_record_value_for_table(state, table, config):
                .get(table, {}) \
                .get('last_record')
 
+    # return 'start date' from config if no bookmark found in state file
     if raw is None:
         return config['start_date']
 
