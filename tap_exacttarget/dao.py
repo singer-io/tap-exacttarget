@@ -28,12 +28,16 @@ class DataAccessObject():
         cls = self.__class__
 
         mdata = metadata.new()
+
+        # use 'get_standard_metadata' with primary key, replication key and replication method
         mdata = metadata.get_standard_metadata(schema=self.SCHEMA,
                                                key_properties=self.KEY_PROPERTIES,
                                                valid_replication_keys=self.REPLICATION_KEYS if self.REPLICATION_KEYS else None,
                                                replication_method=self.REPLICATION_METHOD)
 
         mdata_map = metadata.to_map(mdata)
+
+        # make 'automatic' inclusion for replication keys
         for replication_key in self.REPLICATION_KEYS:
             mdata_map[('properties', replication_key)]['inclusion'] = 'automatic'
 
