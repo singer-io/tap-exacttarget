@@ -27,7 +27,7 @@
             "description": "URL that was clicked."
         },
         "SubscriberKey": {
-            "$ref": "definations.json#/SUBSCRIBER_KEY_FIELD"
+            "$ref": "definitions.json#/SUBSCRIBER_KEY_FIELD"
         }
     }
 }

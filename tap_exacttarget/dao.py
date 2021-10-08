@@ -15,13 +15,13 @@ def _get_catalog_schema(catalog):
 def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
-# function to load the fields in the 'definations' which contains the reference fields
+# function to load the fields in the 'definitions' which contains the reference fields
 def load_schema_references():
-    shared_schema_path = get_abs_path('schemas/definations.json')
+    shared_schema_path = get_abs_path('schemas/definitions.json')
 
     refs = {}
     # load json from the path
-    refs["definations.json"] = utils.load_json(shared_schema_path)
+    refs["definitions.json"] = utils.load_json(shared_schema_path)
 
     return refs
 

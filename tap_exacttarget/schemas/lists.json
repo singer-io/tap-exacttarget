@@ -6,19 +6,19 @@
             "description": "ID of the folder that an item is located in."
         },
         "CreatedDate": {
-            "$ref": "definations.json#/CREATED_DATE_FIELD"
+            "$ref": "definitions.json#/CREATED_DATE_FIELD"
         },
         "ID": {
-            "$ref": "definations.json#/ID_FIELD"
+            "$ref": "definitions.json#/ID_FIELD"
         },
         "ModifiedDate": {
-            "$ref": "definations.json#/MODIFIED_DATE_FIELD"
+            "$ref": "definitions.json#/MODIFIED_DATE_FIELD"
         },
         "ObjectID": {
-            "$ref": "definations.json#/OBJECT_ID_FIELD"
+            "$ref": "definitions.json#/OBJECT_ID_FIELD"
         },
         "PartnerProperties": {
-            "$ref": "definations.json#/CUSTOM_PROPERTY_LIST"
+            "$ref": "definitions.json#/CUSTOM_PROPERTY_LIST"
         },
         "ListClassification": {
             "type": ["null", "string"],
@@ -29,7 +29,7 @@
             "description": "Name of a specific list."
         },
         "Description": {
-            "$ref": "definations.json#/DESCRIPTION_FIELD"
+            "$ref": "definitions.json#/DESCRIPTION_FIELD"
         },
         "SendClassification": {
             "type": ["null", "string"],

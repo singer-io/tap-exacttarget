@@ -48,7 +48,7 @@ class TestSchema(unittest.TestCase):
 
         # make data for assertion
         expected_schema = {}
-        expected_schema["definations.json"] = field_schema
+        expected_schema["definitions.json"] = field_schema
 
         # verify if the 'schema' is same as 'field_schema'
         self.assertEquals(schema, expected_schema)

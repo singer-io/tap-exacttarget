@@ -10,33 +10,33 @@
             "description": "Defines the type of content contained within a folder."
         },
         "CreatedDate": {
-            "$ref": "definations.json#/CREATED_DATE_FIELD"
+            "$ref": "definitions.json#/CREATED_DATE_FIELD"
         },
         "CustomerKey": {
-            "$ref": "definations.json#/CUSTOMER_KEY_FIELD"
+            "$ref": "definitions.json#/CUSTOMER_KEY_FIELD"
         },
         "Description": {
-            "$ref": "definations.json#/DESCRIPTION_FIELD"
+            "$ref": "definitions.json#/DESCRIPTION_FIELD"
         },
         "ID": {
-            "$ref": "definations.json#/ID_FIELD"
+            "$ref": "definitions.json#/ID_FIELD"
         },
         "ModifiedDate": {
-            "$ref": "definations.json#/MODIFIED_DATE_FIELD"
+            "$ref": "definitions.json#/MODIFIED_DATE_FIELD"
         },
         "Name": {
             "type": ["null", "string"],
             "description": "Name of the object or property."
         },
         "ObjectID": {
-            "$ref": "definations.json#/OBJECT_ID_FIELD"
+            "$ref": "definitions.json#/OBJECT_ID_FIELD"
         },
         "ParentFolder": {
             "type": ["null", "integer"],
             "description": "Specifies the parent folder for a data folder."
         },
         "PartnerProperties": {
-            "$ref": "definations.json#/CUSTOM_PROPERTY_LIST"
+            "$ref": "definitions.json#/CUSTOM_PROPERTY_LIST"
         },
         "Type": {
             "type": ["null", "string"],

@@ -2,7 +2,7 @@
     "type": "object",
     "properties": {
         "CreatedDate": {
-            "$ref": "definations.json#/CREATED_DATE_FIELD"
+            "$ref": "definitions.json#/CREATED_DATE_FIELD"
         },
         "EmailID": {
             "type": ["null", "integer"],
@@ -21,7 +21,7 @@
             "description": "Specifies the default email message From Name. Deprecated for email send definitions and triggered send definitions."
         },
         "ID": {
-            "$ref": "definations.json#/ID_FIELD"
+            "$ref": "definitions.json#/ID_FIELD"
         },
         "IsAlwaysOn": {
             "type": ["null", "boolean"],
@@ -32,10 +32,10 @@
             "description": "Indicates whether the email is sent with Multipart/MIME enabled."
         },
         "ModifiedDate": {
-            "$ref": "definations.json#/MODIFIED_DATE_FIELD"
+            "$ref": "definitions.json#/MODIFIED_DATE_FIELD"
         },
         "PartnerProperties": {
-            "$ref": "definations.json#/CUSTOM_PROPERTY_LIST"
+            "$ref": "definitions.json#/CUSTOM_PROPERTY_LIST"
         },
         "SendDate": {
             "type": ["null", "string"],
