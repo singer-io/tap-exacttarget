@@ -29,5 +29,8 @@ setup(
     [console_scripts]
     tap-exacttarget=tap_exacttarget:main
     ''',
-    packages=find_packages()
+    packages=find_packages(),
+    package_data={
+        'tap_exacttarget': ['schemas/*.json']
+    }
 )
