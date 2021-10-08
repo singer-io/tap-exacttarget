@@ -4,7 +4,7 @@ import singer
 from funcy import set_in, update_in, merge
 
 from tap_exacttarget.client import request, request_from_cursor
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.pagination import get_date_page, before_now, \
     increment_date
 from tap_exacttarget.state import incorporate, save_state, \
@@ -44,6 +44,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
     def matches_catalog(cls, catalog):
         return 'data_extension.' in catalog.get('stream')
 
+    @exacttarget_error_handling
     def _get_extensions(self):
         result = request(
             'DataExtension',
@@ -88,6 +89,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         return to_return
 
+    @exacttarget_error_handling
     def _get_fields(self, extensions):
         to_return = extensions.copy()
 
@@ -184,6 +186,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         return to_return
 
+    @exacttarget_error_handling
     def _replicate(self, customer_key, keys,
                    parent_category_id, table,
                    partial=False, start=None,
@@ -225,6 +228,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
             save_state(self.state)
 
+    @exacttarget_error_handling
     def sync_data(self):
         tap_stream_id = self.catalog.get('tap_stream_id')
         table = self.catalog.get('stream')
