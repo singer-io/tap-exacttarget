@@ -13,7 +13,7 @@ def _get_catalog_schema(catalog):
     return catalog.get('schema', {}).get('properties')
 
 def get_abs_path(path):
-        return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
 # function to load the fields in the 'definations' which contains the reference fields
 def load_schema_references():
