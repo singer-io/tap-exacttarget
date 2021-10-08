@@ -7,9 +7,6 @@ from tap_exacttarget.dao import DataAccessObject
 from tap_exacttarget.endpoints.subscribers import SubscriberDataAccessObject
 from tap_exacttarget.pagination import get_date_page, before_now, \
     increment_date
-from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
-    CREATED_DATE_FIELD, OBJECT_ID_FIELD, MODIFIED_DATE_FIELD, \
-    SUBSCRIBER_KEY_FIELD, with_properties
 from tap_exacttarget.state import incorporate, save_state, \
     get_last_record_value_for_table
 from tap_exacttarget.util import partition_all, sudsobj_to_dict
@@ -35,24 +32,6 @@ def _get_list_subscriber_filter(_list, start, unit):
 
 
 class ListSubscriberDataAccessObject(DataAccessObject):
-    SCHEMA = with_properties({
-        'ID': ID_FIELD,
-        'CreatedDate': CREATED_DATE_FIELD,
-        'ModifiedDate': MODIFIED_DATE_FIELD,
-        'ObjectID': OBJECT_ID_FIELD,
-        'PartnerProperties': CUSTOM_PROPERTY_LIST,
-        'ListID': {
-            'type': ['null', 'integer'],
-            'description': ('Defines identification for a list the '
-                            'subscriber resides on.'),
-        },
-        'Status': {
-            'type': ['null', 'string'],
-            'description': ('Defines status of object. Status of '
-                            'an address.'),
-        },
-        'SubscriberKey': SUBSCRIBER_KEY_FIELD,
-    })
 
     TABLE = 'list_subscriber'
     KEY_PROPERTIES = ['SubscriberKey', 'ListID']
