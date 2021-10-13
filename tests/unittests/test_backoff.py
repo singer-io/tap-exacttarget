@@ -28,7 +28,7 @@ class TestConnectionResetError(unittest.TestCase):
         # mocked 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'ContentAreaDataAccessObject'
-        obj = content_areas.ContentAreaDataAccessObject({}, {}, None, {})
+        obj = content_areas.ContentAreaDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -48,7 +48,7 @@ class TestConnectionResetError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'ContentAreaDataAccessObject'
-        obj = content_areas.ContentAreaDataAccessObject({}, {}, None, {})
+        obj = content_areas.ContentAreaDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -60,7 +60,7 @@ class TestConnectionResetError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get_rest.side_effect = socket.error(104, 'Connection reset by peer')
         # # make the object of 'CampaignDataAccessObject'
-        obj = campaigns.CampaignDataAccessObject({}, {}, None, {})
+        obj = campaigns.CampaignDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -80,7 +80,7 @@ class TestConnectionResetError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'CampaignDataAccessObject'
-        obj = campaigns.CampaignDataAccessObject({}, {}, None, {})
+        obj = campaigns.CampaignDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -167,7 +167,7 @@ class TestConnectionResetError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'EmailDataAccessObject'
-        obj = emails.EmailDataAccessObject({}, {}, None, {})
+        obj = emails.EmailDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call function
             obj.sync_data()
@@ -187,7 +187,7 @@ class TestConnectionResetError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'EmailDataAccessObject'
-        obj = emails.EmailDataAccessObject({}, {}, None, {})
+        obj = emails.EmailDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -213,7 +213,7 @@ class TestConnectionResetError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'FolderDataAccessObject'
-        obj = folders.FolderDataAccessObject({}, {}, None, {})
+        obj = folders.FolderDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -233,7 +233,7 @@ class TestConnectionResetError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'FolderDataAccessObject'
-        obj = folders.FolderDataAccessObject({}, {}, None, {})
+        obj = folders.FolderDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -245,7 +245,7 @@ class TestConnectionResetError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'ListSendDataAccessObject'
-        obj = list_sends.ListSendDataAccessObject({}, {}, None, {})
+        obj = list_sends.ListSendDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -265,7 +265,7 @@ class TestConnectionResetError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'ListSendDataAccessObject'
-        obj = list_sends.ListSendDataAccessObject({}, {}, None, {})
+        obj = list_sends.ListSendDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -311,7 +311,7 @@ class TestConnectionResetError(unittest.TestCase):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [json])]
         # make the object of 'ListSubscriberDataAccessObject'
-        obj = list_subscribers.ListSubscriberDataAccessObject({}, {}, None, {})
+        obj = list_subscribers.ListSubscriberDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call function
         actual = obj._get_all_subscribers_list()
         # verify if the record was returned as response
@@ -322,7 +322,7 @@ class TestConnectionResetError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'ListDataAccessObject'
-        obj = lists.ListDataAccessObject({}, {}, None, {})
+        obj = lists.ListDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -342,7 +342,7 @@ class TestConnectionResetError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'ListDataAccessObject'
-        obj = lists.ListDataAccessObject({}, {}, None, {})
+        obj = lists.ListDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -354,7 +354,7 @@ class TestConnectionResetError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'SendDataAccessObject'
-        obj = sends.SendDataAccessObject({}, {}, None, {})
+        obj = sends.SendDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -374,7 +374,7 @@ class TestConnectionResetError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'SendDataAccessObject'
-        obj = sends.SendDataAccessObject({}, {}, None, {})
+        obj = sends.SendDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -386,7 +386,7 @@ class TestConnectionResetError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'SubscriberDataAccessObject'
-        obj = subscribers.SubscriberDataAccessObject({}, {}, None, {})
+        obj = subscribers.SubscriberDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call function
             obj.pull_subscribers_batch(['sub1'])
@@ -406,7 +406,7 @@ class TestConnectionResetError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'SubscriberDataAccessObject'
-        obj = subscribers.SubscriberDataAccessObject({}, {}, None, {})
+        obj = subscribers.SubscriberDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call function
         obj.pull_subscribers_batch(['sub1'])
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -424,7 +424,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'ContentAreaDataAccessObject'
-        obj = content_areas.ContentAreaDataAccessObject({}, {}, None, {})
+        obj = content_areas.ContentAreaDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -444,7 +444,7 @@ class TestSocketTimeoutError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'ContentAreaDataAccessObject'
-        obj = content_areas.ContentAreaDataAccessObject({}, {}, None, {})
+        obj = content_areas.ContentAreaDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -456,7 +456,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get_rest.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'CampaignDataAccessObject'
-        obj = campaigns.CampaignDataAccessObject({}, {}, None, {})
+        obj = campaigns.CampaignDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -476,7 +476,7 @@ class TestSocketTimeoutError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'CampaignDataAccessObject'
-        obj = campaigns.CampaignDataAccessObject({}, {}, None, {})
+        obj = campaigns.CampaignDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -563,7 +563,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # # make the object of 'EmailDataAccessObject'
-        obj = emails.EmailDataAccessObject({}, {}, None, {})
+        obj = emails.EmailDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -583,7 +583,7 @@ class TestSocketTimeoutError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'EmailDataAccessObject'
-        obj = emails.EmailDataAccessObject({}, {}, None, {})
+        obj = emails.EmailDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -609,7 +609,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'FolderDataAccessObject'
-        obj = folders.FolderDataAccessObject({}, {}, None, {})
+        obj = folders.FolderDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -629,7 +629,7 @@ class TestSocketTimeoutError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'FolderDataAccessObject'
-        obj = folders.FolderDataAccessObject({}, {}, None, {})
+        obj = folders.FolderDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -641,7 +641,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'ListSendDataAccessObject'
-        obj = list_sends.ListSendDataAccessObject({}, {}, None, {})
+        obj = list_sends.ListSendDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -661,7 +661,7 @@ class TestSocketTimeoutError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'ListSendDataAccessObject'
-        obj = list_sends.ListSendDataAccessObject({}, {}, None, {})
+        obj = list_sends.ListSendDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -707,7 +707,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [json])]
         # make the object of 'ListSubscriberDataAccessObject'
-        obj = list_subscribers.ListSubscriberDataAccessObject({}, {}, None, {})
+        obj = list_subscribers.ListSubscriberDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call function
         actual = obj._get_all_subscribers_list()
         # verify if the record was returned as response
@@ -718,7 +718,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'ListDataAccessObject'
-        obj = lists.ListDataAccessObject({}, {}, None, {})
+        obj = lists.ListDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -738,7 +738,7 @@ class TestSocketTimeoutError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'ListDataAccessObject'
-        obj = lists.ListDataAccessObject({}, {}, None, {})
+        obj = lists.ListDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -750,7 +750,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'SendDataAccessObject'
-        obj = sends.SendDataAccessObject({}, {}, None, {})
+        obj = sends.SendDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call sync
             obj.sync_data()
@@ -770,7 +770,7 @@ class TestSocketTimeoutError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'SendDataAccessObject'
-        obj = sends.SendDataAccessObject({}, {}, None, {})
+        obj = sends.SendDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call sync
         obj.sync_data()
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
@@ -782,7 +782,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'SubscriberDataAccessObject'
-        obj = subscribers.SubscriberDataAccessObject({}, {}, None, {})
+        obj = subscribers.SubscriberDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         try:
             # call function
             obj.pull_subscribers_batch(['sub1'])
@@ -802,7 +802,7 @@ class TestSocketTimeoutError(unittest.TestCase):
             "EmailType": "Normal"
         }])]
         # make the object of 'SubscriberDataAccessObject'
-        obj = subscribers.SubscriberDataAccessObject({}, {}, None, {})
+        obj = subscribers.SubscriberDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
         # call function
         obj.pull_subscribers_batch(['sub1'])
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
