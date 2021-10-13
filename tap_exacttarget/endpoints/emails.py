@@ -2,7 +2,7 @@ import FuelSDK
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
     CREATED_DATE_FIELD, CUSTOMER_KEY_FIELD, OBJECT_ID_FIELD, \
     MODIFIED_DATE_FIELD, with_properties
@@ -120,8 +120,9 @@ class EmailDataAccessObject(DataAccessObject):
         to_return['EmailID'] = to_return.get('Email', {}).get('ID')
         to_return['ContentAreaIDs'] = content_area_ids
 
-        return super(EmailDataAccessObject, self).parse_object(to_return)
+        return super().parse_object(to_return)
 
+    @exacttarget_error_handling
     def sync_data(self):
         table = self.__class__.TABLE
         selector = FuelSDK.ET_Email

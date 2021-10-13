@@ -2,7 +2,7 @@ import FuelSDK
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.schemas import CUSTOM_PROPERTY_LIST, ID_FIELD, \
     CREATED_DATE_FIELD, CUSTOMER_KEY_FIELD, OBJECT_ID_FIELD, \
     SUBSCRIBER_KEY_FIELD, MODIFIED_DATE_FIELD, with_properties
@@ -121,11 +121,12 @@ class SubscriberDataAccessObject(DataAccessObject):
         if to_return.get('PartnerProperties') is None:
             to_return['PartnerProperties'] = []
 
-        return super(SubscriberDataAccessObject, self).parse_object(obj)
+        return super().parse_object(obj)
 
     def sync_data(self):
         pass
 
+    @exacttarget_error_handling
     def pull_subscribers_batch(self, subscriber_keys):
         if not subscriber_keys:
             return

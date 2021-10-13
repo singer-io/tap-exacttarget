@@ -186,7 +186,7 @@ class ExactTargetBase(unittest.TestCase):
             sum(sync_record_count.values()), 0,
             msg="failed to replicate any data: {}".format(sync_record_count)
         )
-        print("total replicated row count: {}".format(sum(sync_record_count.values())))
+        print("total replicated row count: %s", sum(sync_record_count.values()))
 
         return sync_record_count
 
