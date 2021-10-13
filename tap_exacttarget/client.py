@@ -6,7 +6,7 @@ from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 
 LOGGER = singer.get_logger()
 
-
+# prints the number of records fetched from the passed endpoint
 def _get_response_items(response, name):
     items = response.results
 
@@ -107,7 +107,8 @@ def request(name, selector, auth_stub, search_filter=None, props=None, batch_siz
     """
     cursor = selector()
     cursor.auth_stub = auth_stub
-    # set batch size
+    # set batch size ie. the page size defined by the user as the
+    # FuelSDK supports setting page size in the "BatchSize" value in "options" parameter
     cursor.options = {"BatchSize": batch_size}
 
     if props is not None:
