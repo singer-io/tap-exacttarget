@@ -38,7 +38,7 @@ class ExactTargetBase(unittest.TestCase):
     def get_properties(self):
         yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
         return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            'start_date': yesterday.strftime("%Y-%m-%dT00:00:00Z"),
             'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID')
         }
 
