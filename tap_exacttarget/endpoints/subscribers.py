@@ -35,6 +35,7 @@ class SubscriberDataAccessObject(DataAccessObject):
     def sync_data(self):
         pass
 
+    # fetch subscriber records based in the 'subscriber_keys' provided
     @exacttarget_error_handling
     def pull_subscribers_batch(self, subscriber_keys):
         if not subscriber_keys:
