@@ -110,6 +110,8 @@ class ContentAreaDataAccessObject(DataAccessObject):
         selector = FuelSDK.ET_ContentArea
 
         search_filter = None
+
+        # pass config to return start date if not bookmark is found
         retrieve_all_since = get_last_record_value_for_table(self.state, table, self.config)
 
         if retrieve_all_since is not None:
