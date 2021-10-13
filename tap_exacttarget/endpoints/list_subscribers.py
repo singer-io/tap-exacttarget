@@ -54,7 +54,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             'Property': 'ListName',
             'SimpleOperator': 'equals',
             'Value': 'All Subscribers',
-        })
+        }, batch_size=self.batch_size)
 
         lists = list(result)
 
@@ -94,7 +94,8 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                              self.auth_stub,
                              _get_list_subscriber_filter(
                                  all_subscribers_list,
-                                 start, unit))
+                                 start, unit),
+                             batch_size=self.batch_size)
 
             batch_size = 100
 

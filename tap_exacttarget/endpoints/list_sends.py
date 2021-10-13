@@ -30,7 +30,8 @@ class ListSendDataAccessObject(DataAccessObject):
         # here: https://salesforce.stackexchange.com/questions/354332/not-getting-modifieddate-for-listsend-endpoint
         stream = request('ListSend',
                          selector,
-                         self.auth_stub)
+                         self.auth_stub,
+                         batch_size=self.batch_size)
 
         catalog_copy = copy.deepcopy(self.catalog)
 

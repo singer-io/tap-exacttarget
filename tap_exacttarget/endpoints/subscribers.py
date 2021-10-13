@@ -61,7 +61,7 @@ class SubscriberDataAccessObject(DataAccessObject):
             return
 
         stream = request(
-            'Subscriber', FuelSDK.ET_Subscriber, self.auth_stub, _filter)
+            'Subscriber', FuelSDK.ET_Subscriber, self.auth_stub, _filter, batch_size=self.batch_size)
 
         catalog_copy = copy.deepcopy(self.catalog)
 

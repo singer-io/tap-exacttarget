@@ -60,6 +60,8 @@ class ExactTargetBase(unittest.TestCase):
         return return_value
 
     def expected_metadata(self):
+        # Note: Custom streams failed on our account with an error on
+        # `_CustomObjectKey` not being valid
         return {
             "campaign": {
                 self.PRIMARY_KEYS: {"id"},

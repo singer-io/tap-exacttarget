@@ -51,6 +51,8 @@ class DataAccessObject():
         self.state = state.copy()
         self.catalog = catalog
         self.auth_stub = auth_stub
+        # initialize batch size
+        self.batch_size = int(self.config.get('batch_size', 2500))
 
     @classmethod
     def matches_catalog(cls, catalog):

@@ -134,7 +134,7 @@ class TestConnectionResetError(unittest.TestCase):
         # verify the code backed off and requested for 5 times
         self.assertEquals(mocked_get.call_count, 5)
 
-    @mock.patch("FuelSDK.objects.ET_DataExtension_Column.get")
+    @mock.patch("tap_exacttarget.fuel_overrides.TapExacttarget__ET_DataExtension_Column.get")
     def test_connection_reset_error_occurred__data_extension_get_fields(self, mocked_data_ext_column, mocked_sleep):
         # mock 'get' and raise error
         mocked_data_ext_column.side_effect = socket.error(104, 'Connection reset by peer')
@@ -148,7 +148,7 @@ class TestConnectionResetError(unittest.TestCase):
         # verify the code backed off and requested for 5 times
         self.assertEquals(mocked_data_ext_column.call_count, 5)
 
-    @mock.patch("FuelSDK.objects.ET_DataExtension_Row.get")
+    @mock.patch("tap_exacttarget.fuel_overrides.TapExacttarget__ET_DataExtension_Row.get")
     def test_connection_reset_error_occurred__data_extension_replicate(self, mocked_data_ext_column, mocked_sleep):
         # mock 'get' and raise error
         mocked_data_ext_column.side_effect = socket.error(104, 'Connection reset by peer')
@@ -530,7 +530,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # verify the code backed off and requested for 5 times
         self.assertEquals(mocked_get.call_count, 5)
 
-    @mock.patch("FuelSDK.objects.ET_DataExtension_Column.get")
+    @mock.patch("tap_exacttarget.fuel_overrides.TapExacttarget__ET_DataExtension_Column.get")
     def test_socket_timeout_error_occurred__data_extension_get_fields(self, mocked_data_ext_column, mocked_sleep):
         # mock 'get' and raise error
         mocked_data_ext_column.side_effect = socket.timeout("The read operation timed out")
@@ -544,7 +544,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         # verify the code backed off and requested for 5 times
         self.assertEquals(mocked_data_ext_column.call_count, 5)
 
-    @mock.patch("FuelSDK.objects.ET_DataExtension_Row.get")
+    @mock.patch("tap_exacttarget.fuel_overrides.TapExacttarget__ET_DataExtension_Row.get")
     def test_socket_timeout_error_occurred__data_extension_replicate(self, mocked_data_ext_column, mocked_sleep):
         # mock 'get' and raise error
         mocked_data_ext_column.side_effect = socket.timeout("The read operation timed out")

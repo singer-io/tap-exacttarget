@@ -38,7 +38,8 @@ class ContentAreaDataAccessObject(DataAccessObject):
         stream = request('ContentAreaDataAccessObject',
                          selector,
                          self.auth_stub,
-                         search_filter)
+                         search_filter,
+                         batch_size=self.batch_size)
 
         catalog_copy = copy.deepcopy(self.catalog)
 

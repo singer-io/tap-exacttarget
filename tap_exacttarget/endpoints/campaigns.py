@@ -19,7 +19,10 @@ class CampaignDataAccessObject(DataAccessObject):
         cursor = request(
             'Campaign',
             FuelSDK.ET_Campaign,
-            self.auth_stub)
+            self.auth_stub,
+            # use $pageSize and $page in the props for
+            # this stream as it calls using REST API
+            props={"$pageSize": self.batch_size, "$page": 1, "page": 1})
 
         catalog_copy = copy.deepcopy(self.catalog)
 

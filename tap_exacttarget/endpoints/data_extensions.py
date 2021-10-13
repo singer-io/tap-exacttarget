@@ -11,6 +11,8 @@ from tap_exacttarget.pagination import get_date_page, before_now, \
 from tap_exacttarget.state import incorporate, save_state, \
     get_last_record_value_for_table
 from tap_exacttarget.util import sudsobj_to_dict
+from tap_exacttarget.fuel_overrides import TapExacttarget__ET_DataExtension_Row, \
+    TapExacttarget__ET_DataExtension_Column
 
 LOGGER = singer.get_logger()  # noqa
 
@@ -52,7 +54,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
             FuelSDK.ET_DataExtension,
             self.auth_stub,
             props=['CustomerKey', 'Name'],
-            batch_size=int(self.config.get('batch_size', 2500))
+            batch_size=self.batch_size
         )
 
         to_return = {}
@@ -110,8 +112,10 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         result = request(
             'DataExtensionField',
-            FuelSDK.ET_DataExtension_Column,
-            self.auth_stub)
+            # use custom class to apply 'batch_size'
+            TapExacttarget__ET_DataExtension_Column,
+            self.auth_stub,
+            batch_size=self.batch_size)
 
         # iterate through all the fields and determine if it is primary key
         # or replication key and update the catalog file accordingly:
@@ -276,19 +280,20 @@ class DataExtensionDataAccessObject(DataAccessObject):
             LOGGER.info("Fetching {} from {} to {}"
                         .format(table, start, end))
 
-        cursor = FuelSDK.ET_DataExtension_Row()
+        # use custom class to apply 'batch_size'
+        cursor = TapExacttarget__ET_DataExtension_Row()
         cursor.auth_stub = self.auth_stub
         cursor.CustomerKey = customer_key
         cursor.props = keys
+        cursor.options = {"BatchSize": self.batch_size}
 
         if partial:
             cursor.search_filter = get_date_page(replication_key,
                                                  start,
                                                  unit)
 
-        batch_size = int(self.config.get('batch_size', 2500))
         result = request_from_cursor('DataExtensionObject', cursor,
-                                     batch_size=batch_size)
+                                     batch_size=self.batch_size)
 
         catalog_copy = copy.deepcopy(self.catalog)
 
@@ -350,7 +355,8 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 'SimpleOperator': 'equals',
                 'Value': customer_key,
             },
-            props=['CustomerKey', 'CategoryID'])
+            props=['CustomerKey', 'CategoryID'],
+            batch_size=self.batch_size)
 
         parent_extension = next(parent_result)
         parent_category_id = parent_extension.CategoryID
