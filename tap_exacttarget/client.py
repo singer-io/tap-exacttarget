@@ -6,14 +6,14 @@ from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 
 LOGGER = singer.get_logger()
 
-
-def _get_response_items(response):
+# prints the number of records fetched from the passed endpoint
+def _get_response_items(response, name):
     items = response.results
 
     if 'count' in response.results:
-        LOGGER.info('Got {} results.'.format(response.results.get('count')))
         items = response.results.get('items')
 
+    LOGGER.info('Got %s results from %s endpoint.', len(items), name)
     return items
 
 
@@ -61,7 +61,8 @@ def get_auth_stub(config):
         LOGGER.info('Failed to auth using V1 endpoint')
         if not config.get('tenant_subdomain'):
             LOGGER.warning('No tenant_subdomain found, will not attempt to auth with V2 endpoint')
-            raise e
+            message = f"{str(e)}. Please check your \'client_id\', \'client_secret\' or try adding the \'tenant_subdomain\'."
+            raise Exception(message) from None
 
     # Next try V2
     # Move to OAuth2: https://help.salesforce.com/articleView?id=mc_rn_january_2019_platform_ip_remove_legacy_package_create_ability.htm&type=5
@@ -77,7 +78,8 @@ def get_auth_stub(config):
             transport=transport)
     except Exception as e:
         LOGGER.info('Failed to auth using V2 endpoint')
-        raise e
+        message = f"{str(e)}. Please check your \'client_id\', \'client_secret\' or \'tenant_subdomain\'."
+        raise Exception(message) from None
 
     LOGGER.info("Success.")
     return auth_stub
@@ -107,6 +109,9 @@ def request(name, selector, auth_stub, search_filter=None, props=None, batch_siz
     """
     cursor = selector()
     cursor.auth_stub = auth_stub
+    # set batch size ie. the page size defined by the user as the
+    # FuelSDK supports setting page size in the "BatchSize" value in "options" parameter
+    cursor.options = {"BatchSize": batch_size}
 
     if props is not None:
         cursor.props = props
@@ -142,22 +147,26 @@ def request_from_cursor(name, cursor, batch_size):
         raise RuntimeError("Request failed with '{}'"
                            .format(response.message))
 
-    for item in _get_response_items(response):
+    for item in _get_response_items(response, name):
         yield item
 
     while response.more_results:
         LOGGER.info("Getting more results from '{}' endpoint".format(name))
 
-        # Override call to getMoreResults to add a batch_size parameter
-        # response = cursor.getMoreResults()
-        response = tap_exacttarget__getMoreResults(cursor, batch_size=batch_size)
-        LOGGER.info("Fetched {} results from '{}' endpoint".format(len(response.results), name))
+        if isinstance(cursor, FuelSDK.ET_Campaign):
+            # use 'getMoreResults' for campaigns as it does not use
+            # batch_size, rather it uses $page and $pageSize and REST Call
+            response = cursor.getMoreResults()
+        else:
+            # Override call to getMoreResults to add a batch_size parameter
+            # response = cursor.getMoreResults()
+            response = tap_exacttarget__getMoreResults(cursor, batch_size=batch_size)
 
         if not response.status:
             raise RuntimeError("Request failed with '{}'"
                                .format(response.message))
 
-        for item in _get_response_items(response):
+        for item in _get_response_items(response, name):
             yield item
 
     LOGGER.info("Done retrieving results from '{}' endpoint".format(name))
