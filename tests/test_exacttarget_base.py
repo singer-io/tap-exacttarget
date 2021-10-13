@@ -1,4 +1,3 @@
-from tap_tester.scenario import SCENARIOS
 
 import datetime
 import tap_tester.connections as connections
@@ -92,4 +91,3 @@ class ExactTargetBase(unittest.TestCase):
         menagerie.verify_sync_exit_status(self, exit_status, sync_job_name)
 
 
-SCENARIOS.add(ExactTargetBase)
