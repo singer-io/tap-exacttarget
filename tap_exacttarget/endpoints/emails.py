@@ -118,7 +118,7 @@ class EmailDataAccessObject(DataAccessObject):
         to_return['EmailID'] = to_return.get('Email', {}).get('ID')
         to_return['ContentAreaIDs'] = content_area_ids
 
-        return super(EmailDataAccessObject, self).parse_object(to_return)
+        return super().parse_object(to_return)
 
     def sync_data(self):
         table = self.__class__.TABLE

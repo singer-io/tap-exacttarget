@@ -1,4 +1,3 @@
-from tap_tester.scenario import SCENARIOS
 
 import datetime
 import tap_tester.connections as connections
@@ -39,7 +38,7 @@ class ExactTargetBase(unittest.TestCase):
     def get_properties(self):
         yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
         return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            'start_date': yesterday.strftime("%Y-%m-%dT00:00:00Z"),
             'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID')
         }
 
@@ -92,4 +91,3 @@ class ExactTargetBase(unittest.TestCase):
         menagerie.verify_sync_exit_status(self, exit_status, sync_job_name)
 
 
-SCENARIOS.add(ExactTargetBase)

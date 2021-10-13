@@ -58,7 +58,7 @@ class FolderDataAccessObject(DataAccessObject):
 
         to_return['ParentFolder'] = to_return.get('ParentFolder', {}).get('ID')
 
-        return super(FolderDataAccessObject, self).parse_object(to_return)
+        return super().parse_object(to_return)
 
     def sync_data(self):
         table = self.__class__.TABLE

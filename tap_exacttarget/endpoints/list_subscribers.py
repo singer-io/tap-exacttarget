@@ -57,7 +57,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
     KEY_PROPERTIES = ['SubscriberKey', 'ListID']
 
     def __init__(self, config, state, auth_stub, catalog):
-        super(ListSubscriberDataAccessObject, self).__init__(
+        super().__init__(
             config, state, auth_stub, catalog)
 
         self.replicate_subscriber = False

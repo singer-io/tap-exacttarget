@@ -3,6 +3,8 @@
 import argparse
 import json
 
+import sys
+
 import singer
 from singer import utils
 from singer import metadata
@@ -123,7 +125,7 @@ def do_sync(args):
         LOGGER.fatal('Cannot replicate `subscriber` without '
                      '`list_subscriber`. Please select `list_subscriber` '
                      'and try again.')
-        exit(1)
+        sys.exit(1)
 
     for stream_accessor in stream_accessors:
         if isinstance(stream_accessor, ListSubscriberDataAccessObject) and \
@@ -161,10 +163,10 @@ def main():
 
     if success:
         LOGGER.info("Completed successfully, exiting.")
-        exit(0)
+        sys.exit(0)
     else:
         LOGGER.info("Run failed, exiting.")
-        exit(1)
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
