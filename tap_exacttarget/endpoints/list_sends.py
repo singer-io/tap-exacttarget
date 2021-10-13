@@ -31,17 +31,10 @@ class ListSendDataAccessObject(DataAccessObject):
         stream = request('ListSend',
                          selector,
                          self.auth_stub)
-<<<<<<< HEAD
 
         catalog_copy = copy.deepcopy(self.catalog)
-=======
->>>>>>> ca2ca099106184e171a1f2dfe6c34cfa945e6bb2
 
         for list_send in stream:
             list_send = self.filter_keys_and_parse(list_send)
 
-<<<<<<< HEAD
             self.write_records_with_transform(list_send, catalog_copy, table)
-=======
-            singer.write_records(table, [list_send])
->>>>>>> ca2ca099106184e171a1f2dfe6c34cfa945e6bb2
