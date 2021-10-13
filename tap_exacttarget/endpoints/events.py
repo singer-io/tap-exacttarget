@@ -2,7 +2,7 @@ import FuelSDK
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.pagination import get_date_page, before_now, \
     increment_date
 from tap_exacttarget.schemas import SUBSCRIBER_KEY_FIELD, with_properties
@@ -46,6 +46,7 @@ class EventDataAccessObject(DataAccessObject):
     TABLE = 'event'
     KEY_PROPERTIES = ['SendID', 'EventType', 'SubscriberKey', 'EventDate']
 
+    @exacttarget_error_handling
     def sync_data(self):
         table = self.__class__.TABLE
         endpoints = {
