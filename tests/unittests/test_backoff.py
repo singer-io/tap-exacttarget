@@ -38,7 +38,7 @@ class TestConnectionResetError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__content_area(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -51,7 +51,7 @@ class TestConnectionResetError(unittest.TestCase):
         obj = content_areas.ContentAreaDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -70,7 +70,7 @@ class TestConnectionResetError(unittest.TestCase):
         self.assertEquals(mocked_get_rest.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupportRest.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__campaign(self, mocked_write_records, mocked_get_rest, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get_rest.side_effect = [get_response(True, [{
@@ -83,7 +83,7 @@ class TestConnectionResetError(unittest.TestCase):
         obj = campaigns.CampaignDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -177,7 +177,7 @@ class TestConnectionResetError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__email(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -190,7 +190,7 @@ class TestConnectionResetError(unittest.TestCase):
         obj = emails.EmailDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -223,7 +223,7 @@ class TestConnectionResetError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__folder(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -236,7 +236,7 @@ class TestConnectionResetError(unittest.TestCase):
         obj = folders.FolderDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -255,7 +255,7 @@ class TestConnectionResetError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__list_send(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -268,7 +268,7 @@ class TestConnectionResetError(unittest.TestCase):
         obj = list_sends.ListSendDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -332,7 +332,7 @@ class TestConnectionResetError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__list(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -345,7 +345,7 @@ class TestConnectionResetError(unittest.TestCase):
         obj = lists.ListDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -364,7 +364,7 @@ class TestConnectionResetError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__sends(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -377,7 +377,7 @@ class TestConnectionResetError(unittest.TestCase):
         obj = sends.SendDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -396,7 +396,7 @@ class TestConnectionResetError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__subscriber(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -409,7 +409,7 @@ class TestConnectionResetError(unittest.TestCase):
         obj = subscribers.SubscriberDataAccessObject({}, {}, None, {})
         # call function
         obj.pull_subscribers_batch(['sub1'])
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -434,7 +434,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__content_area(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -447,7 +447,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         obj = content_areas.ContentAreaDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -466,7 +466,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         self.assertEquals(mocked_get_rest.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupportRest.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__campaign(self, mocked_write_records, mocked_get_rest, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get_rest.side_effect = [get_response(True, [{
@@ -479,7 +479,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         obj = campaigns.CampaignDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -573,7 +573,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__email(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -586,7 +586,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         obj = emails.EmailDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -619,7 +619,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__folder(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -632,7 +632,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         obj = folders.FolderDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -651,7 +651,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__list_send(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -664,7 +664,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         obj = list_sends.ListSendDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -728,7 +728,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__list(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -741,7 +741,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         obj = lists.ListDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -760,7 +760,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__sends(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -773,7 +773,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         obj = sends.SendDataAccessObject({}, {}, None, {})
         # call sync
         obj.sync_data()
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
 
@@ -792,7 +792,7 @@ class TestSocketTimeoutError(unittest.TestCase):
         self.assertEquals(mocked_get.call_count, 5)
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
-    @mock.patch("singer.write_records")
+    @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__subscriber(self, mocked_write_records, mocked_get, mocked_sleep):
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
@@ -805,6 +805,6 @@ class TestSocketTimeoutError(unittest.TestCase):
         obj = subscribers.SubscriberDataAccessObject({}, {}, None, {})
         # call function
         obj.pull_subscribers_batch(['sub1'])
-        # verify if 'singer.write_records' was called
+        # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)

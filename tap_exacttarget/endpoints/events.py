@@ -1,11 +1,11 @@
 import FuelSDK
+import copy
 import singer
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.pagination import get_date_page, before_now, \
     increment_date
-from tap_exacttarget.schemas import SUBSCRIBER_KEY_FIELD, with_properties
 from tap_exacttarget.state import incorporate, save_state, \
     get_last_record_value_for_table
 
@@ -14,34 +14,6 @@ LOGGER = singer.get_logger()
 
 
 class EventDataAccessObject(DataAccessObject):
-    SCHEMA = with_properties({
-        'SendID': {
-            'type': ['null', 'integer'],
-            'description': 'Contains identifier for a specific send.',
-        },
-        'EventDate': {
-            'type': ['null', 'string'],
-            'format': 'datetime',
-            'description': 'Date when a tracking event occurred.',
-        },
-        'EventType': {
-            'type': ['null', 'string'],
-            'description': 'The type of tracking event',
-        },
-        'BatchID': {
-            'type': ['null','integer'],
-            'description': 'Ties triggered send sent events to other events (like clicks and opens that occur at a later date and time)',
-        },
-        'CorrelationID': {
-            'type': ['null','string'],
-            'description': 'Identifies correlation of objects across several requests.',
-        },
-        'URL': {
-            'type': ['null','string'],
-            'description': 'URL that was clicked.',
-        },
-        'SubscriberKey': SUBSCRIBER_KEY_FIELD,
-    })
 
     TABLE = 'event'
     KEY_PROPERTIES = ['SendID', 'EventType', 'SubscriberKey', 'EventDate']
@@ -90,6 +62,8 @@ class EventDataAccessObject(DataAccessObject):
                                  self.auth_stub,
                                  search_filter)
 
+                catalog_copy = copy.deepcopy(self.catalog)
+
                 for event in stream:
                     event = self.filter_keys_and_parse(event)
 
@@ -105,7 +79,7 @@ class EventDataAccessObject(DataAccessObject):
                                             event.get('EventDate')))
                         continue
 
-                    singer.write_records(table, [event])
+                    self.write_records_with_transform(event, catalog_copy, table)
 
                 self.state = incorporate(self.state,
                                          event_name,

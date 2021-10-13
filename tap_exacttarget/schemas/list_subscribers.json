@@ -1,0 +1,31 @@
+{
+    "type": "object",
+    "properties": {
+        "ID": {
+            "$ref": "definitions.json#/ID_FIELD"
+        },
+        "CreatedDate": {
+            "$ref": "definitions.json#/CREATED_DATE_FIELD"
+        },
+        "ModifiedDate": {
+            "$ref": "definitions.json#/MODIFIED_DATE_FIELD"
+        },
+        "ObjectID": {
+            "$ref": "definitions.json#/OBJECT_ID_FIELD"
+        },
+        "PartnerProperties": {
+            "$ref": "definitions.json#/CUSTOM_PROPERTY_LIST"
+        },
+        "ListID": {
+            "type": ["null", "integer"],
+            "description": "Defines identification for a list the subscriber resides on."
+        },
+        "Status": {
+            "type": ["null", "string"],
+            "description": "Defines status of object. Status of an address."
+        },
+        "SubscriberKey": {
+            "$ref": "definitions.json#/SUBSCRIBER_KEY_FIELD"
+        }
+    }
+}

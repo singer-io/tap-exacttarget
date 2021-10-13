@@ -1,10 +1,9 @@
 import FuelSDK
+import copy
 import singer
 
 from tap_exacttarget.client import request
 from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
-from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
-    CREATED_DATE_FIELD, MODIFIED_DATE_FIELD, with_properties
 from tap_exacttarget.state import incorporate, save_state, \
     get_last_record_value_for_table
 
@@ -12,72 +11,6 @@ LOGGER = singer.get_logger()
 
 
 class SendDataAccessObject(DataAccessObject):
-    SCHEMA = with_properties({
-        'CreatedDate': CREATED_DATE_FIELD,
-        'EmailID': {
-            'type': ['null', 'integer'],
-            'description': ('Specifies the ID of an email message '
-                            'associated with a send.'),
-        },
-        'EmailName': {
-            'type': ['null', 'string'],
-            'description': ('Specifies the name of an email message '
-                            'associated with a send.'),
-        },
-        'FromAddress': {
-            'type': ['null', 'string'],
-            'description': ('Indicates From address associated with a '
-                            'object. Deprecated for email send '
-                            'definitions and triggered send '
-                            'definitions.'),
-        },
-        'FromName': {
-            'type': ['null', 'string'],
-            'description': ('Specifies the default email message From '
-                            'Name. Deprecated for email send '
-                            'definitions and triggered send '
-                            'definitions.'),
-        },
-        'ID': ID_FIELD,
-        'IsAlwaysOn': {
-            'type': ['null', 'boolean'],
-            'description': ('Indicates whether the request can be '
-                            'performed while the system is is '
-                            'maintenance mode. A value of true '
-                            'indicates the system will process the '
-                            'request.'),
-        },
-        'IsMultipart': {
-            'type': ['null', 'boolean'],
-            'description': ('Indicates whether the email is sent with '
-                            'Multipart/MIME enabled.'),
-        },
-        'ModifiedDate': MODIFIED_DATE_FIELD,
-        'PartnerProperties': CUSTOM_PROPERTY_LIST,
-        'SendDate': {
-            'type': ['null', 'string'],
-            'format': 'date-time',
-            'description': ('Indicates the date on which a send '
-                            'occurred. Set this value to have a CST '
-                            '(Central Standard Time) value.'),
-        },
-        'SentDate': {
-            'type': ['null', 'string'],
-            'format': 'date-time',
-            'description': ('Indicates date on which a send took '
-                            'place.'),
-        },
-        'Status': {
-            'type': ['null', 'string'],
-            'description': ('Defines status of object. Status of an '
-                            'address.'),
-        },
-        'Subject': {
-            'type': ['null', 'string'],
-            'description': ('Contains subject area information for '
-                            'a message.'),
-        }
-    })
 
     TABLE = 'send'
     KEY_PROPERTIES = ['ID']
@@ -111,6 +44,8 @@ class SendDataAccessObject(DataAccessObject):
                          self.auth_stub,
                          search_filter)
 
+        catalog_copy = copy.deepcopy(self.catalog)
+
         for send in stream:
             send = self.filter_keys_and_parse(send)
 
@@ -119,6 +54,6 @@ class SendDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      send.get('ModifiedDate'))
 
-            singer.write_records(table, [send])
+            self.write_records_with_transform(send, catalog_copy, table)
 
         save_state(self.state)
