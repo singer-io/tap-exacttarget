@@ -10,8 +10,7 @@ class ExactTargetStartDate(ExactTargetBase):
         return "tap_tester_exacttarget_start_date"
 
     def test_run(self):
-        self.run_test('2014-01-01T00:00:00Z', '2021-08-01T00:00:00Z', self.streams_to_select() - {'email', 'content_area', 'send', 'data_extension.test 1'})
-        self.run_test('2019-01-14T00:00:00Z', '2019-01-14T11:55:00Z', {'email'})
+        self.run_test('2014-01-01T00:00:00Z', '2021-08-01T00:00:00Z', self.streams_to_select() - {'content_area', 'send', 'data_extension.test 1'})
         self.run_test('2021-08-10T00:00:00Z', '2021-08-11T00:00:00Z', {'content_area'})
         self.run_test('2021-08-10T00:00:00Z', '2021-08-15T00:00:00Z', {'send'})
         self.run_test('2021-07-25T00:00:00Z', '2021-08-25T00:00:00Z', {'data_extension.test 1'})
