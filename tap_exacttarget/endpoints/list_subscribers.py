@@ -1,14 +1,12 @@
 import FuelSDK
+import copy
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.endpoints.subscribers import SubscriberDataAccessObject
 from tap_exacttarget.pagination import get_date_page, before_now, \
     increment_date
-from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
-    CREATED_DATE_FIELD, OBJECT_ID_FIELD, MODIFIED_DATE_FIELD, \
-    SUBSCRIBER_KEY_FIELD, with_properties
 from tap_exacttarget.state import incorporate, save_state, \
     get_last_record_value_for_table
 from tap_exacttarget.util import partition_all, sudsobj_to_dict
@@ -34,35 +32,20 @@ def _get_list_subscriber_filter(_list, start, unit):
 
 
 class ListSubscriberDataAccessObject(DataAccessObject):
-    SCHEMA = with_properties({
-        'ID': ID_FIELD,
-        'CreatedDate': CREATED_DATE_FIELD,
-        'ModifiedDate': MODIFIED_DATE_FIELD,
-        'ObjectID': OBJECT_ID_FIELD,
-        'PartnerProperties': CUSTOM_PROPERTY_LIST,
-        'ListID': {
-            'type': ['null', 'integer'],
-            'description': ('Defines identification for a list the '
-                            'subscriber resides on.'),
-        },
-        'Status': {
-            'type': ['null', 'string'],
-            'description': ('Defines status of object. Status of '
-                            'an address.'),
-        },
-        'SubscriberKey': SUBSCRIBER_KEY_FIELD,
-    })
 
     TABLE = 'list_subscriber'
     KEY_PROPERTIES = ['SubscriberKey', 'ListID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
     def __init__(self, config, state, auth_stub, catalog):
-        super(ListSubscriberDataAccessObject, self).__init__(
+        super().__init__(
             config, state, auth_stub, catalog)
 
         self.replicate_subscriber = False
         self.subscriber_catalog = None
 
+    @exacttarget_error_handling
     def _get_all_subscribers_list(self):
         """
         Find the 'All Subscribers' list via the SOAP API, and return it.
@@ -82,6 +65,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
 
         return sudsobj_to_dict(lists[0])
 
+    @exacttarget_error_handling
     def sync_data(self):
         table = self.__class__.TABLE
         subscriber_dao = SubscriberDataAccessObject(
@@ -90,10 +74,8 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             self.auth_stub,
             self.subscriber_catalog)
 
-        start = get_last_record_value_for_table(self.state, table)
-
-        if start is None:
-            start = self.config.get('start_date')
+        # pass config to return start date if not bookmark is found
+        start = get_last_record_value_for_table(self.state, table, self.config)
 
         pagination_unit = self.config.get(
             'pagination__list_subscriber_interval_unit', 'days')
@@ -120,6 +102,8 @@ class ListSubscriberDataAccessObject(DataAccessObject):
             if self.replicate_subscriber:
                 subscriber_dao.write_schema()
 
+            catalog_copy = copy.deepcopy(self.catalog)
+
             for list_subscribers_batch in partition_all(stream, batch_size):
                 for list_subscriber in list_subscribers_batch:
                     list_subscriber = self.filter_keys_and_parse(
@@ -132,7 +116,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
                             'ModifiedDate',
                             list_subscriber.get('ModifiedDate'))
 
-                    singer.write_records(table, [list_subscriber])
+                    self.write_records_with_transform(list_subscriber, catalog_copy, table)
 
                 if self.replicate_subscriber:
                     subscriber_keys = list(map(

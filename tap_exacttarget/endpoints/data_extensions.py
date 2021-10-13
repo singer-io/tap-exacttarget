@@ -1,10 +1,11 @@
 import FuelSDK
+import copy
 import singer
 
 from funcy import set_in, update_in, merge
 
 from tap_exacttarget.client import request, request_from_cursor
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.pagination import get_date_page, before_now, \
     increment_date
 from tap_exacttarget.state import incorporate, save_state, \
@@ -46,6 +47,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
     def matches_catalog(cls, catalog):
         return 'data_extension.' in catalog.get('stream')
 
+    @exacttarget_error_handling
     def _get_extensions(self):
         result = request(
             'DataExtension',
@@ -81,16 +83,31 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         }
                     }
                 },
-                'metadata': [{'breadcrumb': (), 'metadata': {'inclusion':'available'}},
-                             {'breadcrumb': ('properties', '_CustomObjectKey'),
-                              'metadata': {'inclusion':'available'}},
-                             {'breadcrumb': ('properties', 'CategoryID'),
-                              'metadata': {'inclusion':'available'}}]
+                'metadata': [
+                    {
+                        'breadcrumb': (),
+                        'metadata': {
+                            'inclusion':'available',
+                            'forced-replication-method': 'FULL_TABLE',
+                            'table-key-properties': ['_CustomObjectKey'],
+                            'valid-replication-keys': []
+                        }
+                    },
+                    {
+                        'breadcrumb': ('properties', '_CustomObjectKey'),
+                        'metadata': {'inclusion':'automatic'}
+                    },
+                    {
+                        'breadcrumb': ('properties', 'CategoryID'),
+                        'metadata': {'inclusion':'available'}
+                    }
+                ]
             }
 
         return to_return
 
-    def _get_fields(self, extensions):
+    @exacttarget_error_handling
+    def _get_fields(self, extensions): # pylint: disable=too-many-branches
         to_return = extensions.copy()
 
         result = request(
@@ -100,16 +117,30 @@ class DataExtensionDataAccessObject(DataAccessObject):
             self.auth_stub,
             batch_size=self.batch_size)
 
+        # iterate through all the fields and determine if it is primary key
+        # or replication key and update the catalog file accordingly:
+        #   is_primary_key:
+        #       update catalog file by appending that field in 'table-key-properties'
+        #   is_replication_key:
+        #       update value of 'forced-replication-method' as INCREMENTAL
+        #       update catalog file by appending that field in 'valid-replication-keys'
+        #   add 'AUTOMATIC' replication method for both primary and replication keys
         for field in result:
+            is_replication_key = False
+            is_primary_key = False
             extension_id = field.DataExtension.CustomerKey
             field = sudsobj_to_dict(field)
             field_name = field['Name']
 
             if field.get('IsPrimaryKey'):
+                is_primary_key = True
                 to_return = _merge_in(
                     to_return,
                     [extension_id, 'key_properties'],
                     field_name)
+
+            if field_name in ['ModifiedDate', 'JoinDate']:
+                is_replication_key = True
 
             field_schema = {
                 'type': [
@@ -124,13 +155,65 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 [extension_id, 'schema', 'properties', field_name],
                 field_schema)
 
+            # add primary key in 'table-key-properties'
+            if is_primary_key:
+                for mdata in to_return[extension_id]['metadata']:
+                    if not mdata.get('breadcrumb'):
+                        mdata.get('metadata').get('table-key-properties').append(field_name)
+
+            # add replication key in 'valid-replication-keys'
+            # and change 'forced-replication-method' to INCREMENTAL
+            if is_replication_key:
+                for mdata in to_return[extension_id]['metadata']:
+                    if not mdata.get('breadcrumb'):
+                        mdata.get('metadata')['forced-replication-method'] = "INCREMENTAL"
+                        mdata.get('metadata').get('valid-replication-keys').append(field_name)
+
             # These fields are defaulted into the schema, do not add to metadata again.
             if field_name not in {'_CustomObjectKey', 'CategoryID'}:
-                to_return[extension_id]['metadata'].append({
-                    'breadcrumb': ('properties', field_name),
-                    'metadata': {'inclusion': 'available'}
-                })
+                # if primary of replication key, then mark it as automatic
+                if is_primary_key or is_replication_key:
+                    to_return[extension_id]['metadata'].append({
+                        'breadcrumb': ('properties', field_name),
+                        'metadata': {'inclusion': 'automatic'}
+                    })
+                else:
+                    to_return[extension_id]['metadata'].append({
+                        'breadcrumb': ('properties', field_name),
+                        'metadata': {'inclusion': 'available'}
+                    })
 
+        # the structure of 'to_return' is like:
+        # {
+        #     'de1': {
+        #         'tap_stream_id': 'data_extension.de1',
+        #         'stream': 'data_extension.de1',
+        #         'key_properties': ['_CustomObjectKey'],
+        #         'schema': {
+        #             'type': 'object',
+        #             'properties': {...}
+        #         },
+        #         'metadata': [...]
+        #     },
+        #    'de2': {
+        #         'tap_stream_id': 'data_extension.de2',
+        #         'stream': 'data_extension.de2',
+        #         'key_properties': ['_CustomObjectKey'],
+        #         'schema': {
+        #             'type': 'object',
+        #             'properties': {...}
+        #         },
+        #         'metadata': [...]
+        #     }
+        # }
+
+        # loop through all the data extension catalog in 'to_return'
+        # and remove empty 'valid-replication-keys' present in metadata
+        for catalog in to_return.values():
+            for mdata in catalog.get('metadata'):
+                if not mdata.get('breadcrumb'):
+                    if not mdata.get('metadata').get('valid-replication-keys'):
+                        del mdata.get('metadata')['valid-replication-keys']
         return to_return
 
     def generate_catalog(self):
@@ -188,6 +271,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         return to_return
 
+    @exacttarget_error_handling
     def _replicate(self, customer_key, keys,
                    parent_category_id, table,
                    partial=False, start=None,
@@ -211,6 +295,8 @@ class DataExtensionDataAccessObject(DataAccessObject):
         result = request_from_cursor('DataExtensionObject', cursor,
                                      batch_size=self.batch_size)
 
+        catalog_copy = copy.deepcopy(self.catalog)
+
         for row in result:
             row = self.filter_keys_and_parse(row)
             row['CategoryID'] = parent_category_id
@@ -220,7 +306,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
                                      replication_key,
                                      row.get(replication_key))
 
-            singer.write_records(table, [row])
+            self.write_records_with_transform(row, catalog_copy, table)
 
         if partial:
             self.state = incorporate(self.state,
@@ -230,6 +316,7 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
             save_state(self.state)
 
+    @exacttarget_error_handling
     def sync_data(self):
         tap_stream_id = self.catalog.get('tap_stream_id')
         table = self.catalog.get('stream')
@@ -241,10 +328,8 @@ class DataExtensionDataAccessObject(DataAccessObject):
 
         replication_key = None
 
-        start = get_last_record_value_for_table(self.state, table)
-
-        if start is None:
-            start = self.config.get('start_date')
+        # pass config to return start date if not bookmark is found
+        start = get_last_record_value_for_table(self.state, table, self.config)
 
         for key in ['ModifiedDate', 'JoinDate']:
             if key in keys:
