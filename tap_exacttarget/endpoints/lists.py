@@ -1,11 +1,9 @@
 import FuelSDK
+import copy
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
-from tap_exacttarget.schemas import ID_FIELD, CUSTOM_PROPERTY_LIST, \
-    CREATED_DATE_FIELD, OBJECT_ID_FIELD, DESCRIPTION_FIELD, \
-    MODIFIED_DATE_FIELD, with_properties
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.state import incorporate, save_state, \
     get_last_record_value_for_table
 
@@ -15,41 +13,12 @@ LOGGER = singer.get_logger()
 
 class ListDataAccessObject(DataAccessObject):
 
-    SCHEMA = with_properties({
-        'Category': {
-            'type': ['null', 'integer'],
-            'description': 'ID of the folder that an item is located in.',
-        },
-        'CreatedDate': CREATED_DATE_FIELD,
-        'ID': ID_FIELD,
-        'ModifiedDate': MODIFIED_DATE_FIELD,
-        'ObjectID': OBJECT_ID_FIELD,
-        'PartnerProperties': CUSTOM_PROPERTY_LIST,
-        'ListClassification': {
-            'type': ['null', 'string'],
-            'description': ('Specifies the classification for a list.'),
-        },
-        'ListName': {
-            'type': ['null', 'string'],
-            'description': 'Name of a specific list.',
-        },
-        'Description': DESCRIPTION_FIELD,
-        'SendClassification': {
-            'type': ['null', 'string'],
-            'description': ('Indicates the send classification to use '
-                            'as part of a send definition.'),
-        },
-        'Type': {
-            'type': ['null', 'string'],
-            'description': ('Indicates type of specific list. Valid '
-                            'values include Public, Private, Salesforce, '
-                            'GlobalUnsubscribe, and Master.')
-        }
-    })
-
     TABLE = 'list'
     KEY_PROPERTIES = ['ID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
+    @exacttarget_error_handling
     def sync_data(self):
         table = self.__class__.TABLE
         selector = FuelSDK.ET_List
@@ -71,6 +40,8 @@ class ListDataAccessObject(DataAccessObject):
                          self.auth_stub,
                          search_filter)
 
+        catalog_copy = copy.deepcopy(self.catalog)
+
         for _list in stream:
             _list = self.filter_keys_and_parse(_list)
 
@@ -79,6 +50,6 @@ class ListDataAccessObject(DataAccessObject):
                                      'ModifiedDate',
                                      _list.get('ModifiedDate'))
 
-            singer.write_records(table, [_list])
+            self.write_records_with_transform(_list, catalog_copy, table)
 
         save_state(self.state)

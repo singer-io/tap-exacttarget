@@ -46,8 +46,15 @@ def incorporate(state, table, field, value):
     if 'bookmarks' not in new_state:
         new_state['bookmarks'] = {}
 
+    # used 'parsed' value in second condition below instead of original 'value'
+    # because for data extensions bookmark value is coming in the format
+    # 'dd/mm/yyyy hh:mm:ss am/pm' and the bookmark in the state file
+    # is saved in 'yyyy-mm-ddThh:mm:ssZ'
+    # Value in STATE file: 2021-08-31T18:00:00Z
+    # Replication key value from data: 8/24/2021 6:00:00 PM
+    # Replication key value from data 'parsed': 2021-08-24T18:00:00Z
     if(new_state['bookmarks'].get(table, {}).get('last_record') is None or
-       new_state['bookmarks'].get(table, {}).get('last_record') < value):
+       new_state['bookmarks'].get(table, {}).get('last_record') < parsed):
         new_state['bookmarks'][table] = {
             'field': field,
             'last_record': parsed,

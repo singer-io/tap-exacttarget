@@ -1,0 +1,92 @@
+{
+    "type": "object",
+    "properties": {
+        "Addresses": {
+            "type": "array",
+            "description": "Indicates addresses belonging to a subscriber, used to create, retrieve, update or delete an email or SMS Address for a given subscriber.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "Address": {"type": ["null", "string"]},
+                    "AddressType": {"type": ["null", "string"]},
+                    "AddressStatus": {"type": ["null", "string"]}
+                }
+            }
+        },
+        "Attributes": {
+            "$ref": "definitions.json#/CUSTOM_PROPERTY_LIST"
+        },
+        "CreatedDate": {
+            "$ref": "definitions.json#/CREATED_DATE_FIELD"
+        },
+        "CustomerKey": {
+            "$ref": "definitions.json#/CUSTOMER_KEY_FIELD"
+        },
+        "EmailAddress": {
+            "type": ["null", "string"],
+            "description": "Contains the email address for a subscriber. Indicates the data extension field contains email address data."
+        },
+        "EmailTypePreference": {
+            "type": ["null", "string"],
+            "description": "The format in which email should be sent"
+        },
+        "ID": {
+            "$ref": "definitions.json#/ID_FIELD"
+        },
+        "ListIDs": {
+            "type": "array",
+            "description": "Defines list IDs a subscriber resides on.",
+            "items": {
+                "type": ["null", "string"]
+            }
+        },
+        "Locale": {
+            "type": ["null", "string"],
+            "description": "Contains the locale information for an Account. If no location is set, Locale defaults to en-US (English in United States)."
+        },
+        "ModifiedDate": {
+            "$ref": "definitions.json#/MODIFIED_DATE_FIELD"
+        },
+        "ObjectID": {
+            "$ref": "definitions.json#/OBJECT_ID_FIELD"
+        },
+        "PartnerKey": {
+            "type": ["null", "string"],
+            "description": "Unique identifier provided by partner for an object, accessible only via API."
+        },
+        "PartnerProperties": {
+            "$ref": "definitions.json#/CUSTOM_PROPERTY_LIST"
+        },
+        "PartnerType": {
+            "type": ["null", "string"],
+            "description": "Defines partner associated with a subscriber."
+        },
+        "PrimaryEmailAddress": {
+            "type": ["null", "string"],
+            "description": "Indicates primary email address for a subscriber."
+        },
+        "PrimarySMSAddress": {
+            "type": ["null", "string"],
+            "description": "Indicates primary SMS address for a subscriber. Used to create and update SMS Address for a given subscriber."
+        },
+        "PrimarySMSPublicationStatus": {
+            "type": ["null", "string"],
+            "description": "Indicates the subscriber's modality status."
+        },
+        "Status": {
+            "type": ["null", "string"],
+            "description": "Defines status of object. Status of an address."
+        },
+        "SubscriberKey": {
+            "$ref": "definitions.json#/SUBSCRIBER_KEY_FIELD"
+        },
+        "SubscriberTypeDefinition": {
+            "type": ["null", "string"],
+            "description": "Specifies if a subscriber resides in an integration, such as Salesforce or Microsoft Dynamics CRM"
+        },
+        "UnsubscribedDate": {
+            "type": ["null", "string"],
+            "description": "Represents date subscriber unsubscribed from a list."
+        }
+    }
+}
