@@ -41,7 +41,7 @@ class ExactTargetDiscover(unittest.TestCase):
     def get_properties(self):
         yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
         return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            'start_date': yesterday.strftime("%Y-%m-%dT00:00:00Z"),
             'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID')
         }
 
@@ -77,7 +77,7 @@ class ExactTargetDiscover2(ExactTargetDiscover):
     def get_properties(self):
         yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
         return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            'start_date': yesterday.strftime("%Y-%m-%dT00:00:00Z"),
             'client_id': os.getenv('TAP_EXACTTARGET_CLIENT_ID'),
             'tenant_subdomain': os.getenv('TAP_EXACTTARGET_TENANT_SUBDOMAIN')
         }
@@ -95,7 +95,7 @@ class ExactTargetDiscover3(ExactTargetDiscover):
     def get_properties(self):
         yesterday = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
         return {
-            'start_date': yesterday.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            'start_date': yesterday.strftime("%Y-%m-%dT00:00:00Z"),
             'client_id': os.getenv('TAP_EXACTTARGET_V2_CLIENT_ID'),
             'tenant_subdomain': os.getenv('TAP_EXACTTARGET_V2_TENANT_SUBDOMAIN')
         }

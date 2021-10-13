@@ -87,7 +87,7 @@ class SendDataAccessObject(DataAccessObject):
 
         to_return['EmailID'] = to_return.get('Email', {}).get('ID')
 
-        return super(SendDataAccessObject, self).parse_object(to_return)
+        return super().parse_object(to_return)
 
     @exacttarget_error_handling
     def sync_data(self):

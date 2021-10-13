@@ -100,7 +100,7 @@ class ListSendDataAccessObject(DataAccessObject):
 
         to_return['ListID'] = to_return.get('List', {}).get('ID')
 
-        return super(ListSendDataAccessObject, self).parse_object(to_return)
+        return super().parse_object(to_return)
 
     @exacttarget_error_handling
     def sync_data(self):

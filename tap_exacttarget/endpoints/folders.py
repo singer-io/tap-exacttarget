@@ -58,7 +58,7 @@ class FolderDataAccessObject(DataAccessObject):
 
         to_return['ParentFolder'] = to_return.get('ParentFolder', {}).get('ID')
 
-        return super(FolderDataAccessObject, self).parse_object(to_return)
+        return super().parse_object(to_return)
 
     @exacttarget_error_handling
     def sync_data(self):
