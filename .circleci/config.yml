@@ -11,7 +11,7 @@ jobs:
             python3 -mvenv /usr/local/share/virtualenvs/tap-exacttarget
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
             pip install -U 'pip<19.2' 'setuptools<51.0.0'
-            pip install .[dev]
+            pip install .[test]
       - run:
           name: 'unittest'
           command: |
