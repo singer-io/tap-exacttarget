@@ -24,7 +24,9 @@ class ListDataAccessObject(DataAccessObject):
         selector = FuelSDK.ET_List
 
         search_filter = None
-        retrieve_all_since = get_last_record_value_for_table(self.state, table)
+
+        # pass config to return start date if not bookmark is found
+        retrieve_all_since = get_last_record_value_for_table(self.state, table, self.config)
 
         if retrieve_all_since is not None:
             search_filter = {

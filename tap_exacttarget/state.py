@@ -19,13 +19,15 @@ STATE_SCHEMA = Schema({
 })
 
 
-def get_last_record_value_for_table(state, table):
+# 'config': to return start date if no bookmark is found
+def get_last_record_value_for_table(state, table, config):
     raw = state.get('bookmarks', {}) \
                .get(table, {}) \
                .get('last_record')
 
+    # return 'start date' from 'config' if no bookmark found in state file
     if raw is None:
-        return None
+        return config['start_date']
 
     date_obj = datetime.datetime.strptime(raw, DATE_FORMAT)
     date_obj = date_obj - datetime.timedelta(days=1)
