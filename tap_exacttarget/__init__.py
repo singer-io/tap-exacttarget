@@ -3,6 +3,8 @@
 import argparse
 import json
 
+import sys
+
 import singer
 from singer import utils
 from singer import metadata
@@ -50,7 +52,7 @@ AVAILABLE_STREAM_ACCESSORS = [
     SubscriberDataAccessObject,
 ]
 
-
+# run discover mode
 def do_discover(args):
     LOGGER.info("Starting discovery.")
 
@@ -69,14 +71,14 @@ def do_discover(args):
 
     print(json.dumps({'streams': catalog}, indent=4))
 
-
+# check if the stream is selected or not
 def _is_selected(catalog_entry):
     mdata = metadata.to_map(catalog_entry['metadata'])
     return singer.should_sync_field(metadata.get(mdata, (), 'inclusion'),
                                     metadata.get(mdata, (), 'selected'),
                                     default=False)
 
-
+# run sync mode
 def do_sync(args):
     LOGGER.info("Starting sync.")
 
@@ -102,6 +104,15 @@ def do_sync(args):
                         .format(stream_catalog.get('stream')))
             continue
 
+        # for 'subscriber' stream if it is selected, add values for 'subscriber_catalog' and
+        # 'subscriber_selected', and it will replicated via 'list_subscribers' stream
+        # The 'subscribers' stream is the child stream of 'list_subscribers'
+        # When we sync 'list_subscribers', it makes the list of subscriber's
+        # 'SubscriberKey' that were returned as part of 'list_subscribers' records
+        # and pass that list to 'subscribers' stream and thus 'subscribers' stream
+        # will only sync records of subscribers that are present in the list.
+        # Hence, for different start dates the 'SubscriberKey' list will differ and
+        # thus 'subscribers' records will also be different for different start dates.
         if SubscriberDataAccessObject.matches_catalog(stream_catalog):
             subscriber_selected = True
             subscriber_catalog = stream_catalog
@@ -119,11 +130,12 @@ def do_sync(args):
 
                 break
 
+    # do not replicate 'subscriber' stream without selecting 'list_subscriber' stream
     if subscriber_selected and not list_subscriber_selected:
         LOGGER.fatal('Cannot replicate `subscriber` without '
                      '`list_subscriber`. Please select `list_subscriber` '
                      'and try again.')
-        exit(1)
+        sys.exit(1)
 
     for stream_accessor in stream_accessors:
         if isinstance(stream_accessor, ListSubscriberDataAccessObject) and \
@@ -161,10 +173,10 @@ def main():
 
     if success:
         LOGGER.info("Completed successfully, exiting.")
-        exit(0)
+        sys.exit(0)
     else:
         LOGGER.info("Run failed, exiting.")
-        exit(1)
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()

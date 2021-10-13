@@ -1,107 +1,18 @@
 import FuelSDK
+import copy
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
-from tap_exacttarget.schemas import CUSTOM_PROPERTY_LIST, ID_FIELD, \
-    CREATED_DATE_FIELD, CUSTOMER_KEY_FIELD, OBJECT_ID_FIELD, \
-    SUBSCRIBER_KEY_FIELD, MODIFIED_DATE_FIELD, with_properties
-
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 
 LOGGER = singer.get_logger()
 
-SCHEMA = with_properties({
-    'Addresses': {
-        'type': 'array',
-        'description': ('Indicates addresses belonging to a subscriber, '
-                        'used to create, retrieve, update or delete an '
-                        'email or SMS Address for a given subscriber.'),
-        'items': {
-            'type': 'object',
-            'properties': {
-                'Address': {'type': ['null', 'string']},
-                'AddressType': {'type': ['null', 'string']},
-                'AddressStatus': {'type': ['null', 'string']}
-            }
-        }
-    },
-    'Attributes': CUSTOM_PROPERTY_LIST,
-    'CreatedDate': CREATED_DATE_FIELD,
-    'CustomerKey': CUSTOMER_KEY_FIELD,
-    'EmailAddress': {
-        'type': ['null', 'string'],
-        'description': ('Contains the email address for a subscriber. '
-                        'Indicates the data extension field contains '
-                        'email address data.'),
-    },
-    'EmailTypePreference': {
-        'type': ['null', 'string'],
-        'description': 'The format in which email should be sent'
-    },
-    'ID': ID_FIELD,
-    'ListIDs': {
-        'type': 'array',
-        'description': 'Defines list IDs a subscriber resides on.',
-        'items': {
-            'type': ['null', 'string']
-        }
-    },
-    'Locale': {
-        'type': ['null', 'string'],
-        'description': ('Contains the locale information for an Account. '
-                        'If no location is set, Locale defaults to en-US '
-                        '(English in United States).'),
-    },
-    'ModifiedDate': MODIFIED_DATE_FIELD,
-    'ObjectID': OBJECT_ID_FIELD,
-    'PartnerKey': {
-        'type': ['null', 'string'],
-        'description': ('Unique identifier provided by partner for an '
-                        'object, accessible only via API.'),
-    },
-    'PartnerProperties': CUSTOM_PROPERTY_LIST,
-    'PartnerType': {
-        'type': ['null', 'string'],
-        'description': 'Defines partner associated with a subscriber.'
-    },
-    'PrimaryEmailAddress': {
-        'type': ['null', 'string'],
-        'description': 'Indicates primary email address for a subscriber.'
-    },
-    'PrimarySMSAddress': {
-        'type': ['null', 'string'],
-        'description': ('Indicates primary SMS address for a subscriber. '
-                        'Used to create and update SMS Address for a '
-                        'given subscriber.'),
-    },
-    'PrimarySMSPublicationStatus': {
-        'type': ['null', 'string'],
-        'description': 'Indicates the subscriber\'s modality status.',
-    },
-    'Status': {
-        'type': ['null', 'string'],
-        'description': 'Defines status of object. Status of an address.',
-    },
-    'SubscriberKey': SUBSCRIBER_KEY_FIELD,
-    'SubscriberTypeDefinition': {
-        'type': ['null', 'string'],
-        'description': ('Specifies if a subscriber resides in an '
-                        'integration, such as Salesforce or Microsoft '
-                        'Dynamics CRM'),
-    },
-    'UnsubscribedDate': {
-        'type': ['null', 'string'],
-        'description': ('Represents date subscriber unsubscribed '
-                        'from a list.'),
-    }
-})
-
-
 class SubscriberDataAccessObject(DataAccessObject):
 
-    SCHEMA = SCHEMA
     TABLE = 'subscriber'
     KEY_PROPERTIES = ['ID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
     def parse_object(self, obj):
         to_return = obj.copy()
@@ -119,11 +30,13 @@ class SubscriberDataAccessObject(DataAccessObject):
         if to_return.get('PartnerProperties') is None:
             to_return['PartnerProperties'] = []
 
-        return super(SubscriberDataAccessObject, self).parse_object(obj)
+        return super().parse_object(obj)
 
     def sync_data(self):
         pass
 
+    # fetch subscriber records based in the 'subscriber_keys' provided
+    @exacttarget_error_handling
     def pull_subscribers_batch(self, subscriber_keys):
         if not subscriber_keys:
             return
@@ -149,9 +62,11 @@ class SubscriberDataAccessObject(DataAccessObject):
             return
 
         stream = request(
-            'Subscriber', FuelSDK.ET_Subscriber, self.auth_stub, _filter)
+            'Subscriber', FuelSDK.ET_Subscriber, self.auth_stub, _filter, batch_size=self.batch_size)
+
+        catalog_copy = copy.deepcopy(self.catalog)
 
         for subscriber in stream:
             subscriber = self.filter_keys_and_parse(subscriber)
 
-            singer.write_records(table, [subscriber])
+            self.write_records_with_transform(subscriber, catalog_copy, table)

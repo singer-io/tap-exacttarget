@@ -26,7 +26,7 @@ class TapExacttarget__ET_Continue(FuelSDK.rest.ET_Constructor):
         response = auth_stub.soap_client.service.Retrieve(ws_continueRequest)
 
         if response is not None:
-            super(TapExacttarget__ET_Continue, self).__init__(response)
+            super().__init__(response)
 
 def tap_exacttarget__getMoreResults(cursor, batch_size=2500):
     obj = TapExacttarget__ET_Continue(cursor.auth_stub, cursor.last_request_id, batch_size)
@@ -34,3 +34,71 @@ def tap_exacttarget__getMoreResults(cursor, batch_size=2500):
         cursor.last_request_id = obj.request_id
 
     return obj
+
+# extend 'get' from 'ET_DataExtension_Row' and add 'options' parameter to set 'batch_size'
+class TapExacttarget__ET_DataExtension_Row(FuelSDK.ET_DataExtension_Row):
+
+    def get(self):
+        self.getName()
+        '''
+        if props and props.is_a? Array then
+            @props = props
+        end
+        '''
+
+        if self.props is not None and type(self.props) is dict: # pylint:disable=unidiomatic-typecheck
+            self.props = self.props.keys()
+
+        '''
+        if filter and filter.is_a? Hash then
+            @filter = filter
+        end
+        '''
+
+        # add 'options' parameter to set 'batch_size'
+        obj = FuelSDK.ET_Get(self.auth_stub, "DataExtensionObject[{0}]".format(self.Name), self.props, self.search_filter, self.options)
+        self.last_request_id = obj.request_id
+
+        return obj
+
+# extend 'get' from 'ET_DataExtension_Column' and add 'options' parameter to set 'batch_size'
+class TapExacttarget__ET_DataExtension_Column(FuelSDK.ET_DataExtension_Column):
+
+    def get(self):
+        '''
+        if props and props.is_a? Array then
+            @props = props
+        end
+        '''
+
+        if self.props is not None and type(self.props) is dict: # pylint:disable=unidiomatic-typecheck
+            self.props = self.props.keys()
+
+        '''
+        if filter and filter.is_a? Hash then
+            @filter = filter
+        end
+        '''
+
+        '''
+        fixCustomerKey = False
+        if filter and filter.is_a? Hash then
+            @filter = filter
+            if @filter.has_key?("Property") && @filter["Property"] == "CustomerKey" then
+                @filter["Property"]  = "DataExtension.CustomerKey"
+                fixCustomerKey = true
+            end
+        end
+        '''
+
+        # add 'options' parameter to set 'batch_size'
+        obj = FuelSDK.ET_Get(self.auth_stub, self.obj, self.props, self.search_filter, self.options)
+        self.last_request_id = obj.request_id
+
+        '''
+        if fixCustomerKey then
+            @filter["Property"] = "CustomerKey"
+        end
+        '''
+
+        return obj
