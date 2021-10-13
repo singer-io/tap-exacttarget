@@ -26,7 +26,7 @@ class TapExacttarget__ET_Continue(FuelSDK.rest.ET_Constructor):
         response = auth_stub.soap_client.service.Retrieve(ws_continueRequest)
 
         if response is not None:
-            super(TapExacttarget__ET_Continue, self).__init__(response)
+            super().__init__(response)
 
 def tap_exacttarget__getMoreResults(cursor, batch_size=2500):
     obj = TapExacttarget__ET_Continue(cursor.auth_stub, cursor.last_request_id, batch_size)

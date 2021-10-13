@@ -3,7 +3,7 @@ import copy
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 
 LOGGER = singer.get_logger()
 
@@ -19,8 +19,9 @@ class ListSendDataAccessObject(DataAccessObject):
 
         to_return['ListID'] = to_return.get('List', {}).get('ID')
 
-        return super(ListSendDataAccessObject, self).parse_object(to_return)
+        return super().parse_object(to_return)
 
+    @exacttarget_error_handling
     def sync_data(self):
         table = self.__class__.TABLE
         selector = FuelSDK.ET_ListSend
@@ -30,10 +31,17 @@ class ListSendDataAccessObject(DataAccessObject):
         stream = request('ListSend',
                          selector,
                          self.auth_stub)
+<<<<<<< HEAD
 
         catalog_copy = copy.deepcopy(self.catalog)
+=======
+>>>>>>> ca2ca099106184e171a1f2dfe6c34cfa945e6bb2
 
         for list_send in stream:
             list_send = self.filter_keys_and_parse(list_send)
 
+<<<<<<< HEAD
             self.write_records_with_transform(list_send, catalog_copy, table)
+=======
+            singer.write_records(table, [list_send])
+>>>>>>> ca2ca099106184e171a1f2dfe6c34cfa945e6bb2

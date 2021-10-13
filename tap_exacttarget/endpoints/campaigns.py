@@ -3,7 +3,7 @@ import copy
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 
 LOGGER = singer.get_logger()
 
@@ -14,6 +14,7 @@ class CampaignDataAccessObject(DataAccessObject):
     KEY_PROPERTIES = ['id']
     REPLICATION_METHOD = 'FULL_TABLE'
 
+    @exacttarget_error_handling
     def sync_data(self):
         cursor = request(
             'Campaign',

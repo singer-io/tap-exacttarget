@@ -3,7 +3,7 @@ import copy
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.endpoints.subscribers import SubscriberDataAccessObject
 from tap_exacttarget.pagination import get_date_page, before_now, \
     increment_date
@@ -39,12 +39,13 @@ class ListSubscriberDataAccessObject(DataAccessObject):
     REPLICATION_KEYS = ['ModifiedDate']
 
     def __init__(self, config, state, auth_stub, catalog):
-        super(ListSubscriberDataAccessObject, self).__init__(
+        super().__init__(
             config, state, auth_stub, catalog)
 
         self.replicate_subscriber = False
         self.subscriber_catalog = None
 
+    @exacttarget_error_handling
     def _get_all_subscribers_list(self):
         """
         Find the 'All Subscribers' list via the SOAP API, and return it.
@@ -64,6 +65,7 @@ class ListSubscriberDataAccessObject(DataAccessObject):
 
         return sudsobj_to_dict(lists[0])
 
+    @exacttarget_error_handling
     def sync_data(self):
         table = self.__class__.TABLE
         subscriber_dao = SubscriberDataAccessObject(

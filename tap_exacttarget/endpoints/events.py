@@ -3,7 +3,7 @@ import copy
 import singer
 
 from tap_exacttarget.client import request
-from tap_exacttarget.dao import DataAccessObject
+from tap_exacttarget.dao import (DataAccessObject, exacttarget_error_handling)
 from tap_exacttarget.pagination import get_date_page, before_now, \
     increment_date
 from tap_exacttarget.state import incorporate, save_state, \
@@ -20,6 +20,7 @@ class EventDataAccessObject(DataAccessObject):
     REPLICATION_METHOD = 'INCREMENTAL'
     REPLICATION_KEYS = ['EventDate']
 
+    @exacttarget_error_handling
     def sync_data(self):
         table = self.__class__.TABLE
         endpoints = {

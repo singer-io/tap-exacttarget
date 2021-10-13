@@ -1,3 +1,6 @@
+import backoff
+import socket
+import functools
 import singer
 import os
 from singer import metadata, Transformer, utils
@@ -32,6 +35,14 @@ def load_schema(stream):
     schema = utils.load_json(path)
 
     return schema
+
+# decorator for retrying on error
+def exacttarget_error_handling(fnc):
+    @backoff.on_exception(backoff.expo, (socket.timeout, ConnectionError), max_tries=5, factor=2)
+    @functools.wraps(fnc)
+    def wrapper(*args, **kwargs):
+        return fnc(*args, **kwargs)
+    return wrapper
 
 class DataAccessObject():
 
