@@ -104,6 +104,8 @@ class ContentAreaDataAccessObject(DataAccessObject):
 
     TABLE = 'content_area'
     KEY_PROPERTIES = ['ID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
     @exacttarget_error_handling
     def sync_data(self):

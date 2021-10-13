@@ -38,16 +38,25 @@ class DataAccessObject():
         cls = self.__class__
 
         mdata = metadata.new()
-        metadata.write(mdata, (), 'inclusion', 'available')
-        for prop in cls.SCHEMA['properties']: # pylint:disable=unsubscriptable-object
-            metadata.write(mdata, ('properties', prop), 'inclusion', 'available')
+
+        # use 'get_standard_metadata' with primary key, replication key and replication method
+        mdata = metadata.get_standard_metadata(schema=self.SCHEMA,
+                                               key_properties=self.KEY_PROPERTIES,
+                                               valid_replication_keys=self.REPLICATION_KEYS if self.REPLICATION_KEYS else None,
+                                               replication_method=self.REPLICATION_METHOD)
+
+        mdata_map = metadata.to_map(mdata)
+
+        # make 'automatic' inclusion for replication keys
+        for replication_key in self.REPLICATION_KEYS:
+            mdata_map[('properties', replication_key)]['inclusion'] = 'automatic'
 
         return [{
             'tap_stream_id': cls.TABLE,
             'stream': cls.TABLE,
             'key_properties': cls.KEY_PROPERTIES,
             'schema': cls.SCHEMA,
-            'metadata': metadata.to_list(mdata)
+            'metadata': metadata.to_list(mdata_map)
         }]
 
     def filter_keys_and_parse(self, obj):
@@ -88,6 +97,8 @@ class DataAccessObject():
     SCHEMA = None
     TABLE = None
     KEY_PROPERTIES = None
+    REPLICATION_KEYS = []
+    REPLICATION_METHOD = None
 
     def sync_data(self):  # pylint: disable=no-self-use
         raise RuntimeError('sync_data is not implemented!')

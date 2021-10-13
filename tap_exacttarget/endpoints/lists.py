@@ -49,6 +49,8 @@ class ListDataAccessObject(DataAccessObject):
 
     TABLE = 'list'
     KEY_PROPERTIES = ['ID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
     @exacttarget_error_handling
     def sync_data(self):

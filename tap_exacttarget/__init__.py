@@ -104,6 +104,13 @@ def do_sync(args):
                         .format(stream_catalog.get('stream')))
             continue
 
+        # The 'subscribers' stream is the child stream of 'list_subscribers'
+        # When we sync 'list_subscribers', it makes the list of subscriber's
+        # 'SubscriberKey' that were returned as part of 'list_subscribers' records
+        # and pass that list to 'subscribers' stream and thus 'subscribers' stream
+        # will only sync records of subscribers that are present in the list.
+        # Hence, for different start dates the 'SubscriberKey' list will differ and
+        # thus 'subscribers' records will also be different for different start dates.
         if SubscriberDataAccessObject.matches_catalog(stream_catalog):
             subscriber_selected = True
             subscriber_catalog = stream_catalog

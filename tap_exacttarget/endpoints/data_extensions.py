@@ -80,17 +80,31 @@ class DataExtensionDataAccessObject(DataAccessObject):
                         }
                     }
                 },
-                'metadata': [{'breadcrumb': (), 'metadata': {'inclusion':'available'}},
-                             {'breadcrumb': ('properties', '_CustomObjectKey'),
-                              'metadata': {'inclusion':'available'}},
-                             {'breadcrumb': ('properties', 'CategoryID'),
-                              'metadata': {'inclusion':'available'}}]
+                'metadata': [
+                    {
+                        'breadcrumb': (),
+                        'metadata': {
+                            'inclusion':'available',
+                            'forced-replication-method': 'FULL_TABLE',
+                            'table-key-properties': ['_CustomObjectKey'],
+                            'valid-replication-keys': []
+                        }
+                    },
+                    {
+                        'breadcrumb': ('properties', '_CustomObjectKey'),
+                        'metadata': {'inclusion':'automatic'}
+                    },
+                    {
+                        'breadcrumb': ('properties', 'CategoryID'),
+                        'metadata': {'inclusion':'available'}
+                    }
+                ]
             }
 
         return to_return
 
     @exacttarget_error_handling
-    def _get_fields(self, extensions):
+    def _get_fields(self, extensions): # pylint: disable=too-many-branches
         to_return = extensions.copy()
 
         result = request(
@@ -98,16 +112,30 @@ class DataExtensionDataAccessObject(DataAccessObject):
             FuelSDK.ET_DataExtension_Column,
             self.auth_stub)
 
+        # iterate through all the fields and determine if it is primary key
+        # or replication key and update the catalog file accordingly:
+        #   is_primary_key:
+        #       update catalog file by appending that field in 'table-key-properties'
+        #   is_replication_key:
+        #       update value of 'forced-replication-method' as INCREMENTAL
+        #       update catalog file by appending that field in 'valid-replication-keys'
+        #   add 'AUTOMATIC' replication method for both primary and replication keys
         for field in result:
+            is_replication_key = False
+            is_primary_key = False
             extension_id = field.DataExtension.CustomerKey
             field = sudsobj_to_dict(field)
             field_name = field['Name']
 
             if field.get('IsPrimaryKey'):
+                is_primary_key = True
                 to_return = _merge_in(
                     to_return,
                     [extension_id, 'key_properties'],
                     field_name)
+
+            if field_name in ['ModifiedDate', 'JoinDate']:
+                is_replication_key = True
 
             field_schema = {
                 'type': [
@@ -122,13 +150,65 @@ class DataExtensionDataAccessObject(DataAccessObject):
                 [extension_id, 'schema', 'properties', field_name],
                 field_schema)
 
+            # add primary key in 'table-key-properties'
+            if is_primary_key:
+                for mdata in to_return[extension_id]['metadata']:
+                    if not mdata.get('breadcrumb'):
+                        mdata.get('metadata').get('table-key-properties').append(field_name)
+
+            # add replication key in 'valid-replication-keys'
+            # and change 'forced-replication-method' to INCREMENTAL
+            if is_replication_key:
+                for mdata in to_return[extension_id]['metadata']:
+                    if not mdata.get('breadcrumb'):
+                        mdata.get('metadata')['forced-replication-method'] = "INCREMENTAL"
+                        mdata.get('metadata').get('valid-replication-keys').append(field_name)
+
             # These fields are defaulted into the schema, do not add to metadata again.
             if field_name not in {'_CustomObjectKey', 'CategoryID'}:
-                to_return[extension_id]['metadata'].append({
-                    'breadcrumb': ('properties', field_name),
-                    'metadata': {'inclusion': 'available'}
-                })
+                # if primary of replication key, then mark it as automatic
+                if is_primary_key or is_replication_key:
+                    to_return[extension_id]['metadata'].append({
+                        'breadcrumb': ('properties', field_name),
+                        'metadata': {'inclusion': 'automatic'}
+                    })
+                else:
+                    to_return[extension_id]['metadata'].append({
+                        'breadcrumb': ('properties', field_name),
+                        'metadata': {'inclusion': 'available'}
+                    })
 
+        # the structure of 'to_return' is like:
+        # {
+        #     'de1': {
+        #         'tap_stream_id': 'data_extension.de1',
+        #         'stream': 'data_extension.de1',
+        #         'key_properties': ['_CustomObjectKey'],
+        #         'schema': {
+        #             'type': 'object',
+        #             'properties': {...}
+        #         },
+        #         'metadata': [...]
+        #     },
+        #    'de2': {
+        #         'tap_stream_id': 'data_extension.de2',
+        #         'stream': 'data_extension.de2',
+        #         'key_properties': ['_CustomObjectKey'],
+        #         'schema': {
+        #             'type': 'object',
+        #             'properties': {...}
+        #         },
+        #         'metadata': [...]
+        #     }
+        # }
+
+        # loop through all the data extension catalog in 'to_return'
+        # and remove empty 'valid-replication-keys' present in metadata
+        for catalog in to_return.values():
+            for mdata in catalog.get('metadata'):
+                if not mdata.get('breadcrumb'):
+                    if not mdata.get('metadata').get('valid-replication-keys'):
+                        del mdata.get('metadata')['valid-replication-keys']
         return to_return
 
     def generate_catalog(self):

@@ -52,6 +52,8 @@ class FolderDataAccessObject(DataAccessObject):
 
     TABLE = 'folder'
     KEY_PROPERTIES = ['ID']
+    REPLICATION_METHOD = 'INCREMENTAL'
+    REPLICATION_KEYS = ['ModifiedDate']
 
     def parse_object(self, obj):
         to_return = obj.copy()
