@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.7.0
+  * Add retry logic to requests [#60] (https://github.com/singer-io/tap-exacttarget/pull/60)
+  * Print user friendly error messages [#65] (https://github.com/singer-io/tap-exacttarget/pull/65)
+  * Check best practices [#66] (https://github.com/singer-io/tap-exacttarget/pull/66)
+  * Keys should be marked automatic and list_sends stream does not bookmark correctly [#68] (https://github.com/singer-io/tap-exacttarget/pull/68)
+  * Respect field selection [#67] (https://github.com/singer-io/tap-exacttarget/pull/67)
+  * Respect the start date for all streams [#63] (https://github.com/singer-io/tap-exacttarget/pull/63)
+  * Make batch_size apply to the first page and TDL-14895: Use the pagination__list_subscriber_interval_quantity config value correctly [#64] (https://github.com/singer-io/tap-exacttarget/pull/64)
+  * Separation of Schema from .Py [#60] (https://github.com/singer-io/tap-exacttarget/pull/60
+
 ## 1.6.1
   * Add OAuth2 support but using server-to-server integrations [#47](https://github.com/singer-io/tap-exacttarget/pull/47)
 
