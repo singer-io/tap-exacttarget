@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.1
+  * Remove fstring
+
 ## 1.7.0
   * Add retry logic to requests [#60] (https://github.com/singer-io/tap-exacttarget/pull/60)
   * Print user friendly error messages [#65] (https://github.com/singer-io/tap-exacttarget/pull/65)
