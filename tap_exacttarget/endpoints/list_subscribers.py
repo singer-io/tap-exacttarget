@@ -46,7 +46,8 @@ class ListSubscriberDataAccessObject(DataAccessObject):
         self.replicate_subscriber = False
         self.subscriber_catalog = None
 
-    @exacttarget_error_handling
+    # error handling is not required as this function is called from
+    # 'sync_data' hence it will be back-off from that function
     def _get_all_subscribers_list(self):
         """
         Find the 'All Subscribers' list via the SOAP API, and return it.
