@@ -36,7 +36,7 @@ class TestTimeoutVlaue(unittest.TestCase):
         })
 
         # verify the timeout was called with default timeout
-        mocked_HttpAuthenticated.assert_called_with(timeout=900.0)
+        mocked_HttpAuthenticated.assert_called_with(timeout=300.0)
 
     def test_timeout_integer_value(self, mocked_HttpAuthenticated, mocked_ET_Client):
         """
@@ -99,7 +99,7 @@ class TestTimeoutVlaue(unittest.TestCase):
         })
 
         # verify the timeout was called with default timeout
-        mocked_HttpAuthenticated.assert_called_with(timeout=900.0)
+        mocked_HttpAuthenticated.assert_called_with(timeout=300.0)
 
     def test_timeout_0_value(self, mocked_HttpAuthenticated, mocked_ET_Client):
         """
@@ -120,7 +120,7 @@ class TestTimeoutVlaue(unittest.TestCase):
         })
 
         # verify the timeout was called with default timeout
-        mocked_HttpAuthenticated.assert_called_with(timeout=900.0)
+        mocked_HttpAuthenticated.assert_called_with(timeout=300.0)
 
     def test_timeout_string_0_value(self, mocked_HttpAuthenticated, mocked_ET_Client):
         """
@@ -141,4 +141,4 @@ class TestTimeoutVlaue(unittest.TestCase):
         })
 
         # verify the timeout was called with default timeout
-        mocked_HttpAuthenticated.assert_called_with(timeout=900.0)
+        mocked_HttpAuthenticated.assert_called_with(timeout=300.0)

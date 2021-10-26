@@ -7,7 +7,7 @@ from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 LOGGER = singer.get_logger()
 
 # default timeout for requests
-REQUEST_TIMEOUT = 900
+REQUEST_TIMEOUT = 300
 
 # prints the number of records fetched from the passed endpoint
 def _get_response_items(response, name):

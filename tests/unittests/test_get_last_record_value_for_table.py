@@ -25,7 +25,7 @@ class TestGetLastRecordValueForTable(unittest.TestCase):
             "client_secret": "client_secret_123",
             "tenant_subdomain": "tenant_subdomain_123",
             "start_date": "2021-01-01T00:00:00Z",
-            "request_timeout": "900",
+            "request_timeout": "300",
             "batch_size": 2500
         }
 
@@ -51,7 +51,7 @@ class TestGetLastRecordValueForTable(unittest.TestCase):
             "client_secret": "client_secret_123",
             "tenant_subdomain": "tenant_subdomain_123",
             "start_date": "2021-01-01T00:00:00Z",
-            "request_timeout": "900",
+            "request_timeout": "300",
             "batch_size": 2500
         }
 

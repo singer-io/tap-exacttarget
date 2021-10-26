@@ -28,7 +28,7 @@ class TestErrorMessages(unittest.TestCase):
             "client_secret": "client_secret_123",
             "tenant_subdomain": "",
             "start_date": "2019-01-01T00:00:00Z",
-            "request_timeout": "900",
+            "request_timeout": "300",
             "batch_size": 2500
         }
 
@@ -50,7 +50,7 @@ class TestErrorMessages(unittest.TestCase):
             "client_secret": "client_secret_123",
             "tenant_subdomain": "tenant_subdomain_123",
             "start_date": "2019-01-01T00:00:00Z",
-            "request_timeout": "900",
+            "request_timeout": "300",
             "batch_size": 2500
         }
 
@@ -72,7 +72,7 @@ class TestErrorMessages(unittest.TestCase):
             "client_secret": "",
             "tenant_subdomain": "",
             "start_date": "2019-01-01T00:00:00Z",
-            "request_timeout": "900",
+            "request_timeout": "300",
             "batch_size": 2500
         }
 
@@ -95,7 +95,7 @@ class TestErrorMessages(unittest.TestCase):
             "client_secret": "",
             "tenant_subdomain": "tenant_subdomain_123",
             "start_date": "2019-01-01T00:00:00Z",
-            "request_timeout": "900",
+            "request_timeout": "300",
             "batch_size": 2500
         }
 
@@ -116,7 +116,7 @@ class TestErrorMessages(unittest.TestCase):
             "client_secret": "client_secret_123",
             "tenant_subdomain": "",
             "start_date": "2019-01-01T00:00:00Z",
-            "request_timeout": "900",
+            "request_timeout": "300",
             "batch_size": 2500
         }
 
@@ -136,7 +136,7 @@ class TestErrorMessages(unittest.TestCase):
             "client_secret": "client_secret_123",
             "tenant_subdomain": "tenant_subdomain_123",
             "start_date": "2019-01-01T00:00:00Z",
-            "request_timeout": "900",
+            "request_timeout": "300",
             "batch_size": 2500
         }
 
@@ -162,7 +162,7 @@ class TestErrorMessages(unittest.TestCase):
             "client_secret": "client_secret_123",
             "tenant_subdomain": "",
             "start_date": "2019-01-01T00:00:00Z",
-            "request_timeout": "900",
+            "request_timeout": "300",
             "batch_size": 2500
         }
 
@@ -185,7 +185,7 @@ class TestErrorMessages(unittest.TestCase):
             "client_secret": "client_secret_123",
             "tenant_subdomain": "tenant_subdomain_123",
             "start_date": "2019-01-01T00:00:00Z",
-            "request_timeout": "900",
+            "request_timeout": "300",
             "batch_size": 2500
         }
 
