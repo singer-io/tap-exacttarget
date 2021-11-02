@@ -57,9 +57,11 @@ def get_auth_stub(config):
         auth_stub = FuelSDK.ET_Client(params=params)
 
         # Set request timeout with config param `request_timeout`.
-        # If value is 0,"0","" or not passed then set default to 300 seconds.
         config_request_timeout = config.get('request_timeout')
-        request_timeout = config_request_timeout and float(config_request_timeout) or REQUEST_TIMEOUT # pylint: disable=consider-using-ternary
+        if config_request_timeout and float(config_request_timeout):
+            request_timeout = float(config_request_timeout)
+        else:
+            request_timeout = REQUEST_TIMEOUT # If value is 0,"0","" or not passed then it set default to 300 seconds.
 
         transport = HttpAuthenticated(timeout=request_timeout)
         auth_stub.soap_client.set_options(
@@ -84,9 +86,11 @@ def get_auth_stub(config):
         auth_stub = FuelSDK.ET_Client(params=params)
 
         # Set request timeout with config param `request_timeout`.
-        # If value is 0,"0","" or not passed then set default to 300 seconds.
         config_request_timeout = config.get('request_timeout')
-        request_timeout = config_request_timeout and float(config_request_timeout) or REQUEST_TIMEOUT # pylint: disable=consider-using-ternary
+        if config_request_timeout and float(config_request_timeout):
+            request_timeout = float(config_request_timeout)
+        else:
+            request_timeout = REQUEST_TIMEOUT # If value is 0,"0","" or not passed then it set default to 300 seconds.
 
         transport = HttpAuthenticated(timeout=request_timeout)
         auth_stub.soap_client.set_options(
