@@ -6,7 +6,7 @@ from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 
 LOGGER = singer.get_logger()
 
-# default timeout for requests
+# default request timeout
 REQUEST_TIMEOUT = 300
 
 # prints the number of records fetched from the passed endpoint
@@ -50,18 +50,18 @@ def get_auth_stub(config):
         params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
                                   .format(config['tenant_subdomain']))
 
+    # Set request timeout with config param `request_timeout`.
+    config_request_timeout = config.get('request_timeout')
+    if config_request_timeout and float(config_request_timeout):
+        request_timeout = float(config_request_timeout)
+    else:
+        request_timeout = REQUEST_TIMEOUT # If value is 0, "0", "" or not passed then it sets default to 300 seconds.
+
     # First try V1
     try:
         LOGGER.info('Trying to authenticate using V1 endpoint')
         params['useOAuth2Authentication'] = "False"
         auth_stub = FuelSDK.ET_Client(params=params)
-
-        # Set request timeout with config param `request_timeout`.
-        config_request_timeout = config.get('request_timeout')
-        if config_request_timeout and float(config_request_timeout):
-            request_timeout = float(config_request_timeout)
-        else:
-            request_timeout = REQUEST_TIMEOUT # If value is 0,"0","" or not passed then it set default to 300 seconds.
 
         transport = HttpAuthenticated(timeout=request_timeout)
         auth_stub.soap_client.set_options(
@@ -84,13 +84,6 @@ def get_auth_stub(config):
                                        .format(config['tenant_subdomain']))
         LOGGER.info("Authentication URL is: %s", params['authenticationurl'])
         auth_stub = FuelSDK.ET_Client(params=params)
-
-        # Set request timeout with config param `request_timeout`.
-        config_request_timeout = config.get('request_timeout')
-        if config_request_timeout and float(config_request_timeout):
-            request_timeout = float(config_request_timeout)
-        else:
-            request_timeout = REQUEST_TIMEOUT # If value is 0,"0","" or not passed then it set default to 300 seconds.
 
         transport = HttpAuthenticated(timeout=request_timeout)
         auth_stub.soap_client.set_options(
