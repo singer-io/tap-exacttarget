@@ -1210,3 +1210,18 @@ class TestTimeoutError(unittest.TestCase):
         # verify if 'tap_exacttarget.dao.DataAccessObject.write_records_with_transform' was called
         # once as there is only one record
         self.assertEquals(mocked_write_records.call_count, 1)
+
+    @mock.patch("FuelSDK.rest.ET_GetSupport.get")
+    def test_URLError_without_timeout(self, mocked_get, mocked_sleep):
+        # mocked 'get' and raise error
+        mocked_get.side_effect = URLError('URLError occurred.')
+        # make the object of 'ContentAreaDataAccessObject'
+        obj = content_areas.ContentAreaDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
+
+        # verify that URLError is raised as there is no 'time out' in the error string
+        with self.assertRaises(URLError):
+            # call sync
+            obj.sync_data()
+
+        # verify the code did not backoff
+        self.assertEquals(mocked_get.call_count, 1)

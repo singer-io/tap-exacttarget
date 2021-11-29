@@ -50,12 +50,13 @@ def get_auth_stub(config):
         params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
                                   .format(config['tenant_subdomain']))
 
-    # Set request timeout with config param `request_timeout`.
+    # Set request timeout with config param `request_timeout`
+    # If value is 0, "0", "" or not passed then it set timeout to default: 300 seconds.
     config_request_timeout = config.get('request_timeout')
     if config_request_timeout and float(config_request_timeout):
         request_timeout = float(config_request_timeout)
     else:
-        request_timeout = REQUEST_TIMEOUT # If value is 0, "0", "" or not passed then it sets default to 300 seconds.
+        request_timeout = REQUEST_TIMEOUT
 
     # First try V1
     try:
