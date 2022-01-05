@@ -27,6 +27,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_connection_reset_error_occurred__content_area(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mocked 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'ContentAreaDataAccessObject'
@@ -42,6 +45,9 @@ class TestConnectionResetError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__content_area(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'ConnectionResetError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -59,6 +65,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupportRest.get")
     def test_connection_reset_error_occurred__campaign(self, mocked_get_rest, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get_rest.side_effect = socket.error(104, 'Connection reset by peer')
         # # make the object of 'CampaignDataAccessObject'
@@ -74,6 +83,9 @@ class TestConnectionResetError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupportRest.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__campaign(self, mocked_write_records, mocked_get_rest, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'ConnectionResetError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get_rest.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -91,6 +103,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_connection_reset_error_occurred__data_extension(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'DataExtensionDataAccessObject'
@@ -124,6 +139,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_connection_reset_error_occurred__data_extension_get_extensions(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'DataExtensionDataAccessObject'
@@ -138,6 +156,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("tap_exacttarget.fuel_overrides.TapExacttarget__ET_DataExtension_Column.get")
     def test_connection_reset_error_occurred__data_extension_get_fields(self, mocked_data_ext_column, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_data_ext_column.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'DataExtensionDataAccessObject'
@@ -152,6 +173,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("tap_exacttarget.fuel_overrides.TapExacttarget__ET_DataExtension_Row.get")
     def test_connection_reset_error_occurred__data_extension_replicate(self, mocked_data_ext_column, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_data_ext_column.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'DataExtensionDataAccessObject'
@@ -166,6 +190,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_connection_reset_error_occurred__email(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'EmailDataAccessObject'
@@ -181,6 +208,9 @@ class TestConnectionResetError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__email(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'ConnectionResetError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -198,6 +228,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_connection_reset_error_occurred__events(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'EventDataAccessObject'
@@ -212,6 +245,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_connection_reset_error_occurred__folder(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'FolderDataAccessObject'
@@ -227,6 +263,9 @@ class TestConnectionResetError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__folder(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'ConnectionResetError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -244,6 +283,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_connection_reset_error_occurred__list_send(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'ListSendDataAccessObject'
@@ -259,6 +301,9 @@ class TestConnectionResetError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__list_send(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'ConnectionResetError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -276,6 +321,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("tap_exacttarget.endpoints.list_subscribers.ListSubscriberDataAccessObject._get_all_subscribers_list")
     def test_connection_reset_error_occurred__list_subscriber(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'ListSubscriberDataAccessObject'
@@ -291,6 +339,9 @@ class TestConnectionResetError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.endpoints.list_subscribers.ListSubscriberDataAccessObject._get_all_subscribers_list")
     def test_connection_reset_error_occurred__list_subscriber__get_all_subscribers_list(self, mocked_get_all_subscribers_list, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'ListSubscriberDataAccessObject'
@@ -305,6 +356,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_no_connection_reset_error_occurred__list_subscriber__get_all_subscribers_list(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'ConnectionResetError' error occurs
+        """
         json = {
             "CategoryID": 12345,
             "ContentCheckStatus": "Not Checked",
@@ -322,6 +376,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_connection_reset_error_occurred__list(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'ListDataAccessObject'
@@ -337,6 +394,9 @@ class TestConnectionResetError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__list(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'ConnectionResetError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -354,6 +414,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_connection_reset_error_occurred__sends(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'SendDataAccessObject'
@@ -369,6 +432,9 @@ class TestConnectionResetError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__sends(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'ConnectionResetError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -386,6 +452,9 @@ class TestConnectionResetError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_connection_reset_error_occurred__subscriber(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'ConnectionResetError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.error(104, 'Connection reset by peer')
         # make the object of 'SubscriberDataAccessObject'
@@ -401,6 +470,9 @@ class TestConnectionResetError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_connection_reset_error_occurred__subscriber(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'ConnectionResetError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -424,6 +496,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_socket_timeout_error_occurred__content_area(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'ContentAreaDataAccessObject'
@@ -439,6 +514,9 @@ class TestSocketTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__content_area(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'socket.timeout' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -456,6 +534,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupportRest.get")
     def test_socket_timeout_error_occurred__campaign(self, mocked_get_rest, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get_rest.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'CampaignDataAccessObject'
@@ -471,6 +552,9 @@ class TestSocketTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupportRest.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__campaign(self, mocked_write_records, mocked_get_rest, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'socket.timeout' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get_rest.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -488,6 +572,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_socket_timeout_error_occurred__data_extension(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'DataExtensionDataAccessObject'
@@ -521,6 +608,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_socket_timeout_error_occurred__data_extension_get_extensions(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'DataExtensionDataAccessObject'
@@ -535,6 +625,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("tap_exacttarget.fuel_overrides.TapExacttarget__ET_DataExtension_Column.get")
     def test_socket_timeout_error_occurred__data_extension_get_fields(self, mocked_data_ext_column, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_data_ext_column.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'DataExtensionDataAccessObject'
@@ -549,6 +642,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("tap_exacttarget.fuel_overrides.TapExacttarget__ET_DataExtension_Row.get")
     def test_socket_timeout_error_occurred__data_extension_replicate(self, mocked_data_ext_column, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_data_ext_column.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'DataExtensionDataAccessObject'
@@ -563,6 +659,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_socket_timeout_error_occurred__email(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # # make the object of 'EmailDataAccessObject'
@@ -578,6 +677,9 @@ class TestSocketTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__email(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'socket.timeout' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -595,6 +697,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_socket_timeout_error_occurred__events(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'EventDataAccessObject'
@@ -609,6 +714,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_socket_timeout_error_occurred__folder(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'FolderDataAccessObject'
@@ -624,6 +732,9 @@ class TestSocketTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__folder(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'socket.timeout' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -641,6 +752,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_socket_timeout_error_occurred__list_send(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'ListSendDataAccessObject'
@@ -656,6 +770,9 @@ class TestSocketTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__list_send(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'socket.timeout' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -673,6 +790,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("tap_exacttarget.endpoints.list_subscribers.ListSubscriberDataAccessObject._get_all_subscribers_list")
     def test_socket_timeout_error_occurred__list_subscriber(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'ListSubscriberDataAccessObject'
@@ -688,6 +808,9 @@ class TestSocketTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.endpoints.list_subscribers.ListSubscriberDataAccessObject._get_all_subscribers_list")
     def test_socket_timeout_error_occurred__list_subscriber__get_all_subscribers_list(self, mocked_get_all_subscribers_list, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'ListSubscriberDataAccessObject'
@@ -702,6 +825,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_no_socket_timeout_error_occurred__list_subscriber__get_all_subscribers_list(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'socket.timeout' error occurs
+        """
         json = {
             "CategoryID": 12345,
             "ContentCheckStatus": "Not Checked",
@@ -719,6 +845,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_socket_timeout_error_occurred__list(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'ListDataAccessObject'
@@ -734,6 +863,9 @@ class TestSocketTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__list(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'socket.timeout' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -751,6 +883,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_socket_timeout_error_occurred__sends(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'SendDataAccessObject'
@@ -766,6 +901,9 @@ class TestSocketTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__sends(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'socket.timeout' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -783,6 +921,9 @@ class TestSocketTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_socket_timeout_error_occurred__subscriber(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'socket.timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = socket.timeout("The read operation timed out")
         # make the object of 'SubscriberDataAccessObject'
@@ -798,6 +939,9 @@ class TestSocketTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_socket_timeout_error_occurred__subscriber(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'socket.timeout' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -822,6 +966,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_timeout_error_occurred__content_area(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mocked 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'ContentAreaDataAccessObject'
@@ -837,6 +984,9 @@ class TestTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_timeout_error_occurred__content_area(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'URLError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -854,6 +1004,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupportRest.get")
     def test_timeout_error_occurred__campaign(self, mocked_get_rest, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'requests.Timeout' error occurs
+        """
         # mock 'get' and raise error
         mocked_get_rest.side_effect = requests.Timeout
         # # make the object of 'CampaignDataAccessObject'
@@ -869,6 +1022,9 @@ class TestTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupportRest.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_timeout_error_occurred__campaign(self, mocked_write_records, mocked_get_rest, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'requests.Timeout' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get_rest.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -886,6 +1042,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_timeout_error_occurred__data_extension(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'DataExtensionDataAccessObject'
@@ -919,6 +1078,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_timeout_error_occurred__data_extension_get_extensions(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'DataExtensionDataAccessObject'
@@ -933,6 +1095,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("tap_exacttarget.fuel_overrides.TapExacttarget__ET_DataExtension_Column.get")
     def test_timeout_error_occurred__data_extension_get_fields(self, mocked_data_ext_column, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_data_ext_column.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'DataExtensionDataAccessObject'
@@ -947,6 +1112,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("tap_exacttarget.fuel_overrides.TapExacttarget__ET_DataExtension_Row.get")
     def test_timeout_error_occurred__data_extension_replicate(self, mocked_data_ext_column, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_data_ext_column.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'DataExtensionDataAccessObject'
@@ -961,6 +1129,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_timeout_error_occurred__email(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'EmailDataAccessObject'
@@ -976,6 +1147,9 @@ class TestTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_timeout_error_occurred__email(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'URLError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -993,6 +1167,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_timeout_error_occurred__events(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'EventDataAccessObject'
@@ -1007,6 +1184,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_timeout_error_occurred__folder(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'FolderDataAccessObject'
@@ -1022,6 +1202,9 @@ class TestTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_timeout_error_occurred__folder(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'URLError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -1039,6 +1222,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_timeout_error_occurred__list_send(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'ListSendDataAccessObject'
@@ -1054,6 +1240,9 @@ class TestTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_timeout_error_occurred__list_send(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'URLError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -1071,6 +1260,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("tap_exacttarget.endpoints.list_subscribers.ListSubscriberDataAccessObject._get_all_subscribers_list")
     def test_timeout_error_occurred__list_subscriber(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'ListSubscriberDataAccessObject'
@@ -1086,6 +1278,9 @@ class TestTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.endpoints.list_subscribers.ListSubscriberDataAccessObject._get_all_subscribers_list")
     def test_timeout_error_occurred__list_subscriber__get_all_subscribers_list(self, mocked_get_all_subscribers_list, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'ListSubscriberDataAccessObject'
@@ -1100,6 +1295,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_no_timeout_error_occurred__list_subscriber__get_all_subscribers_list(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'URLError' error occurs
+        """
         json = {
             "CategoryID": 12345,
             "ContentCheckStatus": "Not Checked",
@@ -1117,6 +1315,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_timeout_error_occurred__list(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'ListDataAccessObject'
@@ -1132,6 +1333,9 @@ class TestTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_timeout_error_occurred__list(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'URLError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -1149,6 +1353,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_timeout_error_occurred__sends(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'SendDataAccessObject'
@@ -1164,6 +1371,9 @@ class TestTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_timeout_error_occurred__sends(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'URLError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -1181,6 +1391,9 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_timeout_error_occurred__subscriber(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we backoff for 5 times when 'URLError' error occurs
+        """
         # mock 'get' and raise error
         mocked_get.side_effect = URLError('_ssl.c:1059: The handshake operation timed out')
         # make the object of 'SubscriberDataAccessObject'
@@ -1196,6 +1409,9 @@ class TestTimeoutError(unittest.TestCase):
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     @mock.patch("tap_exacttarget.dao.DataAccessObject.write_records_with_transform")
     def test_no_timeout_error_occurred__subscriber(self, mocked_write_records, mocked_get, mocked_sleep):
+        """
+            Test case to verify that the tap works as expected when no 'URLError' error occurs
+        """
         # mock 'get' and return the dummy data
         mocked_get.side_effect = [get_response(True, [{
             "CategoryID": 12345,
@@ -1213,12 +1429,15 @@ class TestTimeoutError(unittest.TestCase):
 
     @mock.patch("FuelSDK.rest.ET_GetSupport.get")
     def test_URLError_without_timeout(self, mocked_get, mocked_sleep):
+        """
+            Test case to verify that we do not backoff when any 'URLError' message do not contain 'timed out'
+        """
         # mocked 'get' and raise error
         mocked_get.side_effect = URLError('URLError occurred.')
         # make the object of 'ContentAreaDataAccessObject'
         obj = content_areas.ContentAreaDataAccessObject({'start_date': '2021-01-01T00:00:00Z'}, {}, None, {})
 
-        # verify that URLError is raised as there is no 'time out' in the error string
+        # verify that URLError is raised as there is no 'timed out' in the error string
         with self.assertRaises(URLError):
             # call sync
             obj.sync_data()
