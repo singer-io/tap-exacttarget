@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.2
+  * Request Timeout Implementation [#83](https://github.com/singer-io/tap-exacttarget/pull/83)
+
 ## 1.7.1
   * Remove fstring
 
