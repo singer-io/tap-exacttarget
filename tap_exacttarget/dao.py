@@ -1,8 +1,10 @@
 import backoff
 import socket
 import functools
+import requests
 import singer
 import os
+import urllib
 from singer import metadata, Transformer, utils
 
 from funcy import project
@@ -36,9 +38,28 @@ def load_schema(stream):
 
     return schema
 
+# boolean function to check if the error is 'timeout' error or not
+def is_timeout_error(e):
+    """
+        This function checks whether the URLError contains 'timed out' substring and return boolean
+        values accordingly, to decide whether to backoff or not.
+    """
+    # retry if the error string contains 'timed out'
+    if str(e).__contains__('timed out'):
+        return False
+    return True
+
 # decorator for retrying on error
 def exacttarget_error_handling(fnc):
-    @backoff.on_exception(backoff.expo, (socket.timeout, ConnectionError), max_tries=5, factor=2)
+    @backoff.on_exception(backoff.expo,
+                          urllib.error.URLError, # backoff 'timeout' error for SOAP API
+                          giveup=is_timeout_error,
+                          max_tries=5,
+                          factor=2)
+    @backoff.on_exception(backoff.expo,
+                          (socket.timeout, ConnectionError, requests.Timeout),
+                          max_tries=5,
+                          factor=2)
     @functools.wraps(fnc)
     def wrapper(*args, **kwargs):
         return fnc(*args, **kwargs)

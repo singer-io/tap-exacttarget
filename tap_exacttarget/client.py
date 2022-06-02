@@ -6,6 +6,9 @@ from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 
 LOGGER = singer.get_logger()
 
+# default request timeout
+REQUEST_TIMEOUT = 300
+
 # prints the number of records fetched from the passed endpoint
 def _get_response_items(response, name):
     items = response.results
@@ -47,12 +50,21 @@ def get_auth_stub(config):
         params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
                                   .format(config['tenant_subdomain']))
 
+    # Set request timeout with config param `request_timeout`
+    # If value is 0, "0", "" or not passed then it set timeout to default: 300 seconds.
+    config_request_timeout = config.get('request_timeout')
+    if config_request_timeout and float(config_request_timeout):
+        request_timeout = float(config_request_timeout)
+    else:
+        request_timeout = REQUEST_TIMEOUT
+
     # First try V1
     try:
         LOGGER.info('Trying to authenticate using V1 endpoint')
         params['useOAuth2Authentication'] = "False"
         auth_stub = FuelSDK.ET_Client(params=params)
-        transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 900)))
+
+        transport = HttpAuthenticated(timeout=request_timeout)
         auth_stub.soap_client.set_options(
             transport=transport)
         LOGGER.info("Success.")
@@ -73,7 +85,8 @@ def get_auth_stub(config):
                                        .format(config['tenant_subdomain']))
         LOGGER.info("Authentication URL is: %s", params['authenticationurl'])
         auth_stub = FuelSDK.ET_Client(params=params)
-        transport = HttpAuthenticated(timeout=int(config.get('request_timeout', 900)))
+
+        transport = HttpAuthenticated(timeout=request_timeout)
         auth_stub.soap_client.set_options(
             transport=transport)
     except Exception as e:
