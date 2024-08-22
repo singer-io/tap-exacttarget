@@ -2,28 +2,30 @@ import FuelSDK
 import singer
 
 from suds.transport.https import HttpAuthenticated
-from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
+from fuel_overrides import tap_exacttarget__getMoreResults
 
 LOGGER = singer.get_logger()
 
 # default request timeout
 REQUEST_TIMEOUT = 300
 
+
 # prints the number of records fetched from the passed endpoint
 def _get_response_items(response, name):
     items = response.results
 
-    if 'count' in response.results:
-        items = response.results.get('items')
+    if "count" in response.results:
+        items = response.results.get("items")
 
-    LOGGER.info('Got %s results from %s endpoint.', len(items), name)
+    LOGGER.info("Got %s results from %s endpoint.", len(items), name)
     return items
 
 
-__all__ = ['get_auth_stub', 'request', 'request_from_cursor']
+__all__ = ["get_auth_stub", "request", "request_from_cursor"]
 
 
 # PUBLIC FUNCTIONS
+
 
 def get_auth_stub(config):
     """
@@ -36,23 +38,26 @@ def get_auth_stub(config):
     """
     LOGGER.info("Generating auth stub...")
 
-    params = {
-        'clientid': config['client_id'],
-        'clientsecret': config['client_secret']
-        }
+    params = {"clientid": config["client_id"], "clientsecret": config["client_secret"]}
 
-    if config.get('tenant_subdomain'):
+    if config.get("tenant_subdomain"):
         # For S10+ accounts: https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/your-subdomain-tenant-specific-endpoints.htm
 
-        params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com/v1/requestToken'
-                                       .format(config['tenant_subdomain']))
-        LOGGER.info("Authentication URL is: %s", params['authenticationurl'])
-        params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
-                                  .format(config['tenant_subdomain']))
+        params["authenticationurl"] = (
+            "https://{}.auth.marketingcloudapis.com/v1/requestToken".format(
+                config["tenant_subdomain"]
+            )
+        )
+        LOGGER.info("Authentication URL is: %s", params["authenticationurl"])
+        params["soapendpoint"] = (
+            "https://{}.soap.marketingcloudapis.com/Service.asmx".format(
+                config["tenant_subdomain"]
+            )
+        )
 
     # Set request timeout with config param `request_timeout`
     # If value is 0, "0", "" or not passed then it set timeout to default: 300 seconds.
-    config_request_timeout = config.get('request_timeout')
+    config_request_timeout = config.get("request_timeout")
     if config_request_timeout and float(config_request_timeout):
         request_timeout = float(config_request_timeout)
     else:
@@ -60,38 +65,41 @@ def get_auth_stub(config):
 
     # First try V1
     try:
-        LOGGER.info('Trying to authenticate using V1 endpoint')
-        params['useOAuth2Authentication'] = "False"
+        LOGGER.info("Trying to authenticate using V1 endpoint")
+        params["useOAuth2Authentication"] = "False"
         auth_stub = FuelSDK.ET_Client(params=params)
 
         transport = HttpAuthenticated(timeout=request_timeout)
-        auth_stub.soap_client.set_options(
-            transport=transport)
+        auth_stub.soap_client.set_options(transport=transport)
         LOGGER.info("Success.")
         return auth_stub
     except Exception as e:
-        LOGGER.info('Failed to auth using V1 endpoint')
-        if not config.get('tenant_subdomain'):
-            LOGGER.warning('No tenant_subdomain found, will not attempt to auth with V2 endpoint')
-            message = "{}. Please check your \'client_id\', \'client_secret\' or try adding the \'tenant_subdomain\'."
+        LOGGER.info("Failed to auth using V1 endpoint")
+        if not config.get("tenant_subdomain"):
+            LOGGER.warning(
+                "No tenant_subdomain found, will not attempt to auth with V2 endpoint"
+            )
+            message = "{}. Please check your 'client_id', 'client_secret' or try adding the 'tenant_subdomain'."
             raise Exception(message.format(str(e))) from None
 
     # Next try V2
     # Move to OAuth2: https://help.salesforce.com/articleView?id=mc_rn_january_2019_platform_ip_remove_legacy_package_create_ability.htm&type=5
     try:
-        LOGGER.info('Trying to authenticate using V2 endpoint')
-        params['useOAuth2Authentication'] = "True"
-        params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com'
-                                       .format(config['tenant_subdomain']))
-        LOGGER.info("Authentication URL is: %s", params['authenticationurl'])
+        LOGGER.info("Trying to authenticate using V2 endpoint")
+        params["useOAuth2Authentication"] = "True"
+        params["authenticationurl"] = "https://{}.auth.marketingcloudapis.com".format(
+            config["tenant_subdomain"]
+        )
+        LOGGER.info("Authentication URL is: %s", params["authenticationurl"])
         auth_stub = FuelSDK.ET_Client(params=params)
 
         transport = HttpAuthenticated(timeout=request_timeout)
-        auth_stub.soap_client.set_options(
-            transport=transport)
+        auth_stub.soap_client.set_options(transport=transport)
     except Exception as e:
-        LOGGER.info('Failed to auth using V2 endpoint')
-        message = "{}. Please check your \'client_id\', \'client_secret\' or \'tenant_subdomain\'."
+        LOGGER.info("Failed to auth using V2 endpoint")
+        message = (
+            "{}. Please check your 'client_id', 'client_secret' or 'tenant_subdomain'."
+        )
         raise Exception(message.format(str(e))) from None
 
     LOGGER.info("Success.")
@@ -133,13 +141,15 @@ def request(name, selector, auth_stub, search_filter=None, props=None, batch_siz
         cursor.search_filter = search_filter
 
         LOGGER.info(
-            "Making RETRIEVE call to '{}' endpoint with filters '{}'."
-            .format(name, search_filter))
+            "Making RETRIEVE call to '{}' endpoint with filters '{}'.".format(
+                name, search_filter
+            )
+        )
 
     else:
         LOGGER.info(
-            "Making RETRIEVE call to '{}' endpoint with no filters."
-            .format(name))
+            "Making RETRIEVE call to '{}' endpoint with no filters.".format(name)
+        )
 
     return request_from_cursor(name, cursor, batch_size)
 
@@ -151,14 +161,13 @@ def request_from_cursor(name, cursor, batch_size):
     items in that cursor.
 
     Primarily used internally by `request`, but can be used if cursors have
-    to be customized. See tap_exacttarget.endpoints.data_extensions for
+    to be customized. See endpoints.data_extensions for
     an example.
     """
     response = cursor.get()
 
     if not response.status:
-        raise RuntimeError("Request failed with '{}'"
-                           .format(response.message))
+        raise RuntimeError("Request failed with '{}'".format(response.message))
 
     for item in _get_response_items(response, name):
         yield item
@@ -176,8 +185,7 @@ def request_from_cursor(name, cursor, batch_size):
             response = tap_exacttarget__getMoreResults(cursor, batch_size=batch_size)
 
         if not response.status:
-            raise RuntimeError("Request failed with '{}'"
-                               .format(response.message))
+            raise RuntimeError("Request failed with '{}'".format(response.message))
 
         for item in _get_response_items(response, name):
             yield item

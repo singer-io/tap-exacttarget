@@ -104,3 +104,7 @@ ENV/
 .tramp_history
 config.json
 catalog.json
+poetry.lock
+pyproject.toml
+*.ndjson
+config.json

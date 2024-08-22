@@ -9,48 +9,42 @@ import singer
 from singer import utils
 from singer import metadata
 
-from tap_exacttarget.state import save_state
+from state import save_state
 
-from tap_exacttarget.client import get_auth_stub
+from client import get_auth_stub
 
-from tap_exacttarget.endpoints.campaigns \
-    import CampaignDataAccessObject
-from tap_exacttarget.endpoints.content_areas \
-    import ContentAreaDataAccessObject
-from tap_exacttarget.endpoints.data_extensions \
-    import DataExtensionDataAccessObject
-from tap_exacttarget.endpoints.emails import EmailDataAccessObject
-from tap_exacttarget.endpoints.events import EventDataAccessObject
-from tap_exacttarget.endpoints.folders import FolderDataAccessObject
-from tap_exacttarget.endpoints.lists import ListDataAccessObject
-from tap_exacttarget.endpoints.list_sends import ListSendDataAccessObject
-from tap_exacttarget.endpoints.list_subscribers \
-    import ListSubscriberDataAccessObject
-from tap_exacttarget.endpoints.sends import SendDataAccessObject
-from tap_exacttarget.endpoints.subscribers import SubscriberDataAccessObject
+from endpoints.campaigns import CampaignDataAccessObject
+from endpoints.content_areas import ContentAreaDataAccessObject
+from endpoints.data_extensions import DataExtensionDataAccessObject
+from endpoints.emails import EmailDataAccessObject
+from endpoints.events import EventDataAccessObject
+from endpoints.folders import FolderDataAccessObject
+from endpoints.lists import ListDataAccessObject
+from endpoints.list_sends import ListSendDataAccessObject
+from endpoints.list_subscribers import ListSubscriberDataAccessObject
+from endpoints.sends import SendDataAccessObject
+from endpoints.subscribers import SubscriberDataAccessObject
 
 
 LOGGER = singer.get_logger()  # noqa
 
-REQUIRED_CONFIG_KEYS = [
-    'client_id',
-    'client_secret'
-]
+REQUIRED_CONFIG_KEYS = ["client_id", "client_secret"]
 
 
 AVAILABLE_STREAM_ACCESSORS = [
-    CampaignDataAccessObject,
-    ContentAreaDataAccessObject,
-    DataExtensionDataAccessObject,
-    EmailDataAccessObject,
+    # CampaignDataAccessObject,
+    # ContentAreaDataAccessObject,
+    # DataExtensionDataAccessObject,
+    # EmailDataAccessObject,
     EventDataAccessObject,
-    FolderDataAccessObject,
-    ListDataAccessObject,
-    ListSendDataAccessObject,
-    ListSubscriberDataAccessObject,
-    SendDataAccessObject,
-    SubscriberDataAccessObject,
+    # FolderDataAccessObject,
+    # ListDataAccessObject,
+    # ListSendDataAccessObject,
+    # ListSubscriberDataAccessObject,
+    # SendDataAccessObject,
+    # SubscriberDataAccessObject,
 ]
+
 
 # run discover mode
 def do_discover(args):
@@ -64,19 +58,12 @@ def do_discover(args):
     catalog = []
 
     for available_stream_accessor in AVAILABLE_STREAM_ACCESSORS:
-        stream_accessor = available_stream_accessor(
-            config, state, auth_stub, None)
+        stream_accessor = available_stream_accessor(config, state, auth_stub, None)
 
         catalog += stream_accessor.generate_catalog()
 
-    print(json.dumps({'streams': catalog}, indent=4))
+    return {"streams": catalog}
 
-# check if the stream is selected or not
-def _is_selected(catalog_entry):
-    mdata = metadata.to_map(catalog_entry['metadata'])
-    return singer.should_sync_field(metadata.get(mdata, (), 'inclusion'),
-                                    metadata.get(mdata, (), 'selected'),
-                                    default=False)
 
 # run sync mode
 def do_sync(args):
@@ -84,10 +71,8 @@ def do_sync(args):
 
     config = args.config
     state = args.state
-    catalog = args.properties
-
+    catalog = do_discover(args)
     success = True
-
     auth_stub = get_auth_stub(config)
 
     stream_accessors = []
@@ -96,13 +81,8 @@ def do_sync(args):
     subscriber_catalog = None
     list_subscriber_selected = False
 
-    for stream_catalog in catalog.get('streams'):
+    for stream_catalog in catalog.get("streams"):
         stream_accessor = None
-
-        if not _is_selected(stream_catalog):
-            LOGGER.info("'{}' is not marked selected, skipping."
-                        .format(stream_catalog.get('stream')))
-            continue
 
         # for 'subscriber' stream if it is selected, add values for 'subscriber_catalog' and
         # 'subscriber_selected', and it will replicated via 'list_subscribers' stream
@@ -116,8 +96,9 @@ def do_sync(args):
         if SubscriberDataAccessObject.matches_catalog(stream_catalog):
             subscriber_selected = True
             subscriber_catalog = stream_catalog
-            LOGGER.info("'subscriber' selected, will replicate via "
-                        "'list_subscriber'")
+            LOGGER.info(
+                "'subscriber' selected, will replicate via " "'list_subscriber'"
+            )
             continue
 
         if ListSubscriberDataAccessObject.matches_catalog(stream_catalog):
@@ -125,21 +106,26 @@ def do_sync(args):
 
         for available_stream_accessor in AVAILABLE_STREAM_ACCESSORS:
             if available_stream_accessor.matches_catalog(stream_catalog):
-                stream_accessors.append(available_stream_accessor(
-                    config, state, auth_stub, stream_catalog))
+                stream_accessors.append(
+                    available_stream_accessor(config, state, auth_stub, stream_catalog)
+                )
 
                 break
 
     # do not replicate 'subscriber' stream without selecting 'list_subscriber' stream
     if subscriber_selected and not list_subscriber_selected:
-        LOGGER.fatal('Cannot replicate `subscriber` without '
-                     '`list_subscriber`. Please select `list_subscriber` '
-                     'and try again.')
+        LOGGER.fatal(
+            "Cannot replicate `subscriber` without "
+            "`list_subscriber`. Please select `list_subscriber` "
+            "and try again."
+        )
         sys.exit(1)
 
     for stream_accessor in stream_accessors:
-        if isinstance(stream_accessor, ListSubscriberDataAccessObject) and \
-           subscriber_selected:
+        if (
+            isinstance(stream_accessor, ListSubscriberDataAccessObject)
+            and subscriber_selected
+        ):
             stream_accessor.replicate_subscriber = True
             stream_accessor.subscriber_catalog = subscriber_catalog
 
@@ -150,7 +136,7 @@ def do_sync(args):
 
         except Exception as e:
             LOGGER.exception(e)
-            LOGGER.error('Failed to sync endpoint, moving on!')
+            LOGGER.error("Failed to sync endpoint, moving on!")
             success = False
 
     save_state(state)
@@ -162,14 +148,7 @@ def do_sync(args):
 def main():
     args = utils.parse_args(REQUIRED_CONFIG_KEYS)
 
-    success = True
-
-    if args.discover:
-        do_discover(args)
-    elif args.properties:
-        success = do_sync(args)
-    else:
-        LOGGER.info("No properties were selected")
+    success = do_sync(args)
 
     if success:
         LOGGER.info("Completed successfully, exiting.")
@@ -178,5 +157,6 @@ def main():
         LOGGER.info("Run failed, exiting.")
         sys.exit(1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
