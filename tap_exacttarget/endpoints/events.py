@@ -22,11 +22,11 @@ class EventDataAccessObject(DataAccessObject):
     def sync_data(self):
         table = self.__class__.TABLE
         endpoints = {
-            "sent": FuelSDK.ET_SentEvent,
+            # "sent": FuelSDK.ET_SentEvent,
             "click": FuelSDK.ET_ClickEvent,
-            "open": FuelSDK.ET_OpenEvent,
-            "bounce": FuelSDK.ET_BounceEvent,
-            "unsub": FuelSDK.ET_UnsubEvent,
+            # "open": FuelSDK.ET_OpenEvent,
+            # "bounce": FuelSDK.ET_BounceEvent,
+            # "unsub": FuelSDK.ET_UnsubEvent,
         }
 
         for event_name, selector in endpoints.items():
@@ -39,10 +39,10 @@ class EventDataAccessObject(DataAccessObject):
                 raise RuntimeError("start_date not defined!")
 
             pagination_unit = self.config.get(
-                "pagination__{}_interval_unit".format(event_name), "minutes"
+                "pagination__{}_interval_unit".format(event_name), "days"
             )
             pagination_quantity = self.config.get(
-                "pagination__{}_interval_quantity".format(event_name), 10
+                "pagination__{}_interval_quantity".format(event_name), 30
             )
 
             unit = {pagination_unit: int(pagination_quantity)}
