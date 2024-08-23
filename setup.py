@@ -13,7 +13,7 @@ setup(
     install_requires=[
         "funcy==1.9.1",
         "singer-python==5.8.1",
-        "python-dateutil==2.6.0",
+        "python-dateutil==2.8.0",
         "voluptuous==0.10.5",
         "salesforce-marketing-cloud-python-sdk @ https://github.com/dreamdata-io/salesforce-marketing-cloud-python-sdk/archive/master.zip",
     ],
