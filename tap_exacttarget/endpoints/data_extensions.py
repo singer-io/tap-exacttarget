@@ -4,12 +4,12 @@ import singer
 
 from funcy import set_in, update_in, merge
 
-from client import request, request_from_cursor
-from dao import DataAccessObject, exacttarget_error_handling
-from pagination import get_date_page, before_now, increment_date
-from state import incorporate, save_state, get_last_record_value_for_table
-from util import sudsobj_to_dict
-from fuel_overrides import (
+from tap_exacttarget.client import request, request_from_cursor
+from tap_exacttarget.dao import DataAccessObject, exacttarget_error_handling
+from tap_exacttarget.pagination import get_date_page, before_now, increment_date
+from tap_exacttarget.state import incorporate, save_state, get_last_record_value_for_table
+from tap_exacttarget.util import sudsobj_to_dict
+from tap_exacttarget.fuel_overrides import (
     TapExacttarget__ET_DataExtension_Row,
     TapExacttarget__ET_DataExtension_Column,
 )

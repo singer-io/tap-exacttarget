@@ -1,7 +1,7 @@
 import datetime
 import singer
 
-from filters import between
+from tap_exacttarget.filters import between
 
 LOGGER = singer.get_logger()
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%SZ"

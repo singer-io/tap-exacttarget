@@ -9,21 +9,14 @@ import singer
 from singer import utils
 from singer import metadata
 
-from state import save_state
+from tap_exacttarget.state import save_state
 
-from client import get_auth_stub
+from tap_exacttarget.client import get_auth_stub
 
-from endpoints.campaigns import CampaignDataAccessObject
-from endpoints.content_areas import ContentAreaDataAccessObject
-from endpoints.data_extensions import DataExtensionDataAccessObject
-from endpoints.emails import EmailDataAccessObject
-from endpoints.events import EventDataAccessObject
-from endpoints.folders import FolderDataAccessObject
-from endpoints.lists import ListDataAccessObject
-from endpoints.list_sends import ListSendDataAccessObject
-from endpoints.list_subscribers import ListSubscriberDataAccessObject
-from endpoints.sends import SendDataAccessObject
-from endpoints.subscribers import SubscriberDataAccessObject
+
+from tap_exacttarget.endpoints.events import EventDataAccessObject
+from tap_exacttarget.endpoints.list_subscribers import ListSubscriberDataAccessObject
+from tap_exacttarget.endpoints.subscribers import SubscriberDataAccessObject
 
 
 LOGGER = singer.get_logger()  # noqa

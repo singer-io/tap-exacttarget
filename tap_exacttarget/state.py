@@ -5,7 +5,7 @@ import singer
 
 from voluptuous import Schema, Required
 
-from pagination import DATE_FORMAT
+from tap_exacttarget.pagination import DATE_FORMAT
 
 LOGGER = singer.get_logger()
 

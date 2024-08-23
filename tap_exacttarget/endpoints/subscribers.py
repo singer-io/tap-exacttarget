@@ -2,8 +2,8 @@ import FuelSDK
 import copy
 import singer
 
-from client import request
-from dao import DataAccessObject, exacttarget_error_handling
+from tap_exacttarget.client import request
+from tap_exacttarget.dao import DataAccessObject, exacttarget_error_handling
 
 LOGGER = singer.get_logger()
 

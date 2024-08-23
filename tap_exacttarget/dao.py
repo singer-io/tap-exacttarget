@@ -9,7 +9,7 @@ from singer import metadata, Transformer, utils
 
 from funcy import project
 
-from util import sudsobj_to_dict
+from tap_exacttarget.util import sudsobj_to_dict
 
 LOGGER = singer.get_logger()
 

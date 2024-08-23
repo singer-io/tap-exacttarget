@@ -2,7 +2,7 @@ import FuelSDK
 import singer
 
 from suds.transport.https import HttpAuthenticated
-from fuel_overrides import tap_exacttarget__getMoreResults
+from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
 
 LOGGER = singer.get_logger()
 
