@@ -23,7 +23,7 @@ setup(
     },
     entry_points="""
     [console_scripts]
-    tap-exacttarget=tap_exacttarget:main
+    tap-salesforce-marketing-cloud=tap_exacttarget:main
     """,
     packages=find_packages(),
     package_data={"tap_exacttarget": ["schemas/*.json"]},
