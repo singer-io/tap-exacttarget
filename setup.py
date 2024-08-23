@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="tap-exacttarget",
+    name="tap-salesforce-marketing-cloud",
     version="1.7.1",
     description="Singer.io tap for extracting data from the ExactTarget API",
     author="Fishtown Analytics",
