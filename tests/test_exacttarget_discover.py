@@ -35,7 +35,7 @@ class ExactTargetDiscover(ExactTargetBase):
         conn_id = connections.ensure_connection(self)
         runner.run_check_mode(self, conn_id)
 
-        streams_to_test = self.streams_to_select()
+        streams_to_test = self.streams_to_select(is_discovery=True)
         found_catalogs = menagerie.get_catalogs(conn_id)
 
         # verify the stream names discovered were what we expect
