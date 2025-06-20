@@ -1,7 +1,8 @@
-from abc import ABC, abstractmethod
-from typing import Any, Dict, Tuple, List
-from datetime import timedelta, datetime, timezone, date
 import json
+from abc import ABC, abstractmethod
+from datetime import date, datetime, timedelta, timezone
+from typing import Any, Dict, List, Tuple
+
 from singer import (
     Transformer,
     get_bookmark,
@@ -10,16 +11,15 @@ from singer import (
     write_record,
 )
 from singer.metadata import get_standard_metadata, to_list, to_map, write
-from singer.utils import strftime, strptime_to_utc, now
+from singer.transform import SchemaMismatch
+from singer.utils import now, strftime, strptime_to_utc
 from zeep.helpers import serialize_object
 
 LOGGER = get_logger()
 
 
 class CustomDTParser(json.JSONEncoder):
-    """
-    handles parsing for datetime objects
-    """
+    """Handles parsing for datetime objects."""
 
     def default(self, obj):
         if isinstance(obj, (datetime, date)):
@@ -28,15 +28,7 @@ class CustomDTParser(json.JSONEncoder):
 
 
 class BaseStream(ABC):
-    """
-    A Base Class providing structure and boilerplate for generic streams
-    and required attributes for any kind of stream
-    ~~~
-    Provides:
-     - Basic Attributes (stream_name,replication_method,key_properties)
-     - Helper methods for catalog generation
-     - `sync` and `get_records` method for performing sync
-    """
+    """Base stream class."""
 
     schema = None
 
@@ -48,7 +40,7 @@ class BaseStream(ABC):
     @property
     @abstractmethod
     def object_ref(self) -> str:
-        """Property required for interacting with fuelsdk"""
+        """Property required for interacting with soap api."""
 
     @property
     @abstractmethod
@@ -79,7 +71,7 @@ class BaseStream(ABC):
     @property
     @abstractmethod
     def forced_replication_method(self) -> str:
-        """Defines the sync mode of a stream."""
+        """Defines the default replication strategy of a stream."""
 
     @property
     @abstractmethod
@@ -88,8 +80,7 @@ class BaseStream(ABC):
 
     @property
     def selected_by_default(self) -> bool:
-        """Indicates if a node in the schema should be replicated, if a user
-        has not expressed any opinion on whether or not to replicate it."""
+        """Indicates if stream is selected by default."""
         return False
 
     @abstractmethod
@@ -98,20 +89,7 @@ class BaseStream(ABC):
 
     @abstractmethod
     def sync(self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer) -> Dict:
-        """
-        Performs a replication sync for the stream.
-        ~~~
-        Args:
-         - state (dict): represents the state file for the tap.
-         - schema (dict): Schema of the stream
-         - transformer (object): A Object of the singer.transformer class.
-
-        Returns:
-         - bool: The return value. True for success, False otherwise.
-
-        Docs:
-         - https://github.com/singer-io/getting-started/blob/master/docs/SYNC_MODE.md#replication-method
-        """
+        """Performs sync for the stream."""
 
     def __init__(self, metadata, schema, client) -> None:
         self.client = client
@@ -120,9 +98,7 @@ class BaseStream(ABC):
         self.stream_metadata = metadata.get(()) or {}
 
     def get_available_fields(self):
-        """
-        provides selectable fields for each stream
-        """
+        """Provides selectable fields for each stream."""
         is_retrievable = []
         obj_defs = self.client.describe_request(self.object_ref)
         schema = obj_defs["ObjectDefinition"][0]
@@ -132,17 +108,13 @@ class BaseStream(ABC):
         return is_retrievable
 
     def get_query_fields(self, *args, **kwargs):
-        """
-        Filter Query fields
-        """
+        """Filter Query fields."""
         return self.get_available_fields()
 
     def transform_record(self, obj):
-        """
-        serialize_object Converts Soap class obj to python repr
-        json.dumps converts to string
-        json.loads converts to dictionary which can be used by transformer
-        """
+        """serialize_object Converts Soap class obj to python repr json.dumps
+        converts to string json.loads converts to dictionary which can be used
+        by transformer."""
         return json.loads(json.dumps(serialize_object(obj), cls=CustomDTParser))
 
     @classmethod
@@ -175,52 +147,24 @@ class IncrementalStream(BaseStream):
         self.replication_key = self.stream_metadata.get("replication-key") or self.replication_key
 
     def get_bookmark(self, state: dict, key: Any = None) -> int:
-        """A wrapper for singer.get_bookmark"""
+        """A wrapper for singer.get_bookmark."""
         return get_bookmark(
             state, self.tap_stream_id, key or self.replication_key, self.client.config.get("start_date", False)
         )
 
     def write_bookmark(self, state: dict, key: Any = None, value: Any = None) -> Dict:
-        """A wrapper for singer.write_bookmark"""
+        """A wrapper for singer.write_bookmark."""
         return write_bookmark(state, self.tap_stream_id, key or self.replication_key, value)
 
-    def get_records(self, start_date, stream_metadata, schema):
-        """Performs Pagination and querybuilding."""
-
-        query_fields = self.get_query_fields(stream_metadata, schema)
-
-        for start_dt, end_dt in self.create_date_windows(start_date, now(), self.client.date_window):
-            s_filter = self.client.create_simple_filter(self.replication_key, "greaterThanOrEqual", date_value=start_dt)
-            t_filter = self.client.create_simple_filter(self.replication_key, "lessThanOrEqual", date_value=end_dt)
-            c_filter = self.client.create_complex_filter(s_filter, "AND", t_filter)
-
-            next_page = True
-            request_id = None
-            while next_page:
-
-                response = self.client.retrieve_request(
-                    self.object_ref, query_fields, request_id=request_id, search_filter=c_filter
-                )
-                raw_records = response["Results"]
-                request_id = response["RequestID"]
-
-                if response["OverallStatus"] != "MoreDataAvailable":
-                    if "Error" in response["OverallStatus"]:
-                        LOGGER.info("Req Failed: %s %s %s", self.object_ref, query_fields, response["OverallStatus"])
-                    next_page = False
-
-                for rec in raw_records:
-                    yield self.transform_record(rec)
-
     def create_date_windows(self, start_date, end_date, interval_days) -> List:
-        """Creates Date Window for given date range"""
+        """Creates Date Window for given date range."""
         if isinstance(start_date, str):
             start_date = strptime_to_utc(start_date)
         if isinstance(end_date, str):
             end_date = strptime_to_utc(end_date)
 
         if start_date >= end_date:
-            return [end_date, start_date]
+            return [(end_date, start_date)]
         if interval_days <= 0:
             raise ValueError("date_window value must be positive")
 
@@ -238,10 +182,41 @@ class IncrementalStream(BaseStream):
                 break
         return export_batches
 
+    def get_records(self, start_date, stream_metadata, schema):
+        """Performs Pagination and query building."""
+
+        query_fields = self.get_query_fields(stream_metadata, schema)
+
+        for start_dt, end_dt in self.create_date_windows(start_date, now(), self.client.date_window):
+            start_date = self.client.create_simple_filter(
+                self.replication_key, "greaterThanOrEqual", date_value=start_dt
+            )
+            end_date = self.client.create_simple_filter(self.replication_key, "lessThanOrEqual", date_value=end_dt)
+            date_range = self.client.create_complex_filter(start_date, "AND", end_date)
+
+            next_page = True
+            request_id = None
+            while next_page:
+
+                response = self.client.retrieve_request(
+                    self.object_ref, query_fields, request_id=request_id, search_filter=date_range
+                )
+                raw_records = response["Results"]
+                request_id = response["RequestID"]
+
+                if response["OverallStatus"] != "MoreDataAvailable":
+                    if "Error" in response["OverallStatus"]:
+                        LOGGER.info("Req Failed: %s %s %s", self.object_ref, query_fields, response["OverallStatus"])
+                    next_page = False
+
+                for rec in raw_records:
+                    yield self.transform_record(rec)
+
     def sync(self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer) -> Dict:
-        """Generic Sync impl. for incremental streams"""
+        """Sync implementation for incremental streams."""
 
         current_max_bookmark_date = bookmark_date_utc = strptime_to_utc(self.get_bookmark(state))
+        records_processed, schema_mismatch_count = 0, 0
 
         for record in self.get_records(bookmark_date_utc, stream_metadata, schema):
             record_timestamp = None
@@ -250,19 +225,34 @@ class IncrementalStream(BaseStream):
                     record_timestamp = record[self.replication_key].replace(tzinfo=timezone.utc)
                 elif record[self.replication_key]:
                     record_timestamp = strptime_to_utc(record[self.replication_key])
-
-                write_record(self.tap_stream_id, transformer.transform(record, schema, stream_metadata))
-            except KeyError as _:
-                LOGGER.info("%s Record did not have replication key value skipping", record)
+                # Add specific handling for schema mismatch errors
+                try:
+                    transformed_record = transformer.transform(record, schema, stream_metadata)
+                    write_record(self.tap_stream_id, transformed_record)
+                    records_processed += 1
+                except SchemaMismatch as ex:
+                    schema_mismatch_count += 1
+                    LOGGER.warning("Schema mismatch for record in stream %s: %s", self.tap_stream_id, str(ex))
+                    continue
+            except KeyError as err:
+                LOGGER.info("%s Record did not have replication key value skipping %s", record, err)
 
             if record_timestamp:
                 current_max_bookmark_date = max(current_max_bookmark_date, record_timestamp)
-            state = self.write_bookmark(state, value=strftime(current_max_bookmark_date))
+
+        LOGGER.info(
+            "Stream %s sync complete: %d records processed, %d schema mismatch errors",
+            self.tap_stream_id,
+            records_processed,
+            schema_mismatch_count,
+        )
+
+        state = self.write_bookmark(state, value=strftime(current_max_bookmark_date))
         return state
 
 
 class FullTableStream(BaseStream):
-    """Base Class for Incremental Stream."""
+    """Base Class for Fulltable Stream."""
 
     replication_method = "FULL_TABLE"
     forced_replication_method = "FULL_TABLE"
@@ -288,9 +278,22 @@ class FullTableStream(BaseStream):
                 yield self.transform_record(rec)
 
     def sync(self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer) -> Dict:
-        """Generic Sync impl. for incremental streams"""
-
+        """Generic Sync implementation for Fulltable streams."""
+        records_processed, schema_mismatch_count = 0, 0
         for record in self.get_records(stream_metadata, schema):
-            transformed_record = transformer.transform(record, schema, stream_metadata)
-            write_record(self.tap_stream_id, transformed_record)
+            try:
+                transformed_record = transformer.transform(record, schema, stream_metadata)
+                write_record(self.tap_stream_id, transformed_record)
+                records_processed += 1
+            except SchemaMismatch as ex:
+                schema_mismatch_count += 1
+                LOGGER.warning("Schema mismatch for record in stream %s: %s", self.tap_stream_id, str(ex))
+
+        LOGGER.info(
+            "Stream %s sync complete: %d records processed, %d schema mismatch errors",
+            self.tap_stream_id,
+            records_processed,
+            schema_mismatch_count,
+        )
+
         return state
