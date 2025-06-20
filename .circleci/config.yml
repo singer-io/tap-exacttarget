@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
@@ -10,10 +10,21 @@ jobs:
           command: |
             python3 -mvenv /usr/local/share/virtualenvs/tap-exacttarget
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
-            pip install -U 'pip<19.2' 'setuptools<51.0.0'
-            pip install .[test]
+            pip install -U 'pip==22.2.2' 'setuptools==65.3.0'
+            pip install .[dev]
       - run:
-          name: 'unittest'
+          name: 'JSON Validator'
+          command: |
+            source /usr/local/share/virtualenvs/tap-tester/bin/activate
+            stitch-validate-json tap_exacttarget/schemas/*.json
+      - run:
+          name: 'pylint'
+          command: |
+            source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
+            pylint tap_exacttarget -d C,R,W
+      - add_ssh_keys
+      - run:
+          name: 'Unit Tests'
           command: |
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
             pip install nose coverage
@@ -24,18 +35,14 @@ jobs:
       - store_artifacts:
           path: htmlcov
       - run:
-          name: 'pylint'
-          command: |
-            source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
-            pylint tap_exacttarget -d no-else-return,wrong-import-order,pointless-string-statement,invalid-name,deprecated-method,bad-whitespace,line-too-long
-      - add_ssh_keys
-      - run:
           name: 'Integration Tests'
           command: |
             aws s3 cp s3://com-stitchdata-dev-deployment-assets/environments/tap-tester/tap_tester_sandbox dev_env.sh
             source dev_env.sh
             source /usr/local/share/virtualenvs/tap-tester/bin/activate
             run-test --tap=tap-exacttarget tests
+
+
 workflows:
   version: 2
   commit:
@@ -45,7 +52,7 @@ workflows:
   build_daily:
     triggers:
       - schedule:
-          cron: "0 0 * * *"
+          cron: "0 19 * * *"
           filters:
             branches:
               only:
