@@ -1,50 +1,92 @@
 {
-    "type": "object",
-    "properties": {
-        "Category": {
-            "type": ["null", "integer"]
-        },
-        "CreatedDate": {
-            "type": ["null", "string"],
-            "format": "date-time"
-        },
-        "ID": {
-            "type": ["integer"]
-        },
-        "ModifiedDate": {
-            "type": ["null", "string"],
-            "format": "date-time"
-        },
-        "ObjectID": {
-            "type": ["null", "string"]
-        },
-        "CustomerKey": {
-            "type": ["null", "string"]
-        },
-       "PartnerProperties": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "Name": {"type": ["null", "string"]},
-                    "Value": {"type": ["null", "string"]}
-                }
-            }
-        },
-        "ListClassification": {
-            "type": ["null", "string"]
-        },
-        "ListName": {
-            "type": ["null", "string"]
-        },
-        "Description":{
-            "type": ["null", "string"]
-        },
-        "SendClassification": {
-            "type": ["null", "string"]
-        },
-        "Type": {
-            "type": ["null", "string"]
+  "type": "object",
+  "properties": {
+    "Category": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "CreatedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "ID": {
+      "type": [
+        "integer"
+      ]
+    },
+    "ModifiedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "ObjectID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CustomerKey": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
         }
+      }
+    },
+    "ListClassification": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ListName": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Description": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SendClassification": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Type": {
+      "type": [
+        "null",
+        "string"
+      ]
     }
+  }
 }

@@ -1,7 +1,11 @@
 from singer import get_logger
+
 from tap_exacttarget.client import Client
-from tap_exacttarget.streams import STREAMS, DataExtentionObjectFt, DataExtentionObjectInc
 from tap_exacttarget.exceptions import MarketingCloudError
+from tap_exacttarget.streams import (
+    DataExtentionObjectFt,
+    DataExtentionObjectInc,
+)
 
 LOGGER = get_logger()
 
@@ -20,7 +24,9 @@ field_format = {"Decimal": "singer.decimal", "Date": "date-time"}
 def detect_field_schema(field):
 
     schema = {}
-    field_type = ( [ "null", ] )
+    field_type = [
+        "null",
+    ]
 
     field_type.append(field_type_mapping.get(field["FieldType"], "string"))
     schema["type"] = field_type
@@ -107,8 +113,8 @@ def discover_dao_streams(client: Client):
                 },
             }
 
-            # Modified Date is the preffered replication key
-            # Maintaining orignal sequence of the repl_key picking order
+            # Modified Date is the preferred replication key
+            # Maintaining original sequence of the key picking order
             replication_key = next(
                 (k for k in ["ModifiedDate", "JoinDate", "_ModifiedDate", "_CreatedDate"] if k in repl_keys), None
             )
@@ -131,8 +137,8 @@ def discover_dao_streams(client: Client):
                     "replication_key": replication_key,
                     "valid_replication_keys": repl_keys,
                     "schema": schema,
-                    "customer_key":customer_key,
-                    "category_id":category_id,
+                    "customer_key": customer_key,
+                    "category_id": category_id,
                 },
             )
 

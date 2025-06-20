@@ -1,136 +1,243 @@
 {
-    "type": "object",
-    "properties": {
-      "CreatedDate": {
-        "type": ["null", "string"],
-        "format": "date-time"
-      },
-      "EmailID": {
-        "type": ["null", "integer"]
-      },
-      "EmailName": {
-        "type": ["null", "string"]
-      },
-      "FromAddress": {
-        "type": ["null", "string"]
-      },
-      "FromName": {
-        "type": ["null", "string"]
-      },
-      "ID": {
-        "type": ["integer"]
-      },
-      "IsAlwaysOn": {
-        "type": ["null", "boolean"]
-      },
-      "IsMultipart": {
-        "type": ["null", "boolean"]
-      },
-      "ModifiedDate": {
-        "type": ["null", "string"],
-        "format": "date-time"
-      },
-      "PartnerProperties": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "Name": {"type": ["null", "string"]},
-            "Value": {"type": ["null", "string"]}
+  "type": "object",
+  "properties": {
+    "CreatedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "EmailID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "EmailName": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "FromAddress": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "FromName": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ID": {
+      "type": [
+        "integer"
+      ]
+    },
+    "IsAlwaysOn": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "IsMultipart": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "ModifiedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
-      },
-      "SendDate": {
-        "type": ["null", "string"],
-        "format": "date-time"
-      },
-      "SentDate": {
-        "type": ["null", "string"],
-        "format": "date-time"
-      },
-      "Status": {
-        "type": ["null", "string"]
-      },
-      "Subject": {
-        "type": ["null", "string"]
-      },
-      "BccEmail": {
-        "type": ["null", "string"]
-      },
-      "NumberSent": {
-        "type": ["null", "integer"]
-      },
-      "NumberDelivered": {
-        "type": ["null", "integer"]
-      },
-      "NumberTargeted": {
-        "type": ["null", "integer"]
-      },
-      "NumberErrored": {
-        "type": ["null", "integer"]
-      },
-      "NumberExcluded": {
-        "type": ["null", "integer"]
-      },
-      "Unsubscribes": {
-        "type": ["null", "integer"]
-      },
-      "MissingAddresses": {
-        "type": ["null", "integer"]
-      },
-      "Duplicates": {
-        "type": ["null", "integer"]
-      },
-      "InvalidAddresses": {
-        "type": ["null", "integer"]
-      },
-      "HardBounces": {
-        "type": ["null", "integer"]
-      },
-      "SoftBounces": {
-        "type": ["null", "integer"]
-      },
-      "OtherBounces": {
-        "type": ["null", "integer"]
-      },
-      "ForwardedEmails": {
-        "type": ["null", "integer"]
-      },
-      "UniqueClicks": {
-        "type": ["null", "integer"]
-      },
-      "UniqueOpens": {
-        "type": ["null", "integer"]
-      },
-      "PreviewURL": {
-        "type": ["null", "string"]
-      },
-      "Links": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "URL": {
-              "type": ["null", "string"]
-            }
+      }
+    },
+    "SendDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "SentDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "Status": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Subject": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "BccEmail": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "NumberSent": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "NumberDelivered": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "NumberTargeted": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "NumberErrored": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "NumberExcluded": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Unsubscribes": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "MissingAddresses": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Duplicates": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "InvalidAddresses": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "HardBounces": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "SoftBounces": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "OtherBounces": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ForwardedEmails": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "UniqueClicks": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "UniqueOpens": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "PreviewURL": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "URL": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
-      },
-      "Events": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "EventType": {
-              "type": ["null", "string"]
-            },
-            "EventDate": {
-              "type": ["null", "string"],
-              "format": "date-time"
-            }
+      }
+    },
+    "Events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "EventType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "EventDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       }
     }
   }
-  
+}

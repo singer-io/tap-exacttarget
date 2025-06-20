@@ -1,19 +1,16 @@
-"""tap-exacttarget sync."""
-
 from typing import Dict
 
 import singer
 
-from tap_exacttarget.streams import STREAMS
 from tap_exacttarget.discover_dataextentionobj import discover_dao_streams
 from tap_exacttarget.exceptions import IncompatibleFieldSelectionError
-
+from tap_exacttarget.streams import STREAMS
 
 LOGGER = singer.get_logger()
 
 
 def sync(client, catalog: singer.Catalog, state: Dict):
-    """performs sync for selected streams."""
+    """Performs sync for selected streams."""
     doa_streams = discover_dao_streams(client=client)
     STREAMS.update(doa_streams)
     failed_streams = []

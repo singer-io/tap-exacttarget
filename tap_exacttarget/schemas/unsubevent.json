@@ -1,27 +1,48 @@
 {
-    "type": "object",
-    "properties": {
-        "SendID": {
-            "type": ["null", "integer"]
-        },
-        "EventDate": {
-            "type": ["null", "string"],
-            "format": "datetime"
-        },
-        "EventType": {
-            "type": ["null", "string"]
-        },
-        "BatchID": {
-            "type": ["null","integer"]
-        },
-        "CorrelationID": {
-            "type": ["null","string"]
-        },
-        "URL": {
-            "type": ["null","string"]
-        },
-        "SubscriberKey": {
-            "type": ["null", "string"]
-        }
+  "type": "object",
+  "properties": {
+    "SendID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "EventDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "datetime"
+    },
+    "EventType": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "BatchID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "CorrelationID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "URL": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SubscriberKey": {
+      "type": [
+        "null",
+        "string"
+      ]
     }
+  }
 }

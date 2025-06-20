@@ -3,9 +3,9 @@ from tap_exacttarget.streams.abstracts import IncrementalStream
 
 
 class ContentArea(IncrementalStream):
-    """class for collections stream."""
+    """Class for collections stream."""
 
-    client : Client
+    client: Client
 
     stream = "content_area"
     tap_stream_id = "content_area"

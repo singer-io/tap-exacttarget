@@ -1,10 +1,11 @@
 from tap_exacttarget.client import Client
 from tap_exacttarget.streams.abstracts import IncrementalStream
 
-class ETList(IncrementalStream):
-    """class for collections stream."""
 
-    client : Client
+class ETList(IncrementalStream):
+    """Class for collections stream."""
+
+    client: Client
 
     stream = "list"
     tap_stream_id = "list"

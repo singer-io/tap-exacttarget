@@ -3,16 +3,16 @@ from tap_exacttarget.streams.abstracts import FullTableStream
 
 
 class ListSend(FullTableStream):
-    """class for collections stream."""
+    """Class for collections stream."""
 
-    client : Client
+    client: Client
 
     stream = "list_send"
     tap_stream_id = "list_send"
     object_ref = "ListSend"
-    key_properties = ['SendID', 'ListID']
+    key_properties = ["SendID", "ListID"]
 
     def transform_record(self, obj):
         obj = super().transform_record(obj)
-        obj['ListID'] = obj.get('List', {}).get('ID')
+        obj["ListID"] = obj.get("List", {}).get("ID")
         return obj

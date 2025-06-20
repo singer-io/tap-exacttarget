@@ -1,40 +1,70 @@
 {
-    "type": "object",
-    "properties": {
-        "ID": {
-            "type": ["integer"]
-        },
-        "CreatedDate": {
-            "type": ["null", "string"],
-            "format": "date-time"
-        },
-        "ModifiedDate": {
-            "type": ["null", "string"],
-            "format": "date-time"
-        },
-        "ObjectID": {
-            "type": ["null", "string"]
-        },
-        "PartnerProperties": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "Name": {"type": ["null", "string"]},
-                    "Value": {"type": ["null", "string"]}
-                }
-            }
-        },
-        "ListID": {
-            "type": ["null", "integer"],
-            "description": "Defines identification for a list the subscriber resides on."
-        },
-        "Status": {
-            "type": ["null", "string"],
-            "description": "Defines status of object. Status of an address."
-        },
-        "SubscriberKey": {
-            "type": ["null", "string"]
+  "type": "object",
+  "properties": {
+    "ID": {
+      "type": [
+        "integer"
+      ]
+    },
+    "CreatedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "ModifiedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "ObjectID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
         }
+      }
+    },
+    "ListID": {
+      "type": [
+        "null",
+        "integer"
+      ],
+      "description": "Defines identification for a list the subscriber resides on."
+    },
+    "Status": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "description": "Defines status of object. Status of an address."
+    },
+    "SubscriberKey": {
+      "type": [
+        "null",
+        "string"
+      ]
     }
+  }
 }

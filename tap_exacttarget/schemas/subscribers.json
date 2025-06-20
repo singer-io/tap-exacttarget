@@ -1,95 +1,192 @@
 {
-    "type": "object",
-    "properties": {
-        "Addresses": {
-            "type": ["null", "array"],
-            "items": {
-                "type": "object",
-                "properties": {
-                    "Address": {"type": ["null", "string"]},
-                    "AddressType": {"type": ["null", "string"]},
-                    "AddressStatus": {"type": ["null", "string"]}
-                }
-            }
-        },
-        "Attributes": {
-            "type": ["null", "array"],
-            "items": {
-                "type": "object",
-                "properties": {
-                    "Name": {"type": ["null", "string"]},
-                    "Value": {"type": ["null", "string"]}
-                }
-            }
-        },
-        "CreatedDate": {
-            "type": ["null", "string"],
-            "format": "date-time"
-        },
-        "CustomerKey": {
-            "type": ["null", "string"]
-        },
-        "EmailAddress": {
-            "type": ["null", "string"]
-        },
-        "EmailTypePreference": {
-            "type": ["null", "string"]
-        },
-        "ID": {
-            "type": ["integer"]
-        },
-        "ListIDs": {
-            "type": ["null", "array"],
-            "items": {
-                "type": ["null", "string"]
-            }
-        },
-        "Locale": {
-            "type": ["null", "string"]
-        },
-        "ModifiedDate": {
-            "type": ["null", "string"],
-            "format": "date-time"
-        },
-        "ObjectID": {
-            "type": ["null", "string"]
-        },
-        "PartnerKey": {
-            "type": ["null", "string"]
-        },
-        "PartnerProperties": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "Name": {"type": ["null", "string"]},
-                    "Value": {"type": ["null", "string"]}
-                }
-            }
-        },
-        "PartnerType": {
-            "type": ["null", "string"]
-        },
-        "PrimaryEmailAddress": {
-            "type": ["null", "string"]
-        },
-        "PrimarySMSAddress": {
-            "type": ["null", "string"]
-        },
-        "PrimarySMSPublicationStatus": {
-            "type": ["null", "string"]
-        },
-        "Status": {
-            "type": ["null", "string"]
-        },
-        "SubscriberKey": {
-            "type": ["null", "string"]
-        },
-        "SubscriberTypeDefinition": {
-            "type": ["null", "string"]
-        },
-        "UnsubscribedDate": {
-            "type": ["null", "string"]
+  "type": "object",
+  "properties": {
+    "Addresses": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "Address": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "AddressType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "AddressStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
         }
+      }
+    },
+    "Attributes": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
+    "CreatedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "CustomerKey": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "EmailAddress": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "EmailTypePreference": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ID": {
+      "type": [
+        "integer"
+      ]
+    },
+    "ListIDs": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": [
+          "null",
+          "string"
+        ]
+      }
+    },
+    "Locale": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ModifiedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "ObjectID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PartnerKey": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
+    "PartnerType": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PrimaryEmailAddress": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PrimarySMSAddress": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PrimarySMSPublicationStatus": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Status": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SubscriberKey": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SubscriberTypeDefinition": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "UnsubscribedDate": {
+      "type": [
+        "null",
+        "string"
+      ]
     }
+  }
 }

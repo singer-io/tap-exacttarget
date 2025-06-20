@@ -1,13 +1,13 @@
+from singer import Transformer, get_logger, write_record
+
 from tap_exacttarget.client import Client
 from tap_exacttarget.streams.abstracts import FullTableStream
-from singer import Transformer, write_record, get_logger
 
 LOGGER = get_logger()
-import json
 
 
 class Subscribers(FullTableStream):
-    """class for collections stream."""
+    """Class for collections stream."""
 
     client: Client
 
@@ -24,9 +24,7 @@ class Subscribers(FullTableStream):
         return obj
 
     def filter_records(self, parent_id_list):
-        """
-        queries for records
-        """
+        """Queries for records."""
         query_fields = self.get_query_fields(self.metadata, self.schema)
 
         if len(parent_id_list) == 1:

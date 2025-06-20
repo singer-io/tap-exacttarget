@@ -1,7 +1,7 @@
-from datetime import datetime, timezone
 from typing import Dict
 
-from singer import Transformer, get_logger, metrics, write_record
+from singer import Transformer, get_logger, write_record
+
 from tap_exacttarget.client import Client
 from tap_exacttarget.streams.abstracts import FullTableStream
 
@@ -9,9 +9,9 @@ LOGGER = get_logger()
 
 
 class Campaigns(FullTableStream):
-    """class for Campaigns stream."""
+    """Class for Campaigns stream."""
 
-    client : Client
+    client: Client
 
     stream = "campaigns"
     tap_stream_id = "campaigns"
@@ -33,9 +33,8 @@ class Campaigns(FullTableStream):
             if len(raw_records) < pagesize:
                 next_page = False
 
-            for rec in raw_records:
-                yield rec
-            params["$page"] = page_num+1
+            yield from raw_records
+            params["$page"] = page_num + 1
 
     def sync(self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer) -> Dict:
         """Abstract implementation for `type: Fulltable` stream."""

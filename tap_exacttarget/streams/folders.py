@@ -3,7 +3,7 @@ from tap_exacttarget.streams.abstracts import IncrementalStream
 
 
 class DataFolder(IncrementalStream):
-    """class for collections stream."""
+    """Class for collections stream."""
 
     client: Client
 

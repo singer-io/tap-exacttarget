@@ -1,30 +1,33 @@
+from datetime import datetime, timedelta
+
+import backoff
 import requests
 from requests import Session
-from zeep.transports import Transport
-from datetime import datetime, timedelta
-from zeep import client,xsd
-from zeep.helpers import serialize_object
+from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
 from singer import get_logger
-import backoff
-from tap_exacttarget.exceptions import MarketingCloudError, IncompatibleFieldSelectionError,MarketingCloudPermissionFailure
-from requests.exceptions import RequestException, HTTPError, Timeout, ConnectionError
+from zeep import client, xsd
+from zeep.transports import Transport
 
-LOGGER =  get_logger()
+from tap_exacttarget.exceptions import (
+    IncompatibleFieldSelectionError,
+    MarketingCloudError,
+    MarketingCloudPermissionFailure,
+)
+
+LOGGER = get_logger()
 DEFAULT_DATE_WINDOW = 30
 DEFAULT_BATCH_SIZE = 2500
 
-class Client():
+
+class Client:
 
     batch_size = 2500
 
     oauth_header = xsd.Element(
-        '{http://exacttarget.com}fueloauth',
-        xsd.ComplexType([
-            xsd.Element('_value_1', xsd.String(), nillable=False)
-        ])
+        "{http://exacttarget.com}fueloauth", xsd.ComplexType([xsd.Element("_value_1", xsd.String(), nillable=False)])
     )
 
-    def __init__(self, config : dict):
+    def __init__(self, config: dict):
         LOGGER.info("WebService Client initialization Started.")
 
         self.config = config
@@ -45,7 +48,6 @@ class Client():
         except ValueError:
             LOGGER.info("invalid value received for batch_size, fallback to default %s", DEFAULT_BATCH_SIZE)
 
-
         self.wsdl_uri = f"https://{subdomain}.soap.marketingcloudapis.com/etframework.wsdl"
         self.auth_url = f"https://{subdomain}.auth.marketingcloudapis.com/v2/token"
         self.rest_url = f"https://{subdomain}.rest.marketingcloudapis.com/"
@@ -61,11 +63,9 @@ class Client():
         self.soap_client.set_default_soapheaders([oauth_value])
         LOGGER.info("WebService Client initialization Complete.")
 
-    @backoff.on_exception(backoff.expo,(ConnectionError, Timeout, RequestException),max_tries=6, max_time=300)
+    @backoff.on_exception(backoff.expo, (ConnectionError, Timeout, RequestException), max_tries=6, max_time=300)
     def initalize_soap_client(self):
-        """
-        Performs WebService Client init & handles Rerty
-        """
+        """Performs WebService Client init & handles Rerty."""
 
         session = Session()
         transport = Transport(session=session, timeout=300, operation_timeout=300)
@@ -73,9 +73,7 @@ class Client():
         return soap_client
 
     def is_token_expired(self):
-        """
-        Checks for token expiry
-        """
+        """Checks for token expiry."""
         if self.__access_token is None:
             return True
 
@@ -92,13 +90,11 @@ class Client():
 
     @property
     def access_token(self):
-        """
-        Provides existing token if valid, if expired will refresh it.
-        """
+        """Provides existing token if valid, if expired will refresh it."""
         if self.is_token_expired() or self.__access_token is None:
-            payload = {'client_id': self.client_id}
-            payload['client_secret'] = self.client_secret
-            payload['grant_type'] = "client_credentials"
+            payload = {"client_id": self.client_id}
+            payload["client_secret"] = self.client_secret
+            payload["grant_type"] = "client_credentials"
             try:
 
                 response = requests.post(self.auth_url, json=payload, timeout=self.timeout)
@@ -111,12 +107,9 @@ class Client():
                 raise err
         return self.__access_token
 
-
     def create_simple_filter(self, property_name: str, operator: str, value=None, date_value=None):
-        """
-            Creates a filter object, handles case for date_value
-        """
-        simple_part_filter = self.soap_client.get_type('ns0:SimpleFilterPart')
+        """Creates a filter object, handles case for date_value."""
+        simple_part_filter = self.soap_client.get_type("ns0:SimpleFilterPart")
         _filter = simple_part_filter(
             Property=property_name,
             SimpleOperator=operator,
@@ -124,13 +117,11 @@ class Client():
         if not value and date_value:
             _filter.DateValue = date_value
         elif value:
-            _filter.Value=[value] if not isinstance(value, list) else value
+            _filter.Value = [value] if not isinstance(value, list) else value
         return _filter
 
-
     def create_complex_filter(self, left_operand, logical_operator: str, right_operand):
-        """
-        Create a ComplexFilterPart for combining multiple filter conditions
+        """Create a ComplexFilterPart for combining multiple filter conditions.
 
         Args:
             left_operand: Left filter condition (SimpleFilterPart or ComplexFilterPart)
@@ -152,29 +143,28 @@ class Client():
             filter3 = client.create_simple_filter('SubscriberKey', 'greaterThan', '1000')
             nested_complex = client.create_complex_filter(complex_filter, 'OR', filter3)
         """
-        complex_part_filter = self.soap_client.get_type('ns0:ComplexFilterPart')
+        complex_part_filter = self.soap_client.get_type("ns0:ComplexFilterPart")
         return complex_part_filter(
-            LeftOperand=left_operand,
-            LogicalOperator=logical_operator,
-            RightOperand=right_operand
+            LeftOperand=left_operand, LogicalOperator=logical_operator, RightOperand=right_operand
         )
 
-
-    @backoff.on_exception(backoff.expo, (ConnectionError, Timeout, HTTPError, RequestException),max_tries=5,max_time=300,)
-    def retrieve_request(self, object_type: str, properties : list, request_id = None, search_filter = None):
-        retrieve_req = self.soap_client.get_type('ns0:RetrieveRequest')
-        retrieve_opts = self.soap_client.get_type('ns0:RetrieveOptions')
+    @backoff.on_exception(
+        backoff.expo,
+        (ConnectionError, Timeout, HTTPError, RequestException),
+        max_tries=5,
+        max_time=300,
+    )
+    def retrieve_request(self, object_type: str, properties: list, request_id=None, search_filter=None):
+        retrieve_req = self.soap_client.get_type("ns0:RetrieveRequest")
+        retrieve_opts = self.soap_client.get_type("ns0:RetrieveOptions")
 
         retrieve_options = retrieve_opts(
             BatchSize=self.batch_size,
             # This ensures all the Inherited APIObject fields are available
-            IncludeObjects=True
+            IncludeObjects=True,
         )
 
-        retrieve_request_obj = retrieve_req(
-            ObjectType=object_type,
-            Properties=properties,
-            Options=retrieve_options)
+        retrieve_request_obj = retrieve_req(ObjectType=object_type, Properties=properties, Options=retrieve_options)
 
         if search_filter:
             retrieve_request_obj.Filter = search_filter
@@ -185,7 +175,7 @@ class Client():
         oauth_value = self.oauth_header(self.access_token)
         self.soap_client.set_default_soapheaders([oauth_value])
 
-        LOGGER.info("Calling %s wth fields %s with filter %s", object_type, properties, search_filter)
+        LOGGER.info("Calling %s with fields %s", object_type, properties)
 
         try:
             response = self.soap_client.service.Retrieve(RetrieveRequest=retrieve_request_obj)
@@ -194,11 +184,8 @@ class Client():
         except MarketingCloudError as err:
             raise err
 
-
     def raise_for_error(self, response):
-        """
-        Handles basic request failure
-        """
+        """Handles basic request failure."""
         if "Error: The Request Property(s)" in response["OverallStatus"]:
             raise IncompatibleFieldSelectionError(response["OverallStatus"])
 
@@ -211,9 +198,7 @@ class Client():
     # TODO Add backoff
     def get_rest(self, endpoint, params):
 
-        headers = {
-            "Authorization":f"Bearer {self.access_token}"
-        }
+        headers = {"Authorization": f"Bearer {self.access_token}"}
         final_url = f"{self.rest_url}{endpoint}"
         response = requests.get(final_url, headers=headers, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -221,10 +206,10 @@ class Client():
         return response.json()
 
     def describe_request(self, object_type):
-        """ Queries schema defination for ET Objects"""
+        """Queries schema definition for ET Objects."""
 
-        obj_defn_reqs = self.soap_client.get_type('ns0:ObjectDefinitionRequest')
-        arr_obj_defn_reqs = self.soap_client.get_type('ns0:ArrayOfObjectDefinitionRequest')
+        obj_defn_reqs = self.soap_client.get_type("ns0:ObjectDefinitionRequest")
+        arr_obj_defn_reqs = self.soap_client.get_type("ns0:ArrayOfObjectDefinitionRequest")
 
         obj_def = obj_defn_reqs(ObjectType=object_type)
         obj_def_array = arr_obj_defn_reqs(ObjectDefinitionRequest=[obj_def])

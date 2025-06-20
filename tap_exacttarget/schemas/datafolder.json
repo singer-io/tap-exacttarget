@@ -1,56 +1,104 @@
 {
-    "type": "object",
-    "properties": {
-        "AllowChildren": {
-            "type": ["null", "boolean"]
-        },
-        "ContentType": {
-            "type": ["null", "string"]
-        },
-        "CreatedDate": {
-            "type": ["null", "string"],
-            "format": "date-time"
-        },
-        "CustomerKey": {
-            "type": ["null", "string"]
-        },
-        "Description": {
-            "type": ["null", "string"]
-        },
-        "IsEditable": {
-            "type": ["null", "boolean"]
-        },
-        "IsActive": {
-            "type": ["null", "boolean"]
-        },
-        "ID": {
-            "type": ["integer"]
-        },
-        "ModifiedDate": {
-            "type": ["null", "string"],
-            "format": "date-time"
-        },
-        "Name": {
-            "type": ["null", "string"]
-        },
-        "ObjectID": {
-            "type": ["null", "string"]
-        },
-        "ParentFolder": {
-            "type": ["null", "object"]
-        },
-        "PartnerProperties": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "Name": {"type": ["null", "string"]},
-                    "Value": {"type": ["null", "string"]}
-                }
-            }
-        },
-        "Type": {
-            "type": ["null", "string"]
+  "type": "object",
+  "properties": {
+    "AllowChildren": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "ContentType": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CreatedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "CustomerKey": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Description": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "IsEditable": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "IsActive": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "ID": {
+      "type": [
+        "integer"
+      ]
+    },
+    "ModifiedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "Name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ObjectID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ParentFolder": {
+      "type": [
+        "null",
+        "object"
+      ]
+    },
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
         }
+      }
+    },
+    "Type": {
+      "type": [
+        "null",
+        "string"
+      ]
     }
+  }
 }

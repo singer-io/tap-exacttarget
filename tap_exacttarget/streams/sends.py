@@ -3,9 +3,9 @@ from tap_exacttarget.streams.abstracts import IncrementalStream
 
 
 class Sends(IncrementalStream):
-    """class for collections stream."""
+    """Class for collections stream."""
 
-    client : Client
+    client: Client
 
     stream = "send"
     tap_stream_id = "send"

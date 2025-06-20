@@ -1,15 +1,18 @@
+from itertools import islice
+
+from singer import get_logger
+from singer.utils import now
+
 from tap_exacttarget.client import Client
 from tap_exacttarget.streams.abstracts import IncrementalStream
+
 from .subscribers import Subscribers
-from itertools import islice
-from singer.utils import now
-from singer import get_logger
 
 LOGGER = get_logger()
 
 
 class ListSubscribe(IncrementalStream):
-    """class for collections stream."""
+    """Class for collections stream."""
 
     client: Client
 
@@ -23,7 +26,7 @@ class ListSubscribe(IncrementalStream):
     subscribers_obj: Subscribers = None
 
     def fetch_subscribers_batch(self, subs_ids):
-        """Creates Batch of 100 to fetch subscriber profile"""
+        """Creates Batch of 100 to fetch subscriber profile."""
         subs_ids = iter(subs_ids)
         while True:
             chunk = list(islice(subs_ids, 100))
@@ -34,9 +37,7 @@ class ListSubscribe(IncrementalStream):
                 self.subscribers_obj.sync_ids(chunk)
 
     def get_list_id(self):
-        """
-        Returns the ID of the "All Subscribers" List
-        """
+        """Returns the ID of the "All Subscribers" List."""
         all_sub_filter = self.client.create_simple_filter("ListName", "equals", "All Subscribers")
         response = self.client.retrieve_request("LIST", ["ID", "ListName"], search_filter=all_sub_filter)
         if len(response["Results"]) > 1:
@@ -46,7 +47,7 @@ class ListSubscribe(IncrementalStream):
     # def get_subscriber_filter
 
     def get_records(self, start_date, stream_metadata, schema):
-        """Performs get / retrive for ListSubscribers"""
+        """Performs get / retrieve for ListSubscribers."""
 
         query_fields = self.get_query_fields(stream_metadata, schema)
         list_id = self.get_list_id()

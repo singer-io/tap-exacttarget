@@ -1,17 +1,16 @@
-import sys
 from singer import get_logger, utils
+
 from tap_exacttarget.client import Client
 from tap_exacttarget.discover import discover
 from tap_exacttarget.sync import sync
 
-
-REQUIRED_CONFIG_KEYS = ['client_id', 'client_secret', 'start_date', 'tenant_subdomain']
+REQUIRED_CONFIG_KEYS = ["client_id", "client_secret", "start_date", "tenant_subdomain"]
 LOGGER = get_logger()
 
 
 @utils.handle_top_exception(LOGGER)
 def main():
-    """performs sync and discovery."""
+    """Performs sync and discovery."""
     args = utils.parse_args(REQUIRED_CONFIG_KEYS)
     client = Client(args.config)
 

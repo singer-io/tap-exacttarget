@@ -1,11 +1,14 @@
 import json
-from typing import Dict
 import os
+from typing import Dict
+
 from singer import get_logger
 from singer.catalog import Catalog
-from .discover_dataextentionobj import discover_dao_streams
-from tap_exacttarget.streams import STREAMS
+
 from tap_exacttarget.client import Client
+from tap_exacttarget.streams import STREAMS
+
+from .discover_dataextentionobj import discover_dao_streams
 
 LOGGER = get_logger()
 

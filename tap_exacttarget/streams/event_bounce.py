@@ -3,13 +3,13 @@ from tap_exacttarget.streams.abstracts import IncrementalStream
 
 
 class BounceEvent(IncrementalStream):
-    """class for collections stream."""
+    """Class for collections stream."""
 
-    client : Client
+    client: Client
 
     stream = "bounceevent"
     tap_stream_id = "bounceevent"
     object_ref = "BounceEvent"
-    key_properties = ['SendID', 'EventType', 'SubscriberKey', 'EventDate']
+    key_properties = ["SendID", "EventType", "SubscriberKey", "EventDate"]
     replication_key = "EventDate"
     valid_replication_keys = ["EventDate"]

@@ -1,7 +1,6 @@
-from datetime import datetime, timezone, timedelta
 from typing import Dict, List
-from singer import Transformer, get_logger, write_record
-from singer.utils import now, strftime, strptime_to_utc
+
+from singer import get_logger
 
 from tap_exacttarget.client import Client
 from tap_exacttarget.streams.abstracts import FullTableStream, IncrementalStream
@@ -18,29 +17,23 @@ class DataExtentionObjectBase:
 
     def get_query_fields(self, stream_metadata: Dict, schema: List):
 
-        available = schema["properties"].keys()
-        selected = []
-        query_fields = []
+        available_fields = schema.get("properties", {}).keys()
+        selected_fields = []
 
         for key, item in stream_metadata.items():
-            if item.get("inclusion") == "automatic" or item.get("selected"):
-                if len(key) == 2:
-                    selected.append(key[1])
+            if item.get("selected") or item.get("inclusion") == "automatic":
+                if isinstance(key, tuple) and len(key) == 2:
+                    selected_fields.append(key[1])
 
-        for key in selected:
-            if key not in available:
-                continue
-            else:
-                query_fields.append(key)
-
-        # Cannot be queried, fetched from parent obj
-        if "CategoryID" in query_fields:
-            query_fields.remove("CategoryID")
+        query_fields = []
+        for field in selected_fields:
+            if field in available_fields and field != "CategoryID":
+                query_fields.append(field)
 
         return query_fields
 
     def transform_record(self, obj):
-        LOGGER.info("record for tx %s", obj)
+
         obj_schema = self.schema["properties"]
         properties = obj["Properties"]["Property"]
         to_return = {}
@@ -76,8 +69,8 @@ class DataExtentionObjectBase:
 
 
 class DataExtentionObjectInc(DataExtentionObjectBase, IncrementalStream):
-    """Encapsulates DataExtention Incremental"""
+    """Encapsulates DataExtention Incremental."""
 
 
 class DataExtentionObjectFt(DataExtentionObjectBase, FullTableStream):
-    """Encapsulates DataExtention FullTable"""
+    """Encapsulates DataExtention FullTable."""
