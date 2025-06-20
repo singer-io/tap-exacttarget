@@ -52,8 +52,8 @@ class Client:
         self.auth_url = f"https://{subdomain}.auth.marketingcloudapis.com/v2/token"
         self.rest_url = f"https://{subdomain}.rest.marketingcloudapis.com/"
 
-        self.__access_token: str | None = None
-        self.token_expiry_time: datetime | None = None
+        self.__access_token = None
+        self.token_expiry_time = None
 
         self.client_id = client_id
         self.client_secret = client_secret
