@@ -1,0 +1,34 @@
+{
+    "type": "object",
+    "properties": {
+        "SendID": {
+            "type": ["null", "integer"]
+        },
+        "EventDate": {
+            "type": ["null", "string"],
+            "format": "datetime"
+        },
+        "EventType": {
+            "type": ["null", "string"]
+        },
+        "BatchID": {
+            "type": ["null","integer"]
+        },
+        "TriggeredSendDefinitionObjectID": {
+            "type": ["null","string"]
+        },
+        "SubscriberKey": {
+            "type": ["null", "string"]
+        },
+        "PartnerProperties": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "Name": {"type": ["null", "string"]},
+                    "Value": {"type": ["null", "string"]}
+                }
+            }
+        }
+    }
+}

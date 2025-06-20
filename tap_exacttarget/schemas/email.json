@@ -1,0 +1,94 @@
+{
+    "type": "object",
+    "properties": {
+        "CategoryID": {
+            "type": ["null", "integer"]
+        },
+        "PartnerKey":{
+            "type": ["null", "string"]
+        },
+        "CharacterSet": {
+            "type": ["null", "string"]
+        },
+        "ClonedFromID": {
+            "type": ["null", "integer"]
+        },
+        "ContentAreaIDs": {
+            "type": "array",
+            "items": {
+                "type": ["null", "integer"]
+            }
+        },
+        "ContentCheckStatus": {
+            "type": ["null", "string"]
+        },
+        "CreatedDate": {
+            "type": ["null", "string"],
+            "format": "date-time"
+        },
+        "CustomerKey": {
+            "type": ["null", "string"]
+        },
+        "EmailType": {
+            "type": ["null", "string"]
+        },
+        "HasDynamicSubjectLine": {
+            "type": ["null", "boolean"]
+        },
+        "HTMLBody": {
+            "type": ["null", "string"]
+        },
+        "ID": {
+            "type": ["integer"]
+        },
+        "IsActive": {
+            "type": ["null", "boolean"]
+        },
+        "IsHTMLPaste": {
+            "type": ["null", "boolean"]
+        },
+        "ModifiedDate": {
+            "type": ["null", "string"],
+            "format": "date-time"
+        },
+        "Name": {
+            "type": ["null", "string"]
+        },
+        "ObjectID": {
+            "type": ["null", "string"]
+        },
+        "PartnerProperties": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "Name": {"type": ["null", "string"]},
+                    "Value": {"type": ["null", "string"]}
+                }
+            }
+        },
+        "Folder": {
+            "type": ["null", "string"]
+        },
+        "PreHeader": {
+            "type": ["null", "string"]
+        },
+        "Status": {
+            "type": ["null", "string"]
+        },
+        "Subject": {
+            "type": ["null", "string"]
+        },
+        "SyncTextWithHTML": {
+            "type": ["null", "boolean"]
+        },
+        "TextBody": {
+            "type": ["null", "string"]
+        },
+        "__AdditionalEmailAttribute1": {"type": ["null", "string"]},
+        "__AdditionalEmailAttribute2": {"type": ["null", "string"]},
+        "__AdditionalEmailAttribute3": {"type": ["null", "string"]},
+        "__AdditionalEmailAttribute4": {"type": ["null", "string"]},
+        "__AdditionalEmailAttribute5": {"type": ["null", "string"]}
+    }
+}

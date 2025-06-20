@@ -4,18 +4,16 @@ from setuptools import setup, find_packages
 
 setup(
     name='tap-exacttarget',
-    version='1.7.1',
+    version='2.0.0',
     description='Singer.io tap for extracting data from the ExactTarget API',
     author='Fishtown Analytics',
     url='http://fishtownanalytics.com',
     classifiers=['Programming Language :: Python :: 3 :: Only'],
     py_modules=['tap_exacttarget'],
     install_requires=[
-        'funcy==1.9.1',
-        'singer-python==5.12.1',
-        'python-dateutil==2.6.0',
-        'voluptuous==0.10.5',
-        'Salesforce-FuelSDK==1.3.0'
+        "singer-python==5.13.0",
+        "zeep==4.3.1",
+        'requests==2.32.4',
     ],
     extras_require={
         'test': [
@@ -23,9 +21,6 @@ setup(
             'astroid==2.7.3',
             'nose'
         ],
-        'dev': [
-            'ipdb==0.11'
-        ]
     },
     entry_points='''
     [console_scripts]

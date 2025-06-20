@@ -1,185 +1,235 @@
-import FuelSDK
-import singer
+import requests
+from requests import Session
+from zeep.transports import Transport
+from datetime import datetime, timedelta
+from zeep import client,xsd
+from zeep.helpers import serialize_object
+from singer import get_logger
+import backoff
+from tap_exacttarget.exceptions import MarketingCloudError, IncompatibleFieldSelectionError,MarketingCloudPermissionFailure
+from requests.exceptions import RequestException, HTTPError, Timeout, ConnectionError
 
-from suds.transport.https import HttpAuthenticated
-from tap_exacttarget.fuel_overrides import tap_exacttarget__getMoreResults
+LOGGER =  get_logger()
+DEFAULT_DATE_WINDOW = 30
+DEFAULT_BATCH_SIZE = 2500
 
-LOGGER = singer.get_logger()
+class Client():
 
-# default request timeout
-REQUEST_TIMEOUT = 300
+    batch_size = 2500
 
-# prints the number of records fetched from the passed endpoint
-def _get_response_items(response, name):
-    items = response.results
+    oauth_header = xsd.Element(
+        '{http://exacttarget.com}fueloauth',
+        xsd.ComplexType([
+            xsd.Element('_value_1', xsd.String(), nillable=False)
+        ])
+    )
 
-    if 'count' in response.results:
-        items = response.results.get('items')
+    def __init__(self, config : dict):
+        LOGGER.info("WebService Client initialization Started.")
 
-    LOGGER.info('Got %s results from %s endpoint.', len(items), name)
-    return items
+        self.config = config
+        subdomain = config["tenant_subdomain"]
+        client_id = config["client_id"]
+        client_secret = config["client_secret"]
+        self.timeout = int(config.get("request_timeout")) or 300
+        self.date_window = DEFAULT_DATE_WINDOW
+        self.batch_size = DEFAULT_BATCH_SIZE
+
+        try:
+            self.date_window = float(config.get("date_window"))
+        except ValueError:
+            LOGGER.info("invalid value received for batch_size, fallback to default %s", DEFAULT_DATE_WINDOW)
+
+        try:
+            self.batch_size = int(config.get("batch_size"))
+        except ValueError:
+            LOGGER.info("invalid value received for batch_size, fallback to default %s", DEFAULT_BATCH_SIZE)
 
 
-__all__ = ['get_auth_stub', 'request', 'request_from_cursor']
+        self.wsdl_uri = f"https://{subdomain}.soap.marketingcloudapis.com/etframework.wsdl"
+        self.auth_url = f"https://{subdomain}.auth.marketingcloudapis.com/v2/token"
+        self.rest_url = f"https://{subdomain}.rest.marketingcloudapis.com/"
+
+        self.__access_token: str | None = None
+        self.token_expiry_time: datetime | None = None
+
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.soap_client = self.initalize_soap_client()
+
+        oauth_value = self.oauth_header(self.access_token)
+        self.soap_client.set_default_soapheaders([oauth_value])
+        LOGGER.info("WebService Client initialization Complete.")
+
+    @backoff.on_exception(backoff.expo,(ConnectionError, Timeout, RequestException),max_tries=6, max_time=300)
+    def initalize_soap_client(self):
+        """
+        Performs WebService Client init & handles Rerty
+        """
+
+        session = Session()
+        transport = Transport(session=session, timeout=300, operation_timeout=300)
+        soap_client = client.Client(wsdl=self.wsdl_uri, transport=transport)
+        return soap_client
+
+    def is_token_expired(self):
+        """
+        Checks for token expiry
+        """
+        if self.__access_token is None:
+            return True
+
+        if self.token_expiry_time and (datetime.now() + timedelta(minutes=5) < self.token_expiry_time):
+            return False
+
+        return True
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        pass
+
+    @property
+    def access_token(self):
+        """
+        Provides existing token if valid, if expired will refresh it.
+        """
+        if self.is_token_expired() or self.__access_token is None:
+            payload = {'client_id': self.client_id}
+            payload['client_secret'] = self.client_secret
+            payload['grant_type'] = "client_credentials"
+            try:
+
+                response = requests.post(self.auth_url, json=payload, timeout=self.timeout)
+                response.raise_for_status()
+                data = response.json()
+                self.__access_token = data["access_token"]
+                self.token_expiry_time = datetime.now() + timedelta(seconds=data["expires_in"])
+
+            except Exception as err:
+                raise err
+        return self.__access_token
 
 
-# PUBLIC FUNCTIONS
+    def create_simple_filter(self, property_name: str, operator: str, value=None, date_value=None):
+        """
+            Creates a filter object, handles case for date_value
+        """
+        simple_part_filter = self.soap_client.get_type('ns0:SimpleFilterPart')
+        _filter = simple_part_filter(
+            Property=property_name,
+            SimpleOperator=operator,
+        )
+        if not value and date_value:
+            _filter.DateValue = date_value
+        elif value:
+            _filter.Value=[value] if not isinstance(value, list) else value
+        return _filter
 
-def get_auth_stub(config):
-    """
-    Given a config dict in the format:
 
-        {'clientid': ... your ET client ID ...,
-         'clientsecret': ... your ET client secret ...}
+    def create_complex_filter(self, left_operand, logical_operator: str, right_operand):
+        """
+        Create a ComplexFilterPart for combining multiple filter conditions
 
-    ... return an auth stub to be used when making requests.
-    """
-    LOGGER.info("Generating auth stub...")
+        Args:
+            left_operand: Left filter condition (SimpleFilterPart or ComplexFilterPart)
+            logical_operator (str): Logical operator ('AND' or 'OR')
+            right_operand: Right filter condition (SimpleFilterPart or ComplexFilterPart)
 
-    params = {
-        'clientid': config['client_id'],
-        'clientsecret': config['client_secret']
+        Returns:
+            ComplexFilterPart object
+
+        Example:
+            # Create individual simple filters
+            filter1 = client.create_simple_filter('Status', 'equals', 'Active')
+            filter2 = client.create_simple_filter('EmailAddress', 'isNotNull', '')
+
+            # Combine with AND
+            complex_filter = client.create_complex_filter(filter1, 'AND', filter2)
+
+            # More complex example with nested conditions
+            filter3 = client.create_simple_filter('SubscriberKey', 'greaterThan', '1000')
+            nested_complex = client.create_complex_filter(complex_filter, 'OR', filter3)
+        """
+        complex_part_filter = self.soap_client.get_type('ns0:ComplexFilterPart')
+        return complex_part_filter(
+            LeftOperand=left_operand,
+            LogicalOperator=logical_operator,
+            RightOperand=right_operand
+        )
+
+
+    @backoff.on_exception(backoff.expo, (ConnectionError, Timeout, HTTPError, RequestException),max_tries=5,max_time=300,)
+    def retrieve_request(self, object_type: str, properties : list, request_id = None, search_filter = None):
+        retrieve_req = self.soap_client.get_type('ns0:RetrieveRequest')
+        retrieve_opts = self.soap_client.get_type('ns0:RetrieveOptions')
+
+        retrieve_options = retrieve_opts(
+            BatchSize=self.batch_size,
+            # This ensures all the Inherited APIObject fields are available
+            IncludeObjects=True
+        )
+
+        retrieve_request_obj = retrieve_req(
+            ObjectType=object_type,
+            Properties=properties,
+            Options=retrieve_options)
+
+        if search_filter:
+            retrieve_request_obj.Filter = search_filter
+
+        if request_id:
+            retrieve_request_obj.ContinueRequest = request_id
+
+        oauth_value = self.oauth_header(self.access_token)
+        self.soap_client.set_default_soapheaders([oauth_value])
+
+        LOGGER.info("Calling %s wth fields %s with filter %s", object_type, properties, search_filter)
+
+        try:
+            response = self.soap_client.service.Retrieve(RetrieveRequest=retrieve_request_obj)
+            self.raise_for_error(response)
+            return response
+        except MarketingCloudError as err:
+            raise err
+
+
+    def raise_for_error(self, response):
+        """
+        Handles basic request failure
+        """
+        if "Error: The Request Property(s)" in response["OverallStatus"]:
+            raise IncompatibleFieldSelectionError(response["OverallStatus"])
+
+        if "Error: Invalid column name" in response["OverallStatus"]:
+            raise IncompatibleFieldSelectionError(response["OverallStatus"])
+
+        if "Error: API Permission Failed" in response["OverallStatus"]:
+            raise MarketingCloudPermissionFailure(response["OverallStatus"])
+
+    # TODO Add backoff
+    def get_rest(self, endpoint, params):
+
+        headers = {
+            "Authorization":f"Bearer {self.access_token}"
         }
+        final_url = f"{self.rest_url}{endpoint}"
+        response = requests.get(final_url, headers=headers, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        LOGGER.info("Request URL: %s", response.url)
+        return response.json()
 
-    if config.get('tenant_subdomain'):
-        # For S10+ accounts: https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/your-subdomain-tenant-specific-endpoints.htm
+    def describe_request(self, object_type):
+        """ Queries schema defination for ET Objects"""
 
-        params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com/v1/requestToken'
-                                       .format(config['tenant_subdomain']))
-        LOGGER.info("Authentication URL is: %s", params['authenticationurl'])
-        params['soapendpoint'] = ('https://{}.soap.marketingcloudapis.com/Service.asmx'
-                                  .format(config['tenant_subdomain']))
+        obj_defn_reqs = self.soap_client.get_type('ns0:ObjectDefinitionRequest')
+        arr_obj_defn_reqs = self.soap_client.get_type('ns0:ArrayOfObjectDefinitionRequest')
 
-    # Set request timeout with config param `request_timeout`
-    # If value is 0, "0", "" or not passed then it set timeout to default: 300 seconds.
-    config_request_timeout = config.get('request_timeout')
-    if config_request_timeout and float(config_request_timeout):
-        request_timeout = float(config_request_timeout)
-    else:
-        request_timeout = REQUEST_TIMEOUT
+        obj_def = obj_defn_reqs(ObjectType=object_type)
+        obj_def_array = arr_obj_defn_reqs(ObjectDefinitionRequest=[obj_def])
 
-    # First try V1
-    try:
-        LOGGER.info('Trying to authenticate using V1 endpoint')
-        params['useOAuth2Authentication'] = "False"
-        auth_stub = FuelSDK.ET_Client(params=params)
+        oauth_value = self.oauth_header(self.access_token)
+        self.soap_client.set_default_soapheaders([oauth_value])
 
-        transport = HttpAuthenticated(timeout=request_timeout)
-        auth_stub.soap_client.set_options(
-            transport=transport)
-        LOGGER.info("Success.")
-        return auth_stub
-    except Exception as e:
-        LOGGER.info('Failed to auth using V1 endpoint')
-        if not config.get('tenant_subdomain'):
-            LOGGER.warning('No tenant_subdomain found, will not attempt to auth with V2 endpoint')
-            message = "{}. Please check your \'client_id\', \'client_secret\' or try adding the \'tenant_subdomain\'."
-            raise Exception(message.format(str(e))) from None
-
-    # Next try V2
-    # Move to OAuth2: https://help.salesforce.com/articleView?id=mc_rn_january_2019_platform_ip_remove_legacy_package_create_ability.htm&type=5
-    try:
-        LOGGER.info('Trying to authenticate using V2 endpoint')
-        params['useOAuth2Authentication'] = "True"
-        params['authenticationurl'] = ('https://{}.auth.marketingcloudapis.com'
-                                       .format(config['tenant_subdomain']))
-        LOGGER.info("Authentication URL is: %s", params['authenticationurl'])
-        auth_stub = FuelSDK.ET_Client(params=params)
-
-        transport = HttpAuthenticated(timeout=request_timeout)
-        auth_stub.soap_client.set_options(
-            transport=transport)
-    except Exception as e:
-        LOGGER.info('Failed to auth using V2 endpoint')
-        message = "{}. Please check your \'client_id\', \'client_secret\' or \'tenant_subdomain\'."
-        raise Exception(message.format(str(e))) from None
-
-    LOGGER.info("Success.")
-    return auth_stub
-
-
-def request(name, selector, auth_stub, search_filter=None, props=None, batch_size=2500):
-    """
-    Given an object name (`name`), used for logging purposes only,
-      a `selector`, for example FuelSDK.ET_ClickEvent,
-      an `auth_stub`, generated by `get_auth_stub`,
-      an optional `search_filter`,
-      and an optional set of `props` (properties), which specifies the fields
-        to be returned from this object,
-
-    ... request data from the ExactTarget API using FuelSDK. This function
-    returns a generator that will yield all the records returned by the
-    request.
-
-    Example `search_filter`:
-
-        {'Property': 'CustomerKey',
-         'SimpleOperator': 'equals',
-         'Value': 'abcdef'}
-
-    For more on search filters, see:
-      https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/using_complex_filter_parts.htm
-    """
-    cursor = selector()
-    cursor.auth_stub = auth_stub
-    # set batch size ie. the page size defined by the user as the
-    # FuelSDK supports setting page size in the "BatchSize" value in "options" parameter
-    cursor.options = {"BatchSize": batch_size}
-
-    if props is not None:
-        cursor.props = props
-
-    if search_filter is not None:
-        cursor.search_filter = search_filter
-
-        LOGGER.info(
-            "Making RETRIEVE call to '{}' endpoint with filters '{}'."
-            .format(name, search_filter))
-
-    else:
-        LOGGER.info(
-            "Making RETRIEVE call to '{}' endpoint with no filters."
-            .format(name))
-
-    return request_from_cursor(name, cursor, batch_size)
-
-
-def request_from_cursor(name, cursor, batch_size):
-    """
-    Given an object name (`name`), used for logging purposes only, and a
-    `cursor` provided by FuelSDK, return a generator that yields all the
-    items in that cursor.
-
-    Primarily used internally by `request`, but can be used if cursors have
-    to be customized. See tap_exacttarget.endpoints.data_extensions for
-    an example.
-    """
-    response = cursor.get()
-
-    if not response.status:
-        raise RuntimeError("Request failed with '{}'"
-                           .format(response.message))
-
-    for item in _get_response_items(response, name):
-        yield item
-
-    while response.more_results:
-        LOGGER.info("Getting more results from '{}' endpoint".format(name))
-
-        if isinstance(cursor, FuelSDK.ET_Campaign):
-            # use 'getMoreResults' for campaigns as it does not use
-            # batch_size, rather it uses $page and $pageSize and REST Call
-            response = cursor.getMoreResults()
-        else:
-            # Override call to getMoreResults to add a batch_size parameter
-            # response = cursor.getMoreResults()
-            response = tap_exacttarget__getMoreResults(cursor, batch_size=batch_size)
-
-        if not response.status:
-            raise RuntimeError("Request failed with '{}'"
-                               .format(response.message))
-
-        for item in _get_response_items(response, name):
-            yield item
-
-    LOGGER.info("Done retrieving results from '{}' endpoint".format(name))
+        return self.soap_client.service.Describe(obj_def_array)

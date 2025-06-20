@@ -1,12 +1,15 @@
 {
     "type": "object",
     "properties": {
-        "ID": {
-            "type": ["integer"]
+        "Category": {
+            "type": ["null", "integer"]
         },
         "CreatedDate": {
             "type": ["null", "string"],
             "format": "date-time"
+        },
+        "ID": {
+            "type": ["integer"]
         },
         "ModifiedDate": {
             "type": ["null", "string"],
@@ -15,7 +18,10 @@
         "ObjectID": {
             "type": ["null", "string"]
         },
-        "PartnerProperties": {
+        "CustomerKey": {
+            "type": ["null", "string"]
+        },
+       "PartnerProperties": {
             "type": "array",
             "items": {
                 "type": "object",
@@ -25,15 +31,19 @@
                 }
             }
         },
-        "ListID": {
-            "type": ["null", "integer"],
-            "description": "Defines identification for a list the subscriber resides on."
+        "ListClassification": {
+            "type": ["null", "string"]
         },
-        "Status": {
-            "type": ["null", "string"],
-            "description": "Defines status of object. Status of an address."
+        "ListName": {
+            "type": ["null", "string"]
         },
-        "SubscriberKey": {
+        "Description":{
+            "type": ["null", "string"]
+        },
+        "SendClassification": {
+            "type": ["null", "string"]
+        },
+        "Type": {
             "type": ["null", "string"]
         }
     }

@@ -1,19 +1,43 @@
 {
     "type": "object",
     "properties": {
-        "ID": {
-            "type": ["integer"]
+        "AllowChildren": {
+            "type": ["null", "boolean"]
+        },
+        "ContentType": {
+            "type": ["null", "string"]
         },
         "CreatedDate": {
             "type": ["null", "string"],
             "format": "date-time"
         },
+        "CustomerKey": {
+            "type": ["null", "string"]
+        },
+        "Description": {
+            "type": ["null", "string"]
+        },
+        "IsEditable": {
+            "type": ["null", "boolean"]
+        },
+        "IsActive": {
+            "type": ["null", "boolean"]
+        },
+        "ID": {
+            "type": ["integer"]
+        },
         "ModifiedDate": {
             "type": ["null", "string"],
             "format": "date-time"
         },
+        "Name": {
+            "type": ["null", "string"]
+        },
         "ObjectID": {
             "type": ["null", "string"]
+        },
+        "ParentFolder": {
+            "type": ["null", "object"]
         },
         "PartnerProperties": {
             "type": "array",
@@ -25,15 +49,7 @@
                 }
             }
         },
-        "ListID": {
-            "type": ["null", "integer"],
-            "description": "Defines identification for a list the subscriber resides on."
-        },
-        "Status": {
-            "type": ["null", "string"],
-            "description": "Defines status of object. Status of an address."
-        },
-        "SubscriberKey": {
+        "Type": {
             "type": ["null", "string"]
         }
     }
