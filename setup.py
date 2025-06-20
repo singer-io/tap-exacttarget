@@ -16,7 +16,7 @@ setup(
         "requests==2.32.4",
     ],
     extras_require={
-        "test": ["pylint==2.10.2", "astroid==2.7.3", "nose"],
+        "dev": ["pylint==2.10.2", "astroid==2.7.3", "nose"],
     },
     entry_points="""
     [console_scripts]
