@@ -3,15 +3,17 @@ from datetime import datetime, timedelta
 import backoff
 import requests
 from requests import Session
-from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
+from requests.exceptions import ConnectionError, RequestException, HTTPError, Timeout
 from singer import get_logger
 from zeep import client, xsd
 from zeep.transports import Transport
+from zeep.exceptions import TransportError, Fault
 
 from tap_exacttarget.exceptions import (
     IncompatibleFieldSelectionError,
     MarketingCloudError,
     MarketingCloudPermissionFailure,
+    MarketingCloudSoapApiException,
 )
 
 LOGGER = get_logger()
@@ -92,6 +94,7 @@ class Client:
     def access_token(self):
         """Provides existing token if valid, if expired will refresh it."""
         if self.is_token_expired() or self.__access_token is None:
+            LOGGER.info("Access token expired or not set, requesting new token.")
             payload = {"client_id": self.client_id}
             payload["client_secret"] = self.client_secret
             payload["grant_type"] = "client_credentials"
@@ -101,7 +104,7 @@ class Client:
                 response.raise_for_status()
                 data = response.json()
                 self.__access_token = data["access_token"]
-                self.token_expiry_time = datetime.now() + timedelta(seconds=data["expires_in"])
+                self.token_expiry_time = datetime.now() + timedelta(seconds=(data["expires_in"]- 500))
 
             except Exception as err:
                 raise err
@@ -150,7 +153,8 @@ class Client:
 
     @backoff.on_exception(
         backoff.expo,
-        (ConnectionError, Timeout, HTTPError, RequestException),
+        (ConnectionError, Timeout, HTTPError,
+        RequestException, TransportError, Fault),
         max_tries=5,
         max_time=300,
     )
@@ -175,13 +179,16 @@ class Client:
         oauth_value = self.oauth_header(self.access_token)
         self.soap_client.set_default_soapheaders([oauth_value])
 
-        LOGGER.info("Calling %s with fields %s", object_type, properties)
+        LOGGER.debug("Calling %s with fields %s with filter %s", object_type, properties, search_filter)
 
         try:
             response = self.soap_client.service.Retrieve(RetrieveRequest=retrieve_request_obj)
             self.raise_for_error(response)
             return response
-        except MarketingCloudError as err:
+        except (MarketingCloudError, TransportError, Fault) as err:
+            if isinstance(err, Fault) or isinstance(err, TransportError):
+                # Handle SOAP faults or transport errors
+                raise MarketingCloudSoapApiException(f"SOAP Fault or Transport Error: {err}") from err
             raise err
 
     def raise_for_error(self, response):

@@ -42,6 +42,9 @@ class DataExtentionObjectBase:
             to_return[prop["Name"]] = prop["Value"]
 
         for k, v in to_return.items():
+            if v is None:
+                to_return[k] = None
+                continue
             field_schema = obj_schema.get(k, {})
 
             if "integer" in field_schema.get("type"):

@@ -1,30 +1,39 @@
 import json
 from abc import ABC, abstractmethod
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from typing import Any, Dict, List, Tuple
 
-from singer import (
-    Transformer,
-    get_bookmark,
-    get_logger,
-    write_bookmark,
-    write_record,
-)
+import dateutil.parser
+from singer import Transformer, get_bookmark, get_logger, write_bookmark, write_record
 from singer.metadata import get_standard_metadata, to_list, to_map, write
 from singer.transform import SchemaMismatch
-from singer.utils import now, strftime, strptime_to_utc
+from singer.utils import now
 from zeep.helpers import serialize_object
 
 LOGGER = get_logger()
 
 
-class CustomDTParser(json.JSONEncoder):
-    """Handles parsing for datetime objects."""
+fixed_cst = timezone(timedelta(hours=-6))
 
-    def default(self, obj):
-        if isinstance(obj, (datetime, date)):
-            return obj.isoformat()
-        return super().default(obj)
+
+def strptime_to_cst(dtimestr):
+    """Converts a datetime string to a datetime object in (CST)."""
+    d_object = dateutil.parser.parse(dtimestr)
+    if d_object.tzinfo is None:
+        return d_object.replace(tzinfo=fixed_cst)
+    else:
+        return d_object.astimezone(tz=fixed_cst)
+
+
+class CustomDTParser(json.JSONEncoder):
+    """Handles parsing for datetime, date, and time objects."""
+
+    def default(self, o):
+        if isinstance(o, (datetime, date)):
+            return o.isoformat()
+        if isinstance(o, time):
+            return o.isoformat()
+        return super().default(o)
 
 
 class BaseStream(ABC):
@@ -159,9 +168,9 @@ class IncrementalStream(BaseStream):
     def create_date_windows(self, start_date, end_date, interval_days) -> List:
         """Creates Date Window for given date range."""
         if isinstance(start_date, str):
-            start_date = strptime_to_utc(start_date)
+            start_date = strptime_to_cst(start_date)
         if isinstance(end_date, str):
-            end_date = strptime_to_utc(end_date)
+            end_date = strptime_to_cst(end_date)
 
         if start_date >= end_date:
             return [(end_date, start_date)]
@@ -186,8 +195,9 @@ class IncrementalStream(BaseStream):
         """Performs Pagination and query building."""
 
         query_fields = self.get_query_fields(stream_metadata, schema)
-
-        for start_dt, end_dt in self.create_date_windows(start_date, now(), self.client.date_window):
+        for start_dt, end_dt in self.create_date_windows(
+            start_date, now().astimezone(tz=fixed_cst), self.client.date_window
+        ):
             start_date = self.client.create_simple_filter(
                 self.replication_key, "greaterThanOrEqual", date_value=start_dt
             )
@@ -215,16 +225,16 @@ class IncrementalStream(BaseStream):
     def sync(self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer) -> Dict:
         """Sync implementation for incremental streams."""
 
-        current_max_bookmark_date = bookmark_date_utc = strptime_to_utc(self.get_bookmark(state))
+        current_max_bookmark_date = bookmark_date_utc = strptime_to_cst(self.get_bookmark(state))
         records_processed, schema_mismatch_count = 0, 0
 
         for record in self.get_records(bookmark_date_utc, stream_metadata, schema):
             record_timestamp = None
             try:
                 if isinstance(record[self.replication_key], datetime):
-                    record_timestamp = record[self.replication_key].replace(tzinfo=timezone.utc)
+                    record_timestamp = record[self.replication_key].replace(tzinfo=fixed_cst)
                 elif record[self.replication_key]:
-                    record_timestamp = strptime_to_utc(record[self.replication_key])
+                    record_timestamp = strptime_to_cst(record[self.replication_key])
                 # Add specific handling for schema mismatch errors
                 try:
                     transformed_record = transformer.transform(record, schema, stream_metadata)
@@ -235,7 +245,7 @@ class IncrementalStream(BaseStream):
                     LOGGER.warning("Schema mismatch for record in stream %s: %s", self.tap_stream_id, str(ex))
                     continue
             except KeyError as err:
-                LOGGER.info("%s Record did not have replication key value skipping %s", record, err)
+                LOGGER.info("Missing replication key value skipping %s", err)
 
             if record_timestamp:
                 current_max_bookmark_date = max(current_max_bookmark_date, record_timestamp)
@@ -247,7 +257,7 @@ class IncrementalStream(BaseStream):
             schema_mismatch_count,
         )
 
-        state = self.write_bookmark(state, value=strftime(current_max_bookmark_date))
+        state = self.write_bookmark(state, value=current_max_bookmark_date.isoformat())
         return state
 
 

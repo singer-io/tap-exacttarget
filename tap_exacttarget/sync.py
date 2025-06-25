@@ -3,7 +3,7 @@ from typing import Dict
 import singer
 
 from tap_exacttarget.discover_dataextentionobj import discover_dao_streams
-from tap_exacttarget.exceptions import IncompatibleFieldSelectionError
+from tap_exacttarget.exceptions import IncompatibleFieldSelectionError, MarketingCloudSoapApiException
 from tap_exacttarget.streams import STREAMS
 
 LOGGER = singer.get_logger()
@@ -68,7 +68,7 @@ def sync(client, catalog: singer.Catalog, state: Dict):
                     state=state, schema=stream_schema, stream_metadata=stream_metadata, transformer=transformer
                 )
 
-            except IncompatibleFieldSelectionError as err:
+            except (IncompatibleFieldSelectionError, MarketingCloudSoapApiException) as err:
                 LOGGER.info("Stream Failed to sync %s, error: %s", tap_stream_id, err)
                 failed_streams.append((tap_stream_id, err))
 

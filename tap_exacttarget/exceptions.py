@@ -20,5 +20,9 @@ class MarketingCloudPermissionFailure(MarketingCloudError):
     """Custom Exception raised for permission related faults."""
 
 
+class MarketingCloudSoapApiException(MarketingCloudError):
+    """Custom Exception raised for permission related faults."""
+
+
 class AuthenticationError(MarketingCloudError):
     """Raised for auth related faults."""
