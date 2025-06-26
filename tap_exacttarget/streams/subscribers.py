@@ -53,9 +53,11 @@ class Subscribers(FullTableStream):
 
     def sync_ids(self, subs_key_list):
         transformer = Transformer()
+        self.client.log_search_filter = False
         for record in self.filter_records(subs_key_list):
             transformed_record = transformer.transform(record, self.schema, self.metadata)
             write_record(self.tap_stream_id, transformed_record)
+        self.client.log_search_filter = True
 
     def sync(self, state, schema, stream_metadata, transformer):
         return state

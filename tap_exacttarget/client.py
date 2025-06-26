@@ -24,6 +24,7 @@ DEFAULT_BATCH_SIZE = 2500
 class Client:
 
     batch_size = 2500
+    log_search_filter = True
 
     oauth_header = xsd.Element(
         "{http://exacttarget.com}fueloauth", xsd.ComplexType([xsd.Element("_value_1", xsd.String(), nillable=False)])
@@ -179,7 +180,9 @@ class Client:
         oauth_value = self.oauth_header(self.access_token)
         self.soap_client.set_default_soapheaders([oauth_value])
 
-        LOGGER.debug("Calling %s with fields %s with filter %s", object_type, properties, search_filter)
+        LOGGER.info("Objtype: %s fields: %s", object_type, properties)
+        if self.log_search_filter:
+            LOGGER.info("Filter: %s", search_filter)
 
         try:
             response = self.soap_client.service.Retrieve(RetrieveRequest=retrieve_request_obj)
@@ -202,14 +205,18 @@ class Client:
         if "Error: API Permission Failed" in response["OverallStatus"]:
             raise MarketingCloudPermissionFailure(response["OverallStatus"])
 
-    # TODO Add backoff
+    @backoff.on_exception(
+        backoff.expo,
+        (ConnectionError, Timeout, HTTPError, RequestException),
+        max_tries=5,
+        max_time=300,
+    )
     def get_rest(self, endpoint, params):
 
         headers = {"Authorization": f"Bearer {self.access_token}"}
         final_url = f"{self.rest_url}{endpoint}"
         response = requests.get(final_url, headers=headers, params=params, timeout=self.timeout)
         response.raise_for_status()
-        LOGGER.info("Request URL: %s", response.url)
         return response.json()
 
     def describe_request(self, object_type):
