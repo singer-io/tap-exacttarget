@@ -40,8 +40,8 @@ def sync(client, catalog: singer.Catalog, state: Dict):
                 "Stream Failed to sync subscribers, error: Select list_subscribers stream to enable sync for subscribers"
             )
             failed_streams.append(
-                "subscribers",
-                "Stream Failed to sync subscribers, error: Select list_subscribers stream to enable sync for subscribers",
+                ("subscribers",
+                "Stream Failed to sync subscribers, error: Select list_subscribers stream to enable sync for subscribers")
             )
 
     with singer.Transformer() as transformer:
