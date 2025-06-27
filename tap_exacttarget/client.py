@@ -19,6 +19,7 @@ from tap_exacttarget.exceptions import (
 LOGGER = get_logger()
 DEFAULT_DATE_WINDOW = 30
 DEFAULT_BATCH_SIZE = 2500
+DEFAULT_TIMEOUT =  300
 
 
 class Client:
@@ -37,18 +38,19 @@ class Client:
         subdomain = config["tenant_subdomain"]
         client_id = config["client_id"]
         client_secret = config["client_secret"]
-        self.timeout = int(config.get("request_timeout")) or 300
-        self.date_window = DEFAULT_DATE_WINDOW
-        self.batch_size = DEFAULT_BATCH_SIZE
+        self.timeout = int(config.get("request_timeout") or DEFAULT_TIMEOUT) 
+        
 
         try:
-            self.date_window = float(config.get("date_window"))
+            self.date_window = float(config.get("date_window") or DEFAULT_DATE_WINDOW)
         except ValueError:
+            self.date_window = DEFAULT_DATE_WINDOW
             LOGGER.info("invalid value received for batch_size, fallback to default %s", DEFAULT_DATE_WINDOW)
 
         try:
-            self.batch_size = int(config.get("batch_size"))
+            self.batch_size = int(config.get("batch_size") or DEFAULT_BATCH_SIZE)
         except ValueError:
+            self.batch_size = DEFAULT_BATCH_SIZE
             LOGGER.info("invalid value received for batch_size, fallback to default %s", DEFAULT_BATCH_SIZE)
 
         self.wsdl_uri = f"https://{subdomain}.soap.marketingcloudapis.com/etframework.wsdl"
