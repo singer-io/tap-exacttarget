@@ -43,5 +43,5 @@ class Campaigns(FullTableStream):
             transformed_record = transformer.transform(record, schema, stream_metadata)
             write_record(self.tap_stream_id, transformed_record)
             records_processed += 1
-        LOGGER.info("Campaigns Stream sync completed: %d records processed", self.tap_stream_id, records_processed)
+        LOGGER.info("Campaigns Stream sync completed: %d records processed", records_processed)
         return state
