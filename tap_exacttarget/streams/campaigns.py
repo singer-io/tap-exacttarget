@@ -38,8 +38,10 @@ class Campaigns(FullTableStream):
 
     def sync(self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer) -> Dict:
         """Abstract implementation for `type: Fulltable` stream."""
-
+        records_processed = 0
         for record in self.get_records(stream_metadata, schema):
             transformed_record = transformer.transform(record, schema, stream_metadata)
             write_record(self.tap_stream_id, transformed_record)
+            records_processed += 1
+        LOGGER.info("Campaigns Stream sync completed: %d records processed", self.tap_stream_id, records_processed)
         return state
