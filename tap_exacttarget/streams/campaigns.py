@@ -1,7 +1,7 @@
 from typing import Dict
 
 from singer import Transformer, get_logger, write_record
-
+from singer.transform import SchemaMismatch
 from tap_exacttarget.client import Client
 from tap_exacttarget.streams.abstracts import FullTableStream
 
@@ -38,10 +38,20 @@ class Campaigns(FullTableStream):
 
     def sync(self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer) -> Dict:
         """Abstract implementation for `type: Fulltable` stream."""
-        records_processed = 0
+        records_processed, schema_mismatch_count = 0, 0
         for record in self.get_records(stream_metadata, schema):
-            transformed_record = transformer.transform(record, schema, stream_metadata)
-            write_record(self.tap_stream_id, transformed_record)
-            records_processed += 1
-        LOGGER.info("Campaigns Stream sync completed: %d records processed", records_processed)
+            try:
+                transformed_record = transformer.transform(record, schema, stream_metadata)
+                write_record(self.tap_stream_id, transformed_record)
+                records_processed += 1
+            except SchemaMismatch as ex:
+                schema_mismatch_count += 1
+                LOGGER.warning("Schema mismatch for record in stream %s: %s", self.tap_stream_id, str(ex))
+
+        LOGGER.info(
+            "Stream %s sync complete: %d records processed, %d schema mismatch errors",
+            self.tap_stream_id,
+            records_processed,
+            schema_mismatch_count,
+        )
         return state

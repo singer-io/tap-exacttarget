@@ -69,10 +69,12 @@ def sync(client, catalog: singer.Catalog, state: Dict):
                 )
 
             except (IncompatibleFieldSelectionError, MarketingCloudSoapApiException) as err:
-                LOGGER.info("Stream Failed to sync %s, error: %s", tap_stream_id, err)
+                LOGGER.info("Stream Failed to sync %s", tap_stream_id)
                 failed_streams.append((tap_stream_id, err))
 
             singer.write_state(state)
+
+    LOGGER.info("Sync Completed, stream(s) failed: %s", len(failed_streams))
     if failed_streams:
         for stream, err_cause in failed_streams:
             LOGGER.fatal("Stream Failed %s, Reason: %s", stream, err_cause)
