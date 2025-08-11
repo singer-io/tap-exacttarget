@@ -16,7 +16,7 @@ class Campaigns(FullTableStream):
     stream = "campaigns"
     tap_stream_id = "campaigns"
     object_ref = "Campaigns"
-    key_properties = ["ID"]
+    key_properties = ["id"]
     endpoint = "hub/v1/campaigns/"
 
     def get_records(self, stream_metadata, schema):
