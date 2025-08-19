@@ -12,7 +12,7 @@
         "null",
         "string"
       ],
-      "format": "datetime"
+      "format": "date-time"
     },
     "EventType": {
       "type": [
