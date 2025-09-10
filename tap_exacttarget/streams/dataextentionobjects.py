@@ -67,7 +67,7 @@ class DataExtentionObjectBase:
                     LOGGER.warning("Could not infer boolean value from %s", to_return[k])
                     to_return[k] = None
 
-        to_return["CategoryID"] = self.category_id
+        # to_return["CategoryID"] = self.category_id
         return to_return
 
 
