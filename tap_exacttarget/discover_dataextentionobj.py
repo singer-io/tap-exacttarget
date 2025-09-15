@@ -97,7 +97,7 @@ def discover_dao_streams(client: Client):
             category_id = item["CategoryID"]
 
             stream_name = item["Name"]
-            stream_id = f"data_extension.{customer_key}"
+            stream_id = f"data_extension.{stream_name}"
             stream_fields = discovered_fields.get(customer_key, {})
 
             key_props = ["_CustomObjectKey"] + stream_fields.get("key_properties", [])
@@ -130,7 +130,7 @@ def discover_dao_streams(client: Client):
                 class_name,
                 (base_class,),
                 {
-                    "stream": stream_name,
+                    "stream": f"data_extension.{stream_name}",
                     "tap_stream_id": stream_id,
                     "object_ref": f"DataExtensionObject[{stream_name}]",
                     "key_properties": list(set(key_props)),
