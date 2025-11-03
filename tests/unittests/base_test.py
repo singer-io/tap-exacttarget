@@ -1,4 +1,3 @@
-# test_base.py
 """Shared setup for Client unit tests (unittest version)."""
 
 import unittest
