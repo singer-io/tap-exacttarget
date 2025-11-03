@@ -1,57 +1,44 @@
 {
   "type": "object",
   "properties": {
-    "Addresses": {
+    "CategoryID": {
       "type": [
         "null",
-        "array"
-      ],
+        "integer"
+      ]
+    },
+    "PartnerKey": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CharacterSet": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ClonedFromID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ContentAreaIDs": {
+      "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "Address": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "AddressType": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "AddressStatus": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        }
+        "type": [
+          "null",
+          "integer"
+        ]
       }
     },
-    "Attributes": {
+    "ContentCheckStatus": {
       "type": [
         "null",
-        "array"
-      ],
-      "items": {
-        "type": "object",
-        "properties": {
-          "Name": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "Value": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        }
-      }
+        "string"
+      ]
     },
     "CreatedDate": {
       "type": [
@@ -66,13 +53,19 @@
         "string"
       ]
     },
-    "EmailAddress": {
+    "EmailType": {
       "type": [
         "null",
         "string"
       ]
     },
-    "EmailTypePreference": {
+    "HasDynamicSubjectLine": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "HTMLBody": {
       "type": [
         "null",
         "string"
@@ -83,22 +76,16 @@
         "integer"
       ]
     },
-    "ListIDs": {
+    "IsActive": {
       "type": [
         "null",
-        "array"
-      ],
-      "items": {
-        "type": [
-          "null",
-          "string"
-        ]
-      }
+        "boolean"
+      ]
     },
-    "Locale": {
+    "IsHTMLPaste": {
       "type": [
         "null",
-        "string"
+        "boolean"
       ]
     },
     "ModifiedDate": {
@@ -108,13 +95,13 @@
       ],
       "format": "date-time"
     },
-    "ObjectID": {
+    "Name": {
       "type": [
         "null",
         "string"
       ]
     },
-    "PartnerKey": {
+    "ObjectID": {
       "type": [
         "null",
         "string"
@@ -140,25 +127,13 @@
         }
       }
     },
-    "PartnerType": {
+    "Folder": {
       "type": [
         "null",
         "string"
       ]
     },
-    "PrimaryEmailAddress": {
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    "PrimarySMSAddress": {
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    "PrimarySMSPublicationStatus": {
+    "PreHeader": {
       "type": [
         "null",
         "string"
@@ -170,19 +145,49 @@
         "string"
       ]
     },
-    "SubscriberKey": {
+    "Subject": {
       "type": [
         "null",
         "string"
       ]
     },
-    "SubscriberTypeDefinition": {
+    "SyncTextWithHTML": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "TextBody": {
       "type": [
         "null",
         "string"
       ]
     },
-    "UnsubscribedDate": {
+    "__AdditionalEmailAttribute1": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "__AdditionalEmailAttribute2": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "__AdditionalEmailAttribute3": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "__AdditionalEmailAttribute4": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "__AdditionalEmailAttribute5": {
       "type": [
         "null",
         "string"

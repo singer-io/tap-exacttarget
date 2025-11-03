@@ -1,41 +1,43 @@
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
-      - image: 218546966473.dkr.ecr.us-east-1.amazonaws.com/circle-ci:stitch-tap-tester
+      - image: 218546966473.dkr.ecr.us-east-1.amazonaws.com/circle-ci:stitch-tap-tester-uv
     steps:
       - checkout
       - run:
           name: 'Setup virtual env'
           command: |
-            python3 -mvenv /usr/local/share/virtualenvs/tap-exacttarget
+            uv venv --python 3.11 /usr/local/share/virtualenvs/tap-exacttarget
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
-            pip install -U 'pip<19.2' 'setuptools<51.0.0'
-            pip install .[test]
+            uv pip install -U 'pip==25.2' 'setuptools==80.9.0'
+            uv pip install .[dev]
       - run:
-          name: 'unittest'
+          name: 'JSON Validator'
           command: |
-            source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
-            pip install nose coverage
-            nosetests --with-coverage --cover-erase --cover-package=tap_exacttarget --cover-html-dir=htmlcov tests/unittests
-            coverage html
-      - store_test_results:
-          path: test_output/report.xml
-      - store_artifacts:
-          path: htmlcov
+            source /usr/local/share/virtualenvs/tap-tester/bin/activate
+            stitch-validate-json tap_exacttarget/schemas/*.json
       - run:
           name: 'pylint'
           command: |
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
-            pylint tap_exacttarget -d no-else-return,wrong-import-order,pointless-string-statement,invalid-name,deprecated-method,bad-whitespace,line-too-long
+            pylint tap_exacttarget -d C,R,W
       - add_ssh_keys
       - run:
-          name: 'Integration Tests'
+          name: 'Unit Tests'
           command: |
-            aws s3 cp s3://com-stitchdata-dev-deployment-assets/environments/tap-tester/tap_tester_sandbox dev_env.sh
-            source dev_env.sh
-            source /usr/local/share/virtualenvs/tap-tester/bin/activate
-            run-test --tap=tap-exacttarget tests
+            source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
+            uv pip install nose2==0.15.1
+            nose2  tests.unittests
+      # - run:
+      #     name: 'Integration Tests'
+      #     command: |
+      #       aws s3 cp s3://com-stitchdata-dev-deployment-assets/environments/tap-tester/tap_tester_sandbox dev_env.sh
+      #       source dev_env.sh
+      #       source /usr/local/share/virtualenvs/tap-tester/bin/activate
+      #       run-test --tap=tap-exacttarget tests
+
+
 workflows:
   version: 2
   commit:

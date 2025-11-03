@@ -1,0 +1,134 @@
+{
+  "type": "object",
+  "properties": {
+    "PartnerKey": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
+    "ID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "SendID": {
+      "type": [
+        "null",
+        "integer"
+      ],
+      "description": "Contains identifier for a specific send."
+    },
+    "ListID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Duplicates": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "InvalidAddresses": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ExistingUndeliverables": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ExistingUnsubscribes": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "HardBounces": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "SoftBounces": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "OtherBounces": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ForwardedEmails": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "UniqueClicks": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "UniqueOpens": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "NumberSent": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "NumberDelivered": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Unsubscribes": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "MissingAddresses": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    }
+  }
+}

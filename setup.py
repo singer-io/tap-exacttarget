@@ -1,38 +1,27 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
-    name='tap-exacttarget',
-    version='1.7.1',
-    description='Singer.io tap for extracting data from the ExactTarget API',
-    author='Fishtown Analytics',
-    url='http://fishtownanalytics.com',
-    classifiers=['Programming Language :: Python :: 3 :: Only'],
-    py_modules=['tap_exacttarget'],
+    name="tap-exacttarget",
+    version="2.0.0",
+    description="Singer.io tap for extracting data from the ExactTarget API",
+    author="Fishtown Analytics",
+    url="http://fishtownanalytics.com",
+    classifiers=["Programming Language :: Python :: 3 :: Only"],
+    py_modules=["tap_exacttarget"],
     install_requires=[
-        'funcy==1.9.1',
-        'singer-python==5.12.1',
-        'python-dateutil==2.6.0',
-        'voluptuous==0.10.5',
-        'Salesforce-FuelSDK==1.3.0'
+        "singer-python==6.1.1",
+        "zeep==4.3.1",
+        "requests==2.32.4",
     ],
     extras_require={
-        'test': [
-            'pylint==2.10.2',
-            'astroid==2.7.3',
-            'nose'
-        ],
-        'dev': [
-            'ipdb==0.11'
-        ]
+        "dev": ["pylint==4.0.0", "nose2==0.15.1"],
     },
-    entry_points='''
+    entry_points="""
     [console_scripts]
     tap-exacttarget=tap_exacttarget:main
-    ''',
+    """,
     packages=find_packages(),
-    package_data={
-        'tap_exacttarget': ['schemas/*.json']
-    }
+    package_data={"tap_exacttarget": ["schemas/*.json"]},
 )
