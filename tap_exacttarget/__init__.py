@@ -15,7 +15,7 @@ def main():
     client = Client(args.config)
 
     if args.discover:
-        discover(args.config, client).dump()
+        discover(client).dump()
     else:
         sync(client, args.catalog or discover(args.config, client), args.state)
 

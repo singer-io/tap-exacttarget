@@ -126,7 +126,7 @@ def discover_dao_streams(client: Client):
             class_name = f"DataExtensionObjStream{name_suffix}"
 
             # prevents unpredictable order of key properties
-            sorted_key_props = sorted(list(set(key_props)))
+            sorted_key_props = sorted(set(key_props))
 
             base_class = DataExtensionObjectFt if not repl_keys else DataExtensionObjectInc
             stream_class = type(

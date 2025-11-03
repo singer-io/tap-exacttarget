@@ -18,7 +18,7 @@ def get_abs_path(path: str) -> str:
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
 
-def discover(config: Dict = None, client: Client = None):
+def discover(client: Client = None):
     """Performs Discovery for tap-exacttarget."""
     LOGGER.info("Starting Discovery")
     doa_streams = discover_dao_streams(client=client)

@@ -13,6 +13,8 @@ from zeep.helpers import serialize_object
 LOGGER = get_logger()
 
 
+# https://help.salesforce.com/s/articleView?id=mktg.mc_server_timezone_changes.htm&type=5
+# Must use -6 to avoid DST impact
 fixed_cst = timezone(timedelta(hours=-6))
 
 
@@ -89,7 +91,7 @@ class BaseStream(ABC):
     @abstractmethod
     def parent_tap_stream_id(self) -> str:
         """Indicates the parent of the stream."""
-        return None
+        return ""
 
     @property
     def selected_by_default(self) -> bool:

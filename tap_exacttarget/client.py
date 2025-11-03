@@ -98,10 +98,13 @@ class Client:
     def __enter__(self):
         return self
 
-    def __exit__(self, *args, **kwargs):
-        pass
-
     @property
+    @backoff.on_exception(
+        backoff.expo,
+        (ConnectionError, Timeout, HTTPError, RequestException),
+        max_tries=5,
+        max_time=300,
+    )
     def access_token(self):
         """Provides existing token if valid, if expired will refresh it."""
         if self.is_token_expired() or self.__access_token is None:
@@ -109,18 +112,15 @@ class Client:
             payload = {"client_id": self.client_id}
             payload["client_secret"] = self.client_secret
             payload["grant_type"] = "client_credentials"
-            try:
 
-                response = requests.post(self.auth_url, json=payload, timeout=self.timeout)
-                response.raise_for_status()
-                data = response.json()
-                self.__access_token = data["access_token"]
-                self.token_expiry_time = datetime.now() + timedelta(
-                    seconds=(data["expires_in"] - 500)
-                )
+            response = requests.post(self.auth_url, json=payload, timeout=self.timeout)
+            response.raise_for_status()
+            data = response.json()
+            self.__access_token = data["access_token"]
+            self.token_expiry_time = datetime.now() + timedelta(
+                seconds=(data["expires_in"] - 500)
+            )
 
-            except Exception as err:
-                raise err
         return self.__access_token
 
     def create_simple_filter(self, property_name: str, operator: str, value=None, date_value=None):
