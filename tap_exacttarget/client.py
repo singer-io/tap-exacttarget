@@ -46,7 +46,7 @@ class Client:
         except ValueError:
             self.date_window = DEFAULT_DATE_WINDOW
             LOGGER.info(
-                "invalid value received for batch_size, fallback to default %s", DEFAULT_DATE_WINDOW
+                "invalid value received for date_window, fallback to default %s", DEFAULT_DATE_WINDOW
             )
 
         try:
@@ -66,7 +66,7 @@ class Client:
 
         self.client_id = client_id
         self.client_secret = client_secret
-        self.soap_client = self.initalize_soap_client()
+        self.soap_client = self.initialize_soap_client()
 
         oauth_value = self.oauth_header(self.access_token)
         self.soap_client.set_default_soapheaders([oauth_value])
@@ -75,8 +75,8 @@ class Client:
     @backoff.on_exception(
         backoff.expo, (ConnectionError, Timeout, RequestException), max_tries=6, max_time=300
     )
-    def initalize_soap_client(self):
-        """Performs WebService Client init & handles Rerty."""
+    def initialize_soap_client(self):
+        """Performs WebService Client init & handles Retry."""
 
         session = Session()
         transport = Transport(session=session, timeout=300, operation_timeout=300)

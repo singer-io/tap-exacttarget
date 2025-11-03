@@ -120,7 +120,7 @@ def discover_dao_streams(client: Client):
                 None,
             )
 
-            # mightContainUnexpectedSpecialChars
+            #  Sanitize the stream name to create a valid Python class name by removing special characters.
             name_suffix = stream_name.strip().lower()
             name_suffix = "".join(c for c in name_suffix if c.isalnum())
             class_name = f"DataExtensionObjStream{name_suffix}"

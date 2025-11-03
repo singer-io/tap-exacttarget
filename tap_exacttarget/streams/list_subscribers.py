@@ -47,8 +47,6 @@ class ListSubscribe(IncrementalStream):
             raise RuntimeError("Unexpected Number of All Subscribers list ")
         return response["Results"][0]["ID"]
 
-    # def get_subscriber_filter
-
     def get_records(self, start_date, stream_metadata: Dict, schema: Dict):
         """Performs get / retrieve for ListSubscribers."""
 
