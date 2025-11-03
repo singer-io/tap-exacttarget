@@ -1,6 +1,6 @@
 """Unit tests for Client initialization and configuration logic."""
 
-from unittest.mock import Mock, MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 from tap_exacttarget.client import Client, DEFAULT_TIMEOUT, DEFAULT_BATCH_SIZE, DEFAULT_DATE_WINDOW
 from .base_test import BaseClientTest
 
@@ -73,7 +73,7 @@ class TestClientInitialization(BaseClientTest):
         assert client.date_window == DEFAULT_DATE_WINDOW
         # Verify logging occurred
         mock_logger.info.assert_any_call(
-            "invalid value received for batch_size, fallback to default %s", DEFAULT_DATE_WINDOW
+            "invalid value received for date_window, fallback to default %s", DEFAULT_DATE_WINDOW
         )
 
     @patch("tap_exacttarget.client.requests.post")
@@ -151,7 +151,7 @@ class TestClientInitialization(BaseClientTest):
         mock_soap = MagicMock()
         mock_zeep_client.return_value = mock_soap
 
-        client = Client(self.mock_config)
+        Client(self.mock_config)
 
         # Verify set_default_soapheaders was called with OAuth header
         mock_soap.set_default_soapheaders.assert_called_once()
@@ -187,7 +187,7 @@ class TestClientInitialization(BaseClientTest):
         mock_post.return_value = self.mock_oauth_response
         mock_zeep_client.return_value = MagicMock()
 
-        client = Client(self.mock_config)
+        Client(self.mock_config)
 
         # Verify Transport was called with timeout=300 and operation_timeout=300
         mock_transport_class.assert_called_once()

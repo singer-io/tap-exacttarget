@@ -1,5 +1,3 @@
-"""Unit tests for OAuth token management and expiry handling."""
-
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
 from requests.exceptions import HTTPError, RequestException

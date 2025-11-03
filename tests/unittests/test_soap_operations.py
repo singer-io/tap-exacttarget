@@ -1,11 +1,8 @@
-"""Unit tests for SOAP request construction and response handling."""
-
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
 from zeep.exceptions import TransportError, Fault
 from tap_exacttarget.exceptions import MarketingCloudSoapApiException
 from .base_test import BaseClientTest
-from requests.exceptions import ConnectionError, RequestException, HTTPError, Timeout
 
 
 class TestSoapOperations(BaseClientTest):
@@ -63,7 +60,7 @@ class TestSoapOperations(BaseClientTest):
         mock_response = {"OverallStatus": "OK", "Results": []}
         self.client_instance.soap_client.service.Retrieve.return_value = mock_response
 
-        response = self.client_instance.retrieve_request(
+        self.client_instance.retrieve_request(
             object_type="Subscriber", properties=["SubscriberKey"], search_filter=mock_filter
         )
 
@@ -85,7 +82,7 @@ class TestSoapOperations(BaseClientTest):
         mock_response = {"OverallStatus": "OK", "Results": []}
         self.client_instance.soap_client.service.Retrieve.return_value = mock_response
 
-        response = self.client_instance.retrieve_request(
+        self.client_instance.retrieve_request(
             object_type="Subscriber",
             properties=["SubscriberKey"],
             request_id="continuation-request-123",
@@ -111,7 +108,7 @@ class TestSoapOperations(BaseClientTest):
         mock_response = {"OverallStatus": "OK", "Results": []}
         self.client_instance.soap_client.service.Retrieve.return_value = mock_response
 
-        response = self.client_instance.retrieve_request(
+        self.client_instance.retrieve_request(
             object_type="Subscriber", properties=["SubscriberKey"]
         )
 
@@ -131,9 +128,7 @@ class TestSoapOperations(BaseClientTest):
         mock_response = {"OverallStatus": "OK", "Results": []}
         self.client_instance.soap_client.service.Retrieve.return_value = mock_response
 
-        response = self.client_instance.retrieve_request(
-            object_type="DataExtension", properties=["Name"]
-        )
+        self.client_instance.retrieve_request(object_type="DataExtension", properties=["Name"])
 
         # Verify IncludeObjects=True
         call_kwargs = mock_retrieve_options_type.call_args[1]
@@ -183,7 +178,7 @@ class TestSoapOperations(BaseClientTest):
         mock_response = {"OverallStatus": "OK", "Results": []}
         self.client_instance.soap_client.service.Retrieve.return_value = mock_response
 
-        response = self.client_instance.retrieve_request(
+        self.client_instance.retrieve_request(
             object_type="Subscriber", properties=["SubscriberKey"]
         )
 
@@ -204,7 +199,7 @@ class TestSoapOperations(BaseClientTest):
         mock_response = {"OverallStatus": "OK", "Results": []}
         self.client_instance.soap_client.service.Retrieve.return_value = mock_response
 
-        response = self.client_instance.retrieve_request(
+        self.client_instance.retrieve_request(
             object_type="DataExtension", properties=["Name", "CustomerKey"]
         )
 
@@ -261,5 +256,5 @@ class TestSoapOperations(BaseClientTest):
         mock_response = {"ObjectDefinition": {}}
         self.client_instance.soap_client.service.Describe.return_value = mock_response
 
-        response = self.client_instance.describe_request("DataExtension")
+        self.client_instance.describe_request("DataExtension")
         assert self.client_instance.soap_client.set_default_soapheaders.called

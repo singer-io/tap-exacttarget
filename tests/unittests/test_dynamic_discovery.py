@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock
 from tap_exacttarget.discover_dataextensionobj import (
     detect_field_schema,
     discover_fields,

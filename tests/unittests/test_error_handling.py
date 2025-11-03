@@ -1,6 +1,3 @@
-"""Unit tests for error detection and custom exception mapping."""
-
-import unittest
 from requests.exceptions import ConnectionError, RequestException, HTTPError, Timeout
 from zeep.exceptions import TransportError, Fault
 from tap_exacttarget.exceptions import (

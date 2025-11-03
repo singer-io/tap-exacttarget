@@ -1,5 +1,3 @@
-"""Unit tests for SOAP filter creation helpers."""
-
 from datetime import datetime
 from unittest.mock import Mock
 from .base_test import BaseClientTest
@@ -66,7 +64,7 @@ class TestFilterCreation(BaseClientTest):
         mock_filter_type = Mock(return_value=mock_filter_instance)
         self.client_instance.soap_client.get_type = Mock(return_value=mock_filter_type)
 
-        result = self.client_instance.create_simple_filter(property_name="Field", operator="isNull")
+        self.client_instance.create_simple_filter(property_name="Field", operator="isNull")
 
         mock_filter_type.assert_called_once_with(Property="Field", SimpleOperator="isNull")
 
@@ -83,7 +81,7 @@ class TestFilterCreation(BaseClientTest):
         left_filter = Mock(name="LeftFilter")
         right_filter = Mock(name="RightFilter")
 
-        result = self.client_instance.create_complex_filter(
+        self.client_instance.create_complex_filter(
             left_operand=left_filter, logical_operator="AND", right_operand=right_filter
         )
 

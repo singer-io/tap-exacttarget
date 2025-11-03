@@ -1,8 +1,6 @@
-"""Unit tests for REST API request formation and header handling."""
-
 from unittest.mock import Mock, patch
 from datetime import datetime, timedelta
-from requests.exceptions import HTTPError, ConnectionError, Timeout
+from requests.exceptions import HTTPError
 from .base_test import BaseClientTest
 
 
@@ -42,7 +40,7 @@ class TestRestOperations(BaseClientTest):
         self.client_instance._Client__access_token = "bearer-token-123"
         self.client_instance.token_expiry_time = datetime.now() + timedelta(hours=1)
 
-        result = self.client_instance.get_rest("data/v1/endpoint", {})
+        self.client_instance.get_rest("data/v1/endpoint", {})
 
         # Verify Authorization header
         call_kwargs = mock_get.call_args[1]
@@ -61,7 +59,7 @@ class TestRestOperations(BaseClientTest):
         self.client_instance.token_expiry_time = datetime.now() + timedelta(hours=1)
         self.client_instance.rest_url = "https://test.rest.marketingcloudapis.com/"
 
-        result = self.client_instance.get_rest("data/v1/test", {})
+        self.client_instance.get_rest("data/v1/test", {})
 
         # Verify full URL construction
         call_args = mock_get.call_args[0]
@@ -94,7 +92,7 @@ class TestRestOperations(BaseClientTest):
         self.client_instance.token_expiry_time = datetime.now() + timedelta(hours=1)
 
         params = {"page": 2, "limit": 50, "filter": "active"}
-        result = self.client_instance.get_rest("data/v1/items", params)
+        self.client_instance.get_rest("data/v1/items", params)
 
         # Verify params passed correctly
         call_kwargs = mock_get.call_args[1]
@@ -112,7 +110,7 @@ class TestRestOperations(BaseClientTest):
         self.client_instance.token_expiry_time = datetime.now() + timedelta(hours=1)
         self.client_instance.timeout = 90
 
-        result = self.client_instance.get_rest("data/v1/endpoint", {})
+        self.client_instance.get_rest("data/v1/endpoint", {})
 
         # Verify timeout parameter
         call_kwargs = mock_get.call_args[1]
