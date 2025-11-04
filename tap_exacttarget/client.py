@@ -20,6 +20,7 @@ LOGGER = get_logger()
 DEFAULT_DATE_WINDOW = 30
 DEFAULT_BATCH_SIZE = 2500
 DEFAULT_TIMEOUT = 300
+TOKEN_EXPIRY_BUFFER = 500
 
 
 class Client:
@@ -118,7 +119,7 @@ class Client:
             data = response.json()
             self.__access_token = data["access_token"]
             self.token_expiry_time = datetime.now() + timedelta(
-                seconds=(data["expires_in"] - 500)
+                seconds=(data["expires_in"] - TOKEN_EXPIRY_BUFFER)
             )
 
         return self.__access_token

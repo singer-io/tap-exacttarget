@@ -26,13 +26,15 @@ class TestDataExtensionObjectTransform(unittest.TestCase):
             ("properties", "Id"): {"selected": True},
             ("properties", "Name"): {"selected": False},
             ("properties", "IsActive"): {"selected": True},
-            ("properties", "CategoryID"): {"selected": True},  # Should be excluded
+            ("properties", "CategoryID"): {"selected": True},
         }
 
         result = self.obj.get_query_fields(stream_metadata, self.obj.schema)
 
         self.assertIn("Id", result)
         self.assertIn("IsActive", result)
+
+        # CategoryID is Excluded by default
         self.assertNotIn("CategoryID", result)
         self.assertNotIn("Name", result)
 

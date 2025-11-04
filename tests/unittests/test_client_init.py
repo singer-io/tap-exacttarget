@@ -22,7 +22,6 @@ class TestClientInitialization(BaseClientTest):
 
         client = Client(self.mock_config)
 
-        # Verify all config values parsed correctly
         assert client.timeout == 60
         assert client.date_window == 15.0
         assert client.batch_size == 1000
@@ -46,9 +45,8 @@ class TestClientInitialization(BaseClientTest):
 
         client = Client(self.mock_config)
 
-        # Verify fallback to DEFAULT_BATCH_SIZE
+
         assert client.batch_size == DEFAULT_BATCH_SIZE
-        # Verify logging occurred
         mock_logger.info.assert_any_call(
             "invalid value received for batch_size, fallback to default %s", DEFAULT_BATCH_SIZE
         )
@@ -69,9 +67,8 @@ class TestClientInitialization(BaseClientTest):
 
         client = Client(self.mock_config)
 
-        # Verify fallback to DEFAULT_DATE_WINDOW
         assert client.date_window == DEFAULT_DATE_WINDOW
-        # Verify logging occurred
+
         mock_logger.info.assert_any_call(
             "invalid value received for date_window, fallback to default %s", DEFAULT_DATE_WINDOW
         )
@@ -93,7 +90,6 @@ class TestClientInitialization(BaseClientTest):
 
         client = Client(self.mock_config)
 
-        # Verify defaults are used
         assert client.timeout == DEFAULT_TIMEOUT
         assert client.date_window == DEFAULT_DATE_WINDOW
         assert client.batch_size == DEFAULT_BATCH_SIZE
@@ -111,7 +107,6 @@ class TestClientInitialization(BaseClientTest):
 
         client = Client(self.mock_config)
 
-        # Verify URL construction
         assert (
             client.wsdl_uri == "https://test-subdomain.soap.marketingcloudapis.com/etframework.wsdl"
         )
@@ -132,7 +127,6 @@ class TestClientInitialization(BaseClientTest):
 
         client = Client(self.mock_config)
 
-        # Verify zeep.Client was called with wsdl and transport
         mock_zeep_client.assert_called_once()
         call_kwargs = mock_zeep_client.call_args[1]
         assert "wsdl" in call_kwargs
@@ -153,10 +147,9 @@ class TestClientInitialization(BaseClientTest):
 
         Client(self.mock_config)
 
-        # Verify set_default_soapheaders was called with OAuth header
         mock_soap.set_default_soapheaders.assert_called_once()
         call_args = mock_soap.set_default_soapheaders.call_args[0][0]
-        assert len(call_args) == 1  # One header element
+        assert len(call_args) == 1
 
     @patch("tap_exacttarget.client.requests.post")
     @patch("tap_exacttarget.client.Transport")
@@ -172,7 +165,6 @@ class TestClientInitialization(BaseClientTest):
         self.mock_config["request_timeout"] = "120"
         client = Client(self.mock_config)
 
-        # Verify timeout is parsed as int
         assert client.timeout == 120
         assert isinstance(client.timeout, int)
 
@@ -189,7 +181,6 @@ class TestClientInitialization(BaseClientTest):
 
         Client(self.mock_config)
 
-        # Verify Transport was called with timeout=300 and operation_timeout=300
         mock_transport_class.assert_called_once()
         call_kwargs = mock_transport_class.call_args[1]
         assert call_kwargs["timeout"] == 300
@@ -202,6 +193,5 @@ class TestClientInitialization(BaseClientTest):
 
     def test_context_manager_exit_completes_without_error(self):
         """Test that __exit__ completes without raising exceptions."""
-        # Should not raise any exception
         self.client_instance.__exit__(None, None, None)
         assert True

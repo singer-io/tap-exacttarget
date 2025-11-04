@@ -7,12 +7,12 @@ from singer.utils import now
 from tap_exacttarget.client import Client
 from tap_exacttarget.streams.abstracts import IncrementalStream
 
-from .subscribers import Subscribers
+from .subscriber import Subscribers
 
 LOGGER = get_logger()
 
 
-class ListSubscribe(IncrementalStream):
+class ListSubscribers(IncrementalStream):
     """Class for List Subscribers stream."""
 
     client: Client

@@ -23,10 +23,8 @@ class TestRestOperations(BaseClientTest):
         # Verify result matches response JSON
         assert result == {"items": [{"id": 1}, {"id": 2}]}
 
-        # Verify requests.get was called once
         mock_get.assert_called_once()
 
-        # Verify raise_for_status was called
         mock_response.raise_for_status.assert_called_once()
 
     @patch("tap_exacttarget.client.requests.get")
@@ -61,7 +59,6 @@ class TestRestOperations(BaseClientTest):
 
         self.client_instance.get_rest("data/v1/test", {})
 
-        # Verify full URL construction
         call_args = mock_get.call_args[0]
         assert call_args[0] == "https://test.rest.marketingcloudapis.com/data/v1/test"
 

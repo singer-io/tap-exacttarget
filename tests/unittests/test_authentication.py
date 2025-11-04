@@ -11,7 +11,9 @@ class TestTokenManagement(BaseClientTest):
     @patch("tap_exacttarget.client.requests.post")
     def test_access_token_retrieved_and_cached_successfully(self, mock_post, mock_datetime_module):
         """Test that access token is retrieved, cached, and expiry time set correctly."""
-        fixed_time = datetime(2025, 9, 4, 3, 0, 0)
+        EXPECTED_TOKEN_EXPIRY_BUFFER = 500
+
+        fixed_time = datetime.now()
         mock_datetime_module.now.return_value = fixed_time
 
         mock_response = Mock()
@@ -27,18 +29,16 @@ class TestTokenManagement(BaseClientTest):
         assert token == "new-token-123"
         assert self.client_instance._Client__access_token == "new-token-123"
 
-        # Verify expiry time is set correctly (expires_in - 500 seconds)
-        expected_expiry = fixed_time + timedelta(seconds=(3600 - 500))
+        expected_expiry = fixed_time + timedelta(seconds=(3600 - EXPECTED_TOKEN_EXPIRY_BUFFER))
         assert self.client_instance.token_expiry_time == expected_expiry
 
-        # Verify API was called once
         mock_post.assert_called_once()
 
     @patch("tap_exacttarget.client.datetime")
     @patch("tap_exacttarget.client.requests.post")
     def test_access_token_refreshed_when_expired(self, mock_post, mock_datetime_module):
         """Test that expired access token triggers refresh."""
-        fixed_time = datetime(2025, 9, 4, 3, 0, 0)
+        fixed_time = datetime.now()
         mock_datetime_module.now.return_value = fixed_time
 
         mock_response = Mock()
@@ -49,13 +49,11 @@ class TestTokenManagement(BaseClientTest):
         mock_response.raise_for_status = Mock()
         mock_post.return_value = mock_response
 
-        # Set expired token
         self.client_instance._Client__access_token = "old-expired-token"
         self.client_instance.token_expiry_time = fixed_time - timedelta(minutes=10)
 
         token = self.client_instance.access_token
 
-        # Verify new token was retrieved
         assert token == "refreshed-token-456"
         assert self.client_instance._Client__access_token == "refreshed-token-456"
         mock_post.assert_called_once()
@@ -68,10 +66,8 @@ class TestTokenManagement(BaseClientTest):
 
         token = self.client_instance.access_token
 
-        # Verify same token is returned
         assert token == "valid-token-789"
 
-        # Verify no API call was made
         mock_post.assert_not_called()
 
     def test_is_token_expired_returns_true_when_no_token(self):
@@ -84,7 +80,7 @@ class TestTokenManagement(BaseClientTest):
     @patch("tap_exacttarget.client.datetime")
     def test_is_token_expired_returns_false_when_still_valid(self, mock_datetime_module):
         """Test that is_token_expired returns False for valid token beyond buffer."""
-        fixed_time = datetime(2025, 9, 4, 3, 0, 0)
+        fixed_time = datetime.now()
         mock_datetime_module.now.return_value = fixed_time
 
         self.client_instance._Client__access_token = "valid-token"
@@ -95,7 +91,7 @@ class TestTokenManagement(BaseClientTest):
     @patch("tap_exacttarget.client.datetime")
     def test_token_expiry_buffer_5_minutes(self, mock_datetime_module):
         """Test that token is considered expired within 5-minute buffer."""
-        fixed_time = datetime(2025, 9, 4, 3, 0, 0)
+        fixed_time = datetime.now()
         mock_datetime_module.now.return_value = fixed_time
 
         self.client_instance._Client__access_token = "expiring-token"
@@ -161,6 +157,5 @@ class TestTokenManagement(BaseClientTest):
 
         _ = self.client_instance.access_token
 
-        # Verify timeout was passed
         call_kwargs = mock_post.call_args[1]
         assert call_kwargs["timeout"] == 75

@@ -711,7 +711,6 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         result = discover_dao_streams(mock_client)
         stream_class = result["data_extension.TestExt"]
 
-        # _CustomObjectKey should be included and sorted
         expected = ["Apple", "Banana", "Middle", "Zebra", "_CustomObjectKey"]
         self.assertEqual(stream_class.key_properties, sorted(expected))
 
@@ -735,7 +734,6 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         result = discover_dao_streams(mock_client)
         stream_class = result["data_extension.TestExt"]
 
-        # Check no duplicates
         self.assertEqual(len(stream_class.key_properties), len(set(stream_class.key_properties)))
         self.assertIn("Id", stream_class.key_properties)
         self.assertIn("Email", stream_class.key_properties)
@@ -808,17 +806,15 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         self.assertIn("data_extension.Extension2", result)
         self.assertIn("data_extension.Extension3", result)
 
-        # Check Extension1 is incremental with ModifiedDate
+
         stream1 = result["data_extension.Extension1"]
         self.assertEqual(stream1.replication_key, "ModifiedDate")
         self.assertTrue(issubclass(stream1, DataExtensionObjectInc))
 
-        # Check Extension2 is full table
         stream2 = result["data_extension.Extension2"]
         self.assertIsNone(stream2.replication_key)
         self.assertTrue(issubclass(stream2, DataExtensionObjectFt))
 
-        # Check Extension3 is incremental with JoinDate
         stream3 = result["data_extension.Extension3"]
         self.assertEqual(stream3.replication_key, "JoinDate")
         self.assertTrue(issubclass(stream3, DataExtensionObjectInc))
@@ -903,7 +899,6 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         self.assertIn("Field1", stream_class.schema["properties"])
         self.assertIn("Field2", stream_class.schema["properties"])
 
-        # Check schema types
         self.assertEqual(stream_class.schema["properties"]["_CustomObjectKey"]["type"], ["string"])
         self.assertEqual(
             stream_class.schema["properties"]["CategoryID"]["type"], ["null", "integer"]
@@ -961,7 +956,6 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         result = discover_dao_streams(mock_client)
         stream_class = result["data_extension.EmptyExt"]
 
-        # Should still have _CustomObjectKey and CategoryID
         self.assertIn("_CustomObjectKey", stream_class.schema["properties"])
         self.assertIn("CategoryID", stream_class.schema["properties"])
         self.assertEqual(len(stream_class.schema["properties"]), 2)
@@ -1034,11 +1028,10 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         result = discover_dao_streams(mock_client)
         stream_class = result["data_extension.MultiKeyExt"]
 
-        # All valid replication keys should be preserved
+
         self.assertIn("ModifiedDate", stream_class.valid_replication_keys)
         self.assertIn("JoinDate", stream_class.valid_replication_keys)
         self.assertIn("_CreatedDate", stream_class.valid_replication_keys)
         self.assertEqual(len(stream_class.valid_replication_keys), 3)
 
-        # But only ModifiedDate should be selected as the replication key
         self.assertEqual(stream_class.replication_key, "ModifiedDate")
