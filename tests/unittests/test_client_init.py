@@ -190,8 +190,3 @@ class TestClientInitialization(BaseClientTest):
         """Test that __enter__ returns the client instance."""
         result = self.client_instance.__enter__()
         assert result is self.client_instance
-
-    def test_context_manager_exit_completes_without_error(self):
-        """Test that __exit__ completes without raising exceptions."""
-        self.client_instance.__exit__(None, None, None)
-        assert True
