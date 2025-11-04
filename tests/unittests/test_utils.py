@@ -4,7 +4,7 @@ from datetime import datetime, date, time, timezone, timedelta
 import json
 
 from tap_exacttarget.streams.abstracts import strptime_to_cst, CustomDTParser, fixed_cst
-from tap_exacttarget.streams.list_subscribers import ListSubscribe
+from tap_exacttarget.streams.list_subscribers import ListSubscribers
 from .base_test import BaseClientTest
 
 
@@ -85,7 +85,7 @@ class TestCustomDTParser(unittest.TestCase):
             def sync_ids(self, ids):
                 self.calls.append(ids)
 
-        obj = ListSubscribe({}, {}, {})
+        obj = ListSubscribers({}, {}, {})
         obj.subscribers_obj = DummyObj()
 
         # Create 250 subscriber IDs → should produce 3 batches (100, 100, 50)
