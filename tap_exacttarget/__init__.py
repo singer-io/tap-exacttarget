@@ -17,7 +17,7 @@ def main():
     if args.discover:
         discover(client).dump()
     else:
-        sync(client, args.catalog or discover(args.config, client), args.state)
+        sync(client, args.catalog or discover(client), args.state)
 
 
 if __name__ == "__main__":
