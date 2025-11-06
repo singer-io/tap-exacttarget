@@ -128,8 +128,40 @@ class BaseStream(ABC):
         return self.get_available_fields()
 
     def transform_record(self, obj):
-        """serialize_object Converts Soap class obj to python repr json.dumps converts to string
-        json.loads converts to dictionary which can be used by transformer."""
+        """
+        Zeep service objects (e.g., instances of `<class 'zeep.objects.StreamName'>`,
+        `<class 'zeep.objects.DataFolder'>`, `<class 'zeep.objects.Event'>`, etc.) are
+        not native Python dictionaries or lists, even though they support key-based
+        access (e.g., `obj["key"]`). This causes compatibility issues when passing
+        them to singer.transformer, which expect standard serializable types
+        (e.g., `dict` or `list`).
+
+        To make these Zeep objects compatible, they can be converted using Zeep’s
+        `serialize_object()` utility:
+
+            sz = serialize_object(obj, dict)
+            jzd = json.dumps(serialize_object(obj), cls=CustomDTParser)
+            jzl = json.loads(jzd)
+
+            print(type(obj), type(sz), type(jzl))
+            # Output:
+            # <class 'zeep.objects.DataFolder'> <class 'dict'> <class 'dict'>
+
+            print(bool(sz.keys() == jzl.keys()))
+            # Output:
+            # True
+
+        Although `serialize_object()` successfully converts the Zeep object into a
+        dictionary, nested `datetime` instances within the structure can still cause
+        serialization errors during transformation, such as:
+
+            TypeError: Parser must be a string or character stream, not datetime
+
+        To address this, a custom JSON encoder (e.g., `CustomDTParser`) is required
+        to recursively convert all `datetime` objects to their ISO 8601 string
+        representations via `datetime.isoformat()`. This ensures full compatibility
+        with Singer transformers and other systems expecting JSON-serializable data.
+        """
         return json.loads(json.dumps(serialize_object(obj), cls=CustomDTParser))
 
     @classmethod
@@ -260,7 +292,8 @@ class IncrementalStream(BaseStream):
 
             if isinstance(record[self.replication_key], datetime):
                 record_timestamp = record[self.replication_key].replace(tzinfo=fixed_cst)
-            elif record[self.replication_key]:
+
+            if record[self.replication_key]:
                 record_timestamp = strptime_to_cst(record[self.replication_key])
                 transformed_record = transformer.transform(record, schema, stream_metadata)
                 write_record(self.tap_stream_id, transformed_record)
@@ -319,7 +352,6 @@ class FullTableStream(BaseStream):
             transformed_record = transformer.transform(record, schema, stream_metadata)
             write_record(self.tap_stream_id, transformed_record)
             records_processed += 1
-            schema_mismatch_count += 1
 
         LOGGER.info(
             "Stream %s sync complete: %d records processed",
