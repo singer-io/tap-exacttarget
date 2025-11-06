@@ -14,6 +14,7 @@ field_type_mapping = {
     "Text": "string",
     "Date": "string",
 }
+supported_repl_keys = {"ModifiedDate", "JoinDate", "_ModifiedDate", "_CreatedDate"}
 
 field_format = {"Decimal": "singer.decimal", "Date": "date-time"}
 
@@ -56,7 +57,7 @@ def discover_fields(client: Client):
         if field["IsPrimaryKey"]:
             stream_field_data["key_properties"].append(field_name)
 
-        if field_name in {"ModifiedDate", "JoinDate", "_ModifiedDate", "_CreatedDate"}:
+        if field_name in supported_repl_keys:
             stream_field_data["valid_replication_keys"].append(field_name)
 
         stream_field_data["properties"][field_name] = detect_field_schema(field)
@@ -113,9 +114,7 @@ def discover_dao_streams(client: Client):
             # Maintaining original sequence of the key picking order
             replication_key = next(
                 (
-                    key
-                    for key in ["ModifiedDate", "JoinDate", "_ModifiedDate", "_CreatedDate"]
-                    if key in repl_keys
+                    key for key in supported_repl_keys if key in repl_keys
                 ),
                 None,
             )

@@ -33,7 +33,7 @@ class Client:
         xsd.ComplexType([xsd.Element("_value_1", xsd.String(), nillable=False)]),
     )
 
-    def __init__(self, config: dict):
+    def __init__(self, config):
         LOGGER.info("WebService Client initialization Started.")
 
         self.config = config
@@ -108,7 +108,7 @@ class Client:
     )
     def access_token(self):
         """Provides existing token if valid, if expired will refresh it."""
-        if self.is_token_expired() or self.__access_token is None:
+        if self.is_token_expired():
             LOGGER.info("Access token expired or not set, requesting new token.")
             payload = {"client_id": self.client_id}
             payload["client_secret"] = self.client_secret
@@ -124,7 +124,7 @@ class Client:
 
         return self.__access_token
 
-    def create_simple_filter(self, property_name: str, operator: str, value=None, date_value=None):
+    def create_simple_filter(self, property_name, operator, value=None, date_value=None):
         """Creates a filter object, handles case for date_value."""
         simple_part_filter = self.soap_client.get_type("ns0:SimpleFilterPart")
         _filter = simple_part_filter(Property=property_name, SimpleOperator=operator)
@@ -134,7 +134,7 @@ class Client:
             _filter.Value = [value] if not isinstance(value, list) else value
         return _filter
 
-    def create_complex_filter(self, left_operand, logical_operator: str, right_operand):
+    def create_complex_filter(self, left_operand, logical_operator, right_operand):
         """Create a ComplexFilterPart for combining multiple filter conditions.
 
         Args:
@@ -169,7 +169,7 @@ class Client:
         max_time=300,
     )
     def retrieve_request(
-        self, object_type: str, properties: list, request_id=None, search_filter=None
+        self, object_type, properties, request_id=None, search_filter=None
     ):
         retrieve_req = self.soap_client.get_type("ns0:RetrieveRequest")
         retrieve_opts = self.soap_client.get_type("ns0:RetrieveOptions")
