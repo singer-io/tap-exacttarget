@@ -147,10 +147,6 @@ class BaseStream(ABC):
             # Output:
             # <class 'zeep.objects.DataFolder'> <class 'dict'> <class 'dict'>
 
-            print(bool(sz.keys() == jzl.keys()))
-            # Output:
-            # True
-
         Although `serialize_object()` successfully converts the Zeep object into a
         dictionary, nested `datetime` instances within the structure can still cause
         serialization errors during transformation, such as:
@@ -160,7 +156,7 @@ class BaseStream(ABC):
         To address this, a custom JSON encoder (e.g., `CustomDTParser`) is required
         to recursively convert all `datetime` objects to their ISO 8601 string
         representations via `datetime.isoformat()`. This ensures full compatibility
-        with Singer transformers and other systems expecting JSON-serializable data.
+        with transformers.
         """
         return json.loads(json.dumps(serialize_object(obj), cls=CustomDTParser))
 
