@@ -6,7 +6,6 @@ from typing import Any, Dict, List, Tuple
 import dateutil.parser
 from singer import Transformer, get_bookmark, get_logger, write_bookmark, write_record
 from singer.metadata import get_standard_metadata, to_list, to_map, write
-from singer.transform import SchemaMismatch
 from singer.utils import now
 from zeep.helpers import serialize_object
 
@@ -254,38 +253,23 @@ class IncrementalStream(BaseStream):
         """Sync implementation for incremental streams."""
 
         current_max_bookmark_date = bookmark_date_utc = strptime_to_cst(self.get_bookmark(state))
-        records_processed, schema_mismatch_count = 0, 0
+        records_processed = 0
 
         for record in self.get_records(bookmark_date_utc, stream_metadata, schema):
             record_timestamp = None
-            try:
-                if isinstance(record[self.replication_key], datetime):
-                    record_timestamp = record[self.replication_key].replace(tzinfo=fixed_cst)
-                elif record[self.replication_key]:
-                    record_timestamp = strptime_to_cst(record[self.replication_key])
-                # Add specific handling for schema mismatch errors
-                try:
-                    transformed_record = transformer.transform(record, schema, stream_metadata)
-                    write_record(self.tap_stream_id, transformed_record)
-                    records_processed += 1
-                except SchemaMismatch as ex:
-                    schema_mismatch_count += 1
-                    LOGGER.warning(
-                        "Schema mismatch for record in stream %s: %s", self.tap_stream_id, str(ex)
-                    )
-                    continue
-            except KeyError as err:
-                LOGGER.info("Missing replication key value skipping %s", err)
+
+            if isinstance(record[self.replication_key], datetime):
+                record_timestamp = record[self.replication_key].replace(tzinfo=fixed_cst)
+            elif record[self.replication_key]:
+                record_timestamp = strptime_to_cst(record[self.replication_key])
+                transformed_record = transformer.transform(record, schema, stream_metadata)
+                write_record(self.tap_stream_id, transformed_record)
+                records_processed += 1
 
             if record_timestamp:
                 current_max_bookmark_date = max(current_max_bookmark_date, record_timestamp)
 
-        LOGGER.info(
-            "Stream %s sync complete: %d records processed, %d schema mismatch errors",
-            self.tap_stream_id,
-            records_processed,
-            schema_mismatch_count,
-        )
+        LOGGER.info("Stream %s sync complete: %d records processed", self.tap_stream_id, records_processed)
 
         state = self.write_bookmark(state, value=current_max_bookmark_date.isoformat())
         return state
@@ -329,23 +313,18 @@ class FullTableStream(BaseStream):
         self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer
     ) -> Dict:
         """Generic Sync implementation for Fulltable streams."""
-        records_processed, schema_mismatch_count = 0, 0
+        records_processed = 0
         for record in self.get_records(stream_metadata, schema):
-            try:
-                transformed_record = transformer.transform(record, schema, stream_metadata)
-                write_record(self.tap_stream_id, transformed_record)
-                records_processed += 1
-            except SchemaMismatch as ex:
-                schema_mismatch_count += 1
-                LOGGER.warning(
-                    "Schema mismatch for record in stream %s: %s", self.tap_stream_id, str(ex)
-                )
+
+            transformed_record = transformer.transform(record, schema, stream_metadata)
+            write_record(self.tap_stream_id, transformed_record)
+            records_processed += 1
+            schema_mismatch_count += 1
 
         LOGGER.info(
-            "Stream %s sync complete: %d records processed, %d schema mismatch errors",
+            "Stream %s sync complete: %d records processed",
             self.tap_stream_id,
             records_processed,
-            schema_mismatch_count,
         )
 
         return state
