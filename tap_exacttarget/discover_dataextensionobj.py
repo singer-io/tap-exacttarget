@@ -14,7 +14,7 @@ field_type_mapping = {
     "Text": "string",
     "Date": "string",
 }
-supported_repl_keys = {"ModifiedDate", "JoinDate", "_ModifiedDate", "_CreatedDate"}
+supported_repl_keys = ["ModifiedDate", "JoinDate", "_ModifiedDate", "_CreatedDate"]
 
 field_format = {"Decimal": "singer.decimal", "Date": "date-time"}
 
