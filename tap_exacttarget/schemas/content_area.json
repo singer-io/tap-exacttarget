@@ -1,0 +1,152 @@
+{
+  "type": "object",
+  "properties": {
+    "BackgroundColor": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "BorderColor": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "BorderWidth": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "CategoryID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Cellpadding": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Cellspacing": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Content": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CreatedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "CustomerKey": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "FontFamily": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "HasFontSize": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "ID": {
+      "type": [
+        "integer"
+      ]
+    },
+    "IsBlank": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "IsDynamicContent": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "IsLocked": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "IsSurvey": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "Key": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ModifiedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "Name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ObjectID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
+    "Width": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    }
+  }
+}

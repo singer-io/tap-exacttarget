@@ -1,26 +1,38 @@
 {
   "type": "object",
   "properties": {
-    "ID": {
+    "SendID": {
       "type": [
+        "null",
         "integer"
       ]
     },
-    "CreatedDate": {
+    "EventDate": {
       "type": [
         "null",
         "string"
       ],
       "format": "date-time"
     },
-    "ModifiedDate": {
+    "EventType": {
       "type": [
         "null",
         "string"
-      ],
-      "format": "date-time"
+      ]
     },
-    "ObjectID": {
+    "BatchID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "TriggeredSendDefinitionObjectID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SubscriberKey": {
       "type": [
         "null",
         "string"
@@ -45,26 +57,6 @@
           }
         }
       }
-    },
-    "ListID": {
-      "type": [
-        "null",
-        "integer"
-      ],
-      "description": "Defines identification for a list the subscriber resides on."
-    },
-    "Status": {
-      "type": [
-        "null",
-        "string"
-      ],
-      "description": "Defines status of object. Status of an address."
-    },
-    "SubscriberKey": {
-      "type": [
-        "null",
-        "string"
-      ]
     }
   }
 }

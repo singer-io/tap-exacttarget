@@ -1,8 +1,9 @@
 {
   "type": "object",
   "properties": {
-    "ID": {
+    "Category": {
       "type": [
+        "null",
         "integer"
       ]
     },
@@ -13,6 +14,11 @@
       ],
       "format": "date-time"
     },
+    "ID": {
+      "type": [
+        "integer"
+      ]
+    },
     "ModifiedDate": {
       "type": [
         "null",
@@ -21,6 +27,12 @@
       "format": "date-time"
     },
     "ObjectID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CustomerKey": {
       "type": [
         "null",
         "string"
@@ -46,21 +58,31 @@
         }
       }
     },
-    "ListID": {
-      "type": [
-        "null",
-        "integer"
-      ],
-      "description": "Defines identification for a list the subscriber resides on."
-    },
-    "Status": {
+    "ListClassification": {
       "type": [
         "null",
         "string"
-      ],
-      "description": "Defines status of object. Status of an address."
+      ]
     },
-    "SubscriberKey": {
+    "ListName": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Description": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SendClassification": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Type": {
       "type": [
         "null",
         "string"
