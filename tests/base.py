@@ -38,232 +38,233 @@ class ExactTargetBaseTest(BaseCase):
                 cls.PRIMARY_KEYS: {"id"},
                 cls.REPLICATION_METHOD: cls.FULL_TABLE
             },
-            "content_area":{
+            "content_area": {
                 cls.PRIMARY_KEYS: {"ID"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "datafolder":{
+            "datafolder": {
                 cls.PRIMARY_KEYS: {"ID"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "email":{
+            "email": {
                 cls.PRIMARY_KEYS: {"ID"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "list_send":{
+            "list_send": {
                 cls.PRIMARY_KEYS: {"ListID", "SendID"},
                 cls.REPLICATION_METHOD: cls.FULL_TABLE,
             },
-            "list_subscribers":{
+            "list_subscribers": {
                 cls.PRIMARY_KEYS: {"SubscriberKey", "ListID"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-             "list":{
+            "list": {
                 cls.PRIMARY_KEYS: {"ID"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "send":{
+            "send": {
                 cls.PRIMARY_KEYS: {"ID"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "subscribers":{
+            "subscribers": {
                 cls.PRIMARY_KEYS: {"ID"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "notsentevent":{
+            "notsentevent": {
                 cls.PRIMARY_KEYS: {"SendID", "EventType", "SubscriberKey", "EventDate"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "unsubevent":{
+            "unsubevent": {
                 cls.PRIMARY_KEYS: {"SendID", "EventType", "SubscriberKey", "EventDate"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "bounceevent":{
+            "bounceevent": {
                 cls.PRIMARY_KEYS: {"SendID", "EventType", "SubscriberKey", "EventDate"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "clickevent":{
+            "clickevent": {
                 cls.PRIMARY_KEYS: {"SendID", "EventType", "SubscriberKey", "EventDate"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "openevent":{
+            "openevent": {
                 cls.PRIMARY_KEYS: {"SendID", "EventType", "SubscriberKey", "EventDate"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "sentevent":{
+            "sentevent": {
                 cls.PRIMARY_KEYS: {"SendID", "EventType", "SubscriberKey", "EventDate"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_snowflake_poc1":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey","email_address"},
-                cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ModifiedDate"},
-                },
-            "data_extension_igo_productattribs":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            # Data Extensions
+            "data_extension_expressionbuilderattributes": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_pi_abandoned_cart_event":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension__mobileaddress": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_einstein_mc_predictive_scores":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension__mobilesubscription": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension__mobilelineaddresscontact":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension__pushaddress": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_cloudpages_dataextension":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension__pushtag": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension__mobilelineaddress":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension__mobilelineaddresscontact": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_igo_products":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension__mobilelineaddress": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_snowflake_poc1_reference":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension__mobilelineprofile": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_igo_profiles":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey", "user_id"},
+            "data_extension__mobilelineprofileattribute": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_tcx_snowflaketest_newslettersubscribers":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension__mobilelinesubscription": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension__chatmessagingsubscription":{
-                cls.PRIMARY_KEYS: {'_ChannelId', '_ChannelType', '_CustomObjectKey', '_MobileNumber'},
+            "data_extension_mobilelineorphancontact": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_pi_sessions":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
-                cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ModifiedDate"},
-            },
-            "data_extension__mobileaddressapplication":{
+            "data_extension__mobileaddressapplication": {
                 cls.PRIMARY_KEYS: {"_ContactID", "_CustomObjectKey", "_MobileApplicationID", "_MobileNumber"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_expressionbuilderattributes":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension__chatmessagingsubscription": {
+                cls.PRIMARY_KEYS: {"_ChannelId", "_ChannelType", "_CustomObjectKey", "_MobileNumber"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_pi_contentattribs":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_igo_profiles": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey", "user_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension__mobilelineprofile":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_igo_views": {
+                cls.PRIMARY_KEYS: {"Timestamp", "_CustomObjectKey", "user_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension__pushaddress":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_pi_session_ends": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey", "session_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_igo_purchases":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_igo_purchases": {
+                cls.PRIMARY_KEYS: {"Sku", "_CustomObjectKey", "user_id", "Timestamp"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_pi_contentviews":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_igo_products": {
+                cls.PRIMARY_KEYS: {"Uuid", "_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension__pushtag":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_igo_productattribs": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey", "attribName", "attributeValueIndex", "sku"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_snowflaketest":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_pi_contentviews": {
+                cls.PRIMARY_KEYS: {"Timestamp", "_CustomObjectKey", "user_Id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension__mobilelineprofileattribute":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_pi_content": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey", "uuid"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_pi_session_ends":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey","session_id"},
+            "data_extension_pi_contentattribs": {
+                cls.PRIMARY_KEYS: {"AttribName", "_CustomObjectKey", "attributeValueIndex", "content_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_snowflake_vot2_dex_welcome_order_added":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_pi_sessions": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey", "session_id", "user_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension__mobilesubscription":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_einstein_mc_predictive_scores": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey", "email_address"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension__mobileaddress":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_pi_abandoned_cart_event": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey", "cart_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_mobilelineorphancontact":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_pi_abandoned_cart_items": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey", "cart_id", "sku"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension__mobilelinesubscription":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_snowflaketest": {
+                cls.PRIMARY_KEYS: {"SubscriberKey", "_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_pi_content":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_snowflake_poc1": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey", "email_address"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_pi_abandoned_cart_items":{
-                cls.PRIMARY_KEYS: {"_CustomObjectKey",},
+            "data_extension_snowflake_poc1_reference": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey", "email_address"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
-            "data_extension_igo_views":{
-                cls.PRIMARY_KEYS: {"Timestamp", "_CustomObjectKey", "user_id",},
+            "data_extension_cloudpages_dataextension": {
+                cls.PRIMARY_KEYS: {"_CustomObjectKey"},
+                cls.REPLICATION_METHOD: cls.INCREMENTAL,
+                cls.REPLICATION_KEYS: {"ModifiedDate"},
+            },
+            "data_extension_tcx_snowflaketest_newslettersubscribers": {
+                cls.PRIMARY_KEYS: {"CampaignCode", "Locale", "SubscriberKey", "_CustomObjectKey"},
+                cls.REPLICATION_METHOD: cls.INCREMENTAL,
+                cls.REPLICATION_KEYS: {"ModifiedDate"},
+            },
+            "data_extension_snowflake_vot2_dex_welcome_order_added": {
+                cls.PRIMARY_KEYS: {"EventId", "_CustomObjectKey"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
                 cls.REPLICATION_KEYS: {"ModifiedDate"},
             },
