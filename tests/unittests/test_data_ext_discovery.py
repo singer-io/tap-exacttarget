@@ -439,8 +439,8 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        self.assertIn("data_extension_TestExtension", result)
-        stream_class = result["data_extension_TestExtension"]
+        self.assertIn("data_extension_testextension", result)
+        stream_class = result["data_extension_testextension"]
         self.assertEqual(stream_class.replication_key, "ModifiedDate")
         self.assertEqual(stream_class.valid_replication_keys, ["ModifiedDate"])
         self.assertTrue(issubclass(stream_class, DataExtensionObjectInc))
@@ -1026,7 +1026,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension_multiKeyExt"]
+        stream_class = result["data_extension_multikeyext"]
 
 
         self.assertIn("ModifiedDate", stream_class.valid_replication_keys)
