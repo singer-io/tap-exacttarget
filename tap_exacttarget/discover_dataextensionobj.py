@@ -14,9 +14,8 @@ field_type_mapping = {
     "Text": "string",
     "Date": "string",
 }
-
-field_format = {"Decimal": "singer.decimal", "Date": "date-time"}
 supported_repl_keys = ["ModifiedDate", "JoinDate", "_ModifiedDate", "_CreatedDate"]
+field_format = {"Decimal": "singer.decimal", "Date": "date-time"}
 
 
 def detect_field_schema(field):
@@ -97,7 +96,7 @@ def discover_dao_streams(client: Client):
             stream_id = f"data_extension_{stream_name}".lower()
             stream_fields = discovered_fields.get(customer_key, {})
 
-            key_props = ["_CustomObjectKey",] + stream_fields.get("key_properties", [])
+            key_props = ["_CustomObjectKey"] + stream_fields.get("key_properties", [])
             repl_keys = stream_fields.get("valid_replication_keys", [])
             props = stream_fields.get("properties", {})
 
