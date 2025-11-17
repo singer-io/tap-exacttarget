@@ -802,9 +802,9 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         result = discover_dao_streams(mock_client)
 
         self.assertEqual(len(result), 3)
-        self.assertIn("data_extension_Extension1", result)
-        self.assertIn("data_extension_Extension2", result)
-        self.assertIn("data_extension_Extension3", result)
+        self.assertIn("data_extension_extension1", result)
+        self.assertIn("data_extension_extension2", result)
+        self.assertIn("data_extension_extension3", result)
 
 
         stream1 = result["data_extension_extension1"]
