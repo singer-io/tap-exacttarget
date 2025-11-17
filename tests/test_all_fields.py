@@ -23,7 +23,7 @@ class ExactTargetAllFields(AllFieldsTest, ExactTargetBaseTest):
 
     def streams_to_test(self):
         streams_to_exclude = {
-            # No data
+            # No data available for streams
             "subscribers",
             "campaigns",
             "content_area",
@@ -31,28 +31,7 @@ class ExactTargetAllFields(AllFieldsTest, ExactTargetBaseTest):
             "list_subscribers",
             "bounceevent",
             "notsentevent",
-
-            # Failed (Bad Streams)
-            # tap - CRITICAL Stream Failed data_extension__mobileaddress, Reason: Error: Invalid column name '_CustomObjectKey'.
-            # tap - CRITICAL Stream Failed data_extension__mobilesubscription, Reason: Error: Invalid column name '_CustomObjectKey'.
-            # tap - CRITICAL Stream Failed data_extension__mobilelineaddresscontact, Reason: Error: Invalid column name '_CustomObjectKey'.
-            # tap - CRITICAL Stream Failed data_extension__mobilelineaddress, Reason: Error: Invalid column name '_CustomObjectKey'.
-            # tap - CRITICAL Stream Failed data_extension__mobilelineprofile, Reason: Error: Invalid column name '_CustomObjectKey'.
-            # tap - CRITICAL Stream Failed data_extension__mobilelineprofileattribute, Reason: Error: Invalid column name '_CustomObjectKey'.
-            # tap - CRITICAL Stream Failed data_extension__mobilelinesubscription, Reason: Error: Invalid column name '_CustomObjectKey'.
-            # tap - CRITICAL Stream Failed data_extension_mobilelineorphancontact, Reason: Error: Invalid column name '_ModifiedDate'.
-
-            "data_extension__mobileaddress",
-            "data_extension__mobilesubscription",
-            "data_extension__mobilelineaddresscontact",
-            "data_extension__mobilelineaddress",
-            "data_extension__mobilelineprofile",
-            "data_extension__mobilelineprofileattribute",
-            "data_extension__mobilelinesubscription",
-            "data_extension_mobilelineorphancontact",
-
-
-            # No data - data_extension's
+            # No data available for streams(data_extension)
             "data_extension_cloudpages_dataextension",
             "data_extension_pi_abandoned_cart_event",
             "data_extension__mobilelineprofile",
@@ -82,5 +61,15 @@ class ExactTargetAllFields(AllFieldsTest, ExactTargetBaseTest):
             "data_extension__mobilelinesubscription",
             "data_extension__mobilesubscription",
             "data_extension__mobilelineprofileattribute",
+            # Following DataExtension streams are failing due to error: Invalid column name '_CustomObjectKey'.
+            "data_extension__mobileaddress",
+            "data_extension__mobilesubscription",
+            "data_extension__mobilelineaddresscontact",
+            "data_extension__mobilelineaddress",
+            "data_extension__mobilelineprofile",
+            "data_extension__mobilelineprofileattribute",
+            "data_extension__mobilelinesubscription",
+            # Following DataExtension streams are failing due to error: Invalid column name '_ModifiedDate'.
+            "data_extension_mobilelineorphancontact",
         }
         return self.expected_stream_names().difference(streams_to_exclude)
