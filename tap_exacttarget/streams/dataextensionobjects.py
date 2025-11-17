@@ -18,6 +18,7 @@ class DataExtensionObjectBase:
     schema = None
     customer_key = None
     category_id = None
+    object_ref = None
 
     def get_query_fields(self, stream_metadata: Dict, schema: Dict):
         """Filter fields to query from metadata."""
