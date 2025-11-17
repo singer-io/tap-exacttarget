@@ -166,7 +166,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        stream_id = "data_extension.TestExtension"
+        stream_id = "data_extension_testextension"
         self.assertIn(stream_id, result)
         stream_class = result[stream_id]
         self.assertTrue(issubclass(stream_class, DataExtensionObjectFt))
@@ -212,7 +212,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        stream_id = "data_extension.IncrementalExtension"
+        stream_id = "data_extension_incrementalextension"
         self.assertIn(stream_id, result)
         stream_class = result[stream_id]
         self.assertTrue(issubclass(stream_class, DataExtensionObjectInc))
@@ -252,7 +252,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         ]
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.PriorityTest"]
+        stream_class = result["data_extension_prioritytest"]
         # JoinDate should be chosen over _CreatedDate
         self.assertEqual(stream_class.replication_key, "JoinDate")
 
@@ -276,7 +276,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        stream_id = "data_extension.Test-Extension_With$Special!Chars"
+        stream_id = "data_extension_test-extension_with$special!chars"
         self.assertIn(stream_id, result)
 
         # Verify the class was created successfully despite special chars
@@ -328,7 +328,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         ]
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.SchemaTest"]
+        stream_class = result["data_extension_schematest"]
         schema = stream_class.schema
 
         # Verify schema structure
