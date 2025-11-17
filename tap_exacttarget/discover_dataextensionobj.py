@@ -49,7 +49,7 @@ def discover_fields(client: Client):
 
     for field in doa_fields:
         stream_id = field["DataExtension"]["CustomerKey"]
-        field_name = field["Name"]
+        field_name = field["Name"].strip()
         stream_field_data = field_info.setdefault(
             stream_id, {"key_properties": [], "valid_replication_keys": [], "properties": {}}
         )
