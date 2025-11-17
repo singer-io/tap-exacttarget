@@ -303,7 +303,7 @@ class IncrementalStream(BaseStream):
 
         LOGGER.info("Stream %s sync complete: %d records processed", self.tap_stream_id, records_processed)
 
-        state = self.write_bookmark(state, value=current_max_bookmark_date.isoformat())
+        state = self.write_bookmark(state, value=current_max_bookmark_date.isoformat(timespec='microseconds'))
         return state
 
 
