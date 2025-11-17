@@ -6,10 +6,10 @@ setup(
     name="tap-exacttarget",
     version="2.0.0",
     description="Singer.io tap for extracting data from the ExactTarget API",
-    author="Fishtown Analytics",
-    url="http://fishtownanalytics.com",
+    author="Singer.io",
+    url="https://singer.io",
     classifiers=["Programming Language :: Python :: 3 :: Only"],
-    py_modules=["tap_exacttarget"],
+    packages=find_packages(),
     install_requires=[
         "singer-python==6.1.1",
         "zeep==4.3.1",
@@ -18,10 +18,10 @@ setup(
     extras_require={
         "dev": ["pylint==4.0.0", "nose2==0.15.1"],
     },
-    entry_points="""
-    [console_scripts]
-    tap-exacttarget=tap_exacttarget:main
-    """,
-    packages=find_packages(),
+    entry_points={
+        "console_scripts": [
+            "tap-exacttarget=tap_exacttarget:main"
+        ]
+    },
     package_data={"tap_exacttarget": ["schemas/*.json"]},
 )
