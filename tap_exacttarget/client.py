@@ -192,7 +192,6 @@ class Client:
 
         oauth_value = self.oauth_header(self.access_token)
         self.soap_client.set_default_soapheaders([oauth_value])
-        LOGGER.info("Objtype: %s fields: %s", object_type, properties)
 
         try:
             response = self.soap_client.service.Retrieve(RetrieveRequest=retrieve_request_obj)

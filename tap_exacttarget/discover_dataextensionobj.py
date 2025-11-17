@@ -92,11 +92,11 @@ def discover_dao_streams(client: Client):
             customer_key = item["CustomerKey"]
             category_id = item["CategoryID"]
 
-            stream_name = item["Name"]
-            stream_id = f"data_extension.{stream_name}"
+            stream_name = item["Name"].lower()
+            stream_id = f"data_extension_{stream_name}"
             stream_fields = discovered_fields.get(customer_key, {})
 
-            key_props = ["_CustomObjectKey"] + stream_fields.get("key_properties", [])
+            key_props = ["_CustomObjectKey",] + stream_fields.get("key_properties", [])
             repl_keys = stream_fields.get("valid_replication_keys", [])
             props = stream_fields.get("properties", {})
 

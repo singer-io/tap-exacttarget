@@ -126,7 +126,9 @@ class BaseStream(ABC):
 
     def get_query_fields(self, *args, **kwargs):
         """Filter Query fields."""
-        return self.get_available_fields()
+        available_fields =  self.get_available_fields()
+        LOGGER.info("Objtype: %s fields: %s", self.object_ref, available_fields)
+        return available_fields
 
     def transform_record(self, obj):
         """serialize_object Converts Soap class obj to python repr json.dumps converts to string
@@ -263,6 +265,7 @@ class IncrementalStream(BaseStream):
                     record_timestamp = record[self.replication_key].replace(tzinfo=fixed_cst)
                 elif record[self.replication_key]:
                     record_timestamp = strptime_to_cst(record[self.replication_key])
+                    record[self.replication_key] = record_timestamp.isoformat()
                 # Add specific handling for schema mismatch errors
                 try:
                     transformed_record = transformer.transform(record, schema, stream_metadata)
