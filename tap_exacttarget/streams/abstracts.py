@@ -125,7 +125,9 @@ class BaseStream(ABC):
 
     def get_query_fields(self, *args, **kwargs):
         """Filter Query fields."""
-        return self.get_available_fields()
+        available_fields =  self.get_available_fields()
+        LOGGER.info("Objtype: %s fields: %s", self.object_ref, available_fields)
+        return available_fields
 
     def transform_record(self, obj):
         """
@@ -291,6 +293,7 @@ class IncrementalStream(BaseStream):
 
             if record[self.replication_key]:
                 record_timestamp = strptime_to_cst(record[self.replication_key])
+                record[self.replication_key] = record_timestamp.isoformat()
                 transformed_record = transformer.transform(record, schema, stream_metadata)
                 write_record(self.tap_stream_id, transformed_record)
                 records_processed += 1
@@ -300,7 +303,7 @@ class IncrementalStream(BaseStream):
 
         LOGGER.info("Stream %s sync complete: %d records processed", self.tap_stream_id, records_processed)
 
-        state = self.write_bookmark(state, value=current_max_bookmark_date.isoformat())
+        state = self.write_bookmark(state, value=current_max_bookmark_date.isoformat(timespec='microseconds'))
         return state
 
 

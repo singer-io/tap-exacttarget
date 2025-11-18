@@ -49,7 +49,7 @@ def discover_fields(client: Client):
 
     for field in doa_fields:
         stream_id = field["DataExtension"]["CustomerKey"]
-        field_name = field["Name"]
+        field_name = field["Name"].strip()
         stream_field_data = field_info.setdefault(
             stream_id, {"key_properties": [], "valid_replication_keys": [], "properties": {}}
         )
@@ -94,7 +94,7 @@ def discover_dao_streams(client: Client):
             category_id = item["CategoryID"]
 
             stream_name = item["Name"]
-            stream_id = f"data_extension.{stream_name}"
+            stream_id = f"data_extension_{stream_name}".lower()
             stream_fields = discovered_fields.get(customer_key, {})
 
             key_props = ["_CustomObjectKey"] + stream_fields.get("key_properties", [])

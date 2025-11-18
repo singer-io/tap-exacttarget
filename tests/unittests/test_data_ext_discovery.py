@@ -439,8 +439,8 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        self.assertIn("data_extension.TestExtension", result)
-        stream_class = result["data_extension.TestExtension"]
+        self.assertIn("data_extension_testextension", result)
+        stream_class = result["data_extension_testextension"]
         self.assertEqual(stream_class.replication_key, "ModifiedDate")
         self.assertEqual(stream_class.valid_replication_keys, ["ModifiedDate"])
         self.assertTrue(issubclass(stream_class, DataExtensionObjectInc))
@@ -469,7 +469,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        stream_class = result["data_extension.SubscriberExt"]
+        stream_class = result["data_extension_subscriberext"]
         self.assertEqual(stream_class.replication_key, "JoinDate")
         self.assertEqual(stream_class.valid_replication_keys, ["JoinDate"])
 
@@ -497,7 +497,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        stream_class = result["data_extension.SystemExt"]
+        stream_class = result["data_extension_systemext"]
         self.assertEqual(stream_class.replication_key, "_ModifiedDate")
         self.assertEqual(stream_class.valid_replication_keys, ["_ModifiedDate"])
 
@@ -525,7 +525,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        stream_class = result["data_extension.CreatedExt"]
+        stream_class = result["data_extension_createdext"]
         self.assertEqual(stream_class.replication_key, "_CreatedDate")
         self.assertEqual(stream_class.valid_replication_keys, ["_CreatedDate"])
 
@@ -558,7 +558,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.TestExt"]
+        stream_class = result["data_extension_testext"]
         self.assertEqual(stream_class.replication_key, "ModifiedDate")
 
     @patch("tap_exacttarget.discover_dataextensionobj.discover_fields")
@@ -584,7 +584,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.TestExt2"]
+        stream_class = result["data_extension_testext2"]
         self.assertEqual(stream_class.replication_key, "JoinDate")
 
     @patch("tap_exacttarget.discover_dataextensionobj.discover_fields")
@@ -609,7 +609,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.TestExt3"]
+        stream_class = result["data_extension_testext3"]
         self.assertEqual(stream_class.replication_key, "_ModifiedDate")
 
     @patch("tap_exacttarget.discover_dataextensionobj.discover_fields")
@@ -633,7 +633,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.TestExt4"]
+        stream_class = result["data_extension_testext4"]
         self.assertEqual(stream_class.replication_key, "_CreatedDate")
 
     @patch("tap_exacttarget.discover_dataextensionobj.discover_fields")
@@ -657,7 +657,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        stream_class = result["data_extension.StaticExtension"]
+        stream_class = result["data_extension_staticextension"]
         self.assertIsNone(stream_class.replication_key)
         self.assertEqual(stream_class.valid_replication_keys, [])
         self.assertTrue(issubclass(stream_class, DataExtensionObjectFt))
@@ -685,7 +685,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.ContactExt"]
+        stream_class = result["data_extension_contactext"]
 
         self.assertIn("_CustomObjectKey", stream_class.key_properties)
         self.assertIn("Id", stream_class.key_properties)
@@ -709,7 +709,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.TestExt"]
+        stream_class = result["data_extension_testext"]
 
         expected = ["Apple", "Banana", "Middle", "Zebra", "_CustomObjectKey"]
         self.assertEqual(stream_class.key_properties, sorted(expected))
@@ -732,7 +732,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.TestExt"]
+        stream_class = result["data_extension_testext"]
 
         self.assertEqual(len(stream_class.key_properties), len(set(stream_class.key_properties)))
         self.assertIn("Id", stream_class.key_properties)
@@ -764,8 +764,8 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        self.assertIn("data_extension.Test Extension!@# 123", result)
-        stream_class = result["data_extension.Test Extension!@# 123"]
+        self.assertIn("data_extension_test extension!@# 123", result)
+        stream_class = result["data_extension_test extension!@# 123"]
         self.assertEqual(stream_class.__name__, "DataExtensionObjStreamtestextension123")
 
     @patch("tap_exacttarget.discover_dataextensionobj.discover_fields")
@@ -802,20 +802,20 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         result = discover_dao_streams(mock_client)
 
         self.assertEqual(len(result), 3)
-        self.assertIn("data_extension.Extension1", result)
-        self.assertIn("data_extension.Extension2", result)
-        self.assertIn("data_extension.Extension3", result)
+        self.assertIn("data_extension_extension1", result)
+        self.assertIn("data_extension_extension2", result)
+        self.assertIn("data_extension_extension3", result)
 
 
-        stream1 = result["data_extension.Extension1"]
+        stream1 = result["data_extension_extension1"]
         self.assertEqual(stream1.replication_key, "ModifiedDate")
         self.assertTrue(issubclass(stream1, DataExtensionObjectInc))
 
-        stream2 = result["data_extension.Extension2"]
+        stream2 = result["data_extension_extension2"]
         self.assertIsNone(stream2.replication_key)
         self.assertTrue(issubclass(stream2, DataExtensionObjectFt))
 
-        stream3 = result["data_extension.Extension3"]
+        stream3 = result["data_extension_extension3"]
         self.assertEqual(stream3.replication_key, "JoinDate")
         self.assertTrue(issubclass(stream3, DataExtensionObjectInc))
 
@@ -851,8 +851,8 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         result = discover_dao_streams(mock_client)
 
         self.assertEqual(len(result), 2)
-        self.assertIn("data_extension.Extension1", result)
-        self.assertIn("data_extension.Extension2", result)
+        self.assertIn("data_extension_extension1", result)
+        self.assertIn("data_extension_extension2", result)
 
     @patch("tap_exacttarget.discover_dataextensionobj.discover_fields")
     def test_error_status_raises_exception(self, mock_discover_fields):
@@ -892,7 +892,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.TestExt"]
+        stream_class = result["data_extension_testext"]
 
         self.assertIn("_CustomObjectKey", stream_class.schema["properties"])
         self.assertIn("CategoryID", stream_class.schema["properties"])
@@ -927,10 +927,10 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.MyExtension"]
+        stream_class = result["data_extension_myextension"]
 
-        self.assertEqual(stream_class.stream, "data_extension.MyExtension")
-        self.assertEqual(stream_class.tap_stream_id, "data_extension.MyExtension")
+        self.assertEqual(stream_class.stream, "data_extension_myextension")
+        self.assertEqual(stream_class.tap_stream_id, "data_extension_myextension")
         self.assertEqual(stream_class.object_ref, "DataExtensionObject[MyExtension]")
         self.assertEqual(stream_class.customer_key, "customer-key-015")
         self.assertEqual(stream_class.category_id, 999)
@@ -954,7 +954,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.EmptyExt"]
+        stream_class = result["data_extension_emptyext"]
 
         self.assertIn("_CustomObjectKey", stream_class.schema["properties"])
         self.assertIn("CategoryID", stream_class.schema["properties"])
@@ -988,7 +988,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.CompleteExt"]
+        stream_class = result["data_extension_completeext"]
 
         props = stream_class.schema["properties"]
         self.assertEqual(props["Id"]["type"], ["null", "integer"])
@@ -1026,7 +1026,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         }
 
         result = discover_dao_streams(mock_client)
-        stream_class = result["data_extension.MultiKeyExt"]
+        stream_class = result["data_extension_multikeyext"]
 
 
         self.assertIn("ModifiedDate", stream_class.valid_replication_keys)

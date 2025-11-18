@@ -185,29 +185,6 @@ class TestSoapOperations(BaseClientTest):
         # Verify set_default_soapheaders was called (OAuth header update)
         assert self.client_instance.soap_client.set_default_soapheaders.called
 
-    @patch("tap_exacttarget.client.LOGGER")
-    def test_retrieve_request_logs_object_type_and_fields(self, mock_logger):
-        """Test that retrieve request logs object type and properties."""
-        mock_retrieve_request_type = Mock()
-        mock_retrieve_options_type = Mock()
-
-        self.client_instance.soap_client.get_type.side_effect = [
-            mock_retrieve_request_type,
-            mock_retrieve_options_type,
-        ]
-
-        mock_response = {"OverallStatus": "OK", "Results": []}
-        self.client_instance.soap_client.service.Retrieve.return_value = mock_response
-
-        self.client_instance.retrieve_request(
-            object_type="DataExtension", properties=["Name", "CustomerKey"]
-        )
-
-        # Verify logging occurred with object type and fields
-        mock_logger.info.assert_any_call(
-            "Objtype: %s fields: %s", "DataExtension", ["Name", "CustomerKey"]
-        )
-
     def test_describe_request_builds_correct_object_definition(self):
         """Test that describe_request builds ObjectDefinitionRequest correctly."""
         mock_obj_defn_request_type = Mock()
