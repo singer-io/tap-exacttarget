@@ -6,6 +6,18 @@ from tap_exacttarget.streams.abstracts import FullTableStream
 class AutomationInstance(FullTableStream):
     """Class for List Send stream."""
 
+    # INFO OBj: AutomationInstance Non Retrievable fields ['AutomationID', 'StatusMessage', 'StatusLastUpdate',
+    # 'TaskInstances', 'StartTime', 'CompletedTime', 'Schedule', 'AutomationTasks', 'IsActive', 'AutomationSource', 'Status',
+    # 'Notifications', 'ScheduledTime', 'AutomationType', 'UpdateModified', 'LastRunInstanceID', 'CreatedBy', 'CategoryID',
+    # 'LastRunTime', 'LastSaveDate', 'ModifiedBy', 'RecurrenceID', 'LastSavedBy', 'InteractionObjectID', 'Name',
+    #  'Description', 'Keyword', 'Client', 'PartnerKey', 'PartnerProperties', 'CreatedDate', 'ModifiedDate', 'ID',
+    # 'CustomerKey', 'Owner', 'CorrelationID', 'ObjectState', 'IsPlatformObject']
+
+
+    # INFO OBj: AutomationInstance Retrievable fields ['ObjectID']
+
+    # Only 1 field is accessable
+
     client: Client
 
     stream = "automation_instance"
