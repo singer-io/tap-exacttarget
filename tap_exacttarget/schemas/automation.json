@@ -1,0 +1,78 @@
+{
+    "type": "object",
+    "properties": {
+      "AutomationSource": {
+        "type": ["null", "object"],
+        "properties": {}
+      },
+      "AutomationTasks": {
+        "type": ["null", "array"],
+        "items": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "AutomationType": { "type": ["null", "string"] },
+      "CorrelationID": { "type": ["null", "string"] },
+      "CreatedDate": { "type": ["null", "string"] },
+      "CustomerKey": { "type": ["null", "string"] },
+      "Description": { "type": ["null", "string"] },
+      "ID": { "type": "integer" },
+      "InteractionObjectID": { "type": ["null", "string"] },
+      "IsActive": { "type": ["null", "string"] },
+      "Keyword": { "type": ["null", "string"] },
+      "ModifiedDate": { "type": ["null", "string"] },
+      "Name": { "type": ["null", "string"] },
+      "Notifications": {
+        "type": ["null", "array"],
+        "items": {
+          "type": "object",
+          "properties": {
+            "Address": {
+              "type": ["null", "array"],
+              "items": {
+                "type": "object",
+                "properties": {}
+              }
+            },
+            "Body": { "type": ["null", "string"] },
+            "ChannelType": { "type": ["null", "string"] },
+            "CorrelationID": { "type": ["null", "string"] },
+            "CreatedDate": { "type": ["null", "string"] },
+            "CustomerKey": { "type": ["null", "string"] },
+            "Description": { "type": ["null", "string"] },
+            "ID": { "type": ["null", "integer"] },
+            "ModifiedDate": { "type": ["null", "string"] },
+            "Name": { "type": ["null", "string"] },
+            "NotificationType": { "type": ["null", "string"] },
+            "PartnerKey": { "type": ["null", "string"] }
+          }
+        }
+      },
+      "PartnerKey": { "type": ["null", "string"] },
+      "ProgramID": { "type": ["null", "string"] },
+      "Schedule": {
+        "type": ["null", "object"],
+        "properties": {
+          "CorrelationID": { "type": ["null", "string"] },
+          "CreatedDate": { "type": ["null", "string"] },
+          "CustomerKey": { "type": ["null", "string"] },
+          "Description": { "type": ["null", "string"] },
+          "EndDateTime": { "type": ["null", "string"] },
+          "ID": { "type": ["null", "integer"] },
+          "Keyword": { "type": ["null", "string"] },
+          "ModifiedDate": { "type": ["null", "string"] },
+          "Name": { "type": ["null", "string"] },
+          "Occurrences": { "type": ["null", "integer"] },
+          "Recurrence": { "type": ["null", "object"], "properties": {} },
+          "RecurrenceRangeType": { "type": ["null", "string"] },
+          "RecurrenceType": { "type": ["null", "string"] },
+          "StartDateTime": { "type": ["null", "string"] },
+          "TimeZone": { "type": ["null", "object"], "properties": {} },
+          "PartnerKey": { "type": ["null", "string"] }
+        }
+      },
+      "ScheduledTime": { "type": ["null", "string"] },
+      "Status": { "type": ["null", "string"] }
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "type": "object",
+    "properties": {
+        "ID": { "type": "integer" },
+        "AutomationID": { "type": ["null", "string"] },
+        "AutomationSource": { "type": ["null", "string"] },
+        "AutomationTasks": { "type": ["null", "string"] },
+        "AutomationType": { "type": ["null", "string"] },
+        "CompletedTime": { "type": ["null", "string"] },
+        "CorrelationID": { "type": ["null", "string"] },
+        "CreatedDate": { "type": ["null", "string"] },
+        "CustomerKey": { "type": ["null", "string"] },
+        "Description": { "type": ["null", "string"] },
+        "InteractionObjectID": { "type": ["null", "string"] },
+        "IsActive": { "type": ["null", "boolean"] },
+        "Keyword": { "type": ["null", "string"] },
+        "ModifiedDate": { "type": ["null", "string"] },
+        "Name": { "type": ["null", "string"] },
+        "Notifications": { "type": ["null", "string"] },
+        "PartnerKey": { "type": ["null", "string"] },
+        "Schedule": { "type": ["null", "string"] },
+        "ScheduledTime": { "type": ["null", "string"] },
+        "StartTime": { "type": ["null", "string"] },
+        "Status": { "type": ["null", "integer"] },
+        "StatusLastUpdate": { "type": ["null", "string"] },
+        "StatusMessage": { "type": ["null", "string"] },
+        "TaskInstances": { "type": ["null", "string"] }
+      }
+}

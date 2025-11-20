@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "properties": {
+        "AccountEmail": { "type": ["null", "string"] },
+        "AccountID": { "type": ["null", "string"] },
+        "AccountName": { "type": ["null", "string"] },
+        "CorrelationID": { "type": ["null", "string"] },
+        "CreatedDate": { "type": ["null", "string"] },
+        "CustomerKey": { "type": ["null", "string"] },
+        "DeliveredTime": { "type": ["null", "string"] },
+        "ID": { "type": "number" },
+        "IsTestAccount": { "type": ["null", "string"] },
+        "ModifiedDate": { "type": ["null", "string"] },
+        "NonTransactional": { "type": ["null", "string"] },
+        "PartnerKey": { "type": ["null", "string"] },
+        "SendID": { "type": ["null", "number"] },
+        "TotalSent": { "type": ["null", "string"] },
+        "Transactional": { "type": ["null", "string"] }
+      }
+}

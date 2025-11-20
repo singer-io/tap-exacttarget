@@ -1,0 +1,128 @@
+{
+    "type": "object",
+    "properties":{
+        "CorrelationID": {
+          "type": ["null", "string"]
+        },
+        "CreatedDate": {
+          "type": ["null", "string"]
+        },
+        "CustomerKey": {
+          "type": ["null", "string"]
+        },
+        "DataExtension": {
+          "type": ["null", "object"]
+        },
+        "DefaultValue": {
+          "type": ["null", "string"]
+        },
+        "Description": {
+          "type": ["null", "string"]
+        },
+        "DisplayOrder": {
+          "type": ["null", "integer"]
+        },
+        "FieldType": {
+          "type": ["null", "string"]
+        },
+        "ID": {
+          "type": "integer"
+        },
+        "IsAccountProperty": {
+          "type": ["null", "string"]
+        },
+        "IsCreatable": {
+          "type": ["null", "string"]
+        },
+        "IsEditable": {
+          "type": ["null", "string"]
+        },
+        "IsFilterable": {
+          "type": ["null", "string"]
+        },
+        "IsNillable": {
+          "type": ["null", "string"]
+        },
+        "IsPartnerProperty": {
+          "type": ["null", "string"]
+        },
+        "IsPrimaryKey": {
+          "type": ["null", "string"]
+        },
+        "IsQueryable": {
+          "type": ["null", "string"]
+        },
+        "IsRequired": {
+          "type": ["null", "string"]
+        },
+        "IsRestrictedPicklist": {
+          "type": ["null", "string"]
+        },
+        "IsRetrievable": {
+          "type": ["null", "string"]
+        },
+        "IsSendTime": {
+          "type": ["null", "string"]
+        },
+        "IsUpdatable": {
+          "type": ["null", "string"]
+        },
+        "IsViewable": {
+          "type": ["null", "string"]
+        },
+        "Label": {
+          "type": ["null", "string"]
+        },
+        "MaxLength": {
+          "type": ["null", "integer"]
+        },
+        "MaxValue": {
+          "type": ["null", "string"]
+        },
+        "MinLength": {
+          "type": ["null", "integer"]
+        },
+        "MinValue": {
+          "type": ["null", "string"]
+        },
+        "ModifiedDate": {
+          "type": ["null", "string"]
+        },
+        "Name": {
+          "type": ["null", "string"]
+        },
+        "Ordinal": {
+          "type": ["null", "integer"]
+        },
+        "PartnerKey": {
+          "type": ["null", "string"]
+        },
+        "PicklistItems": {
+          "type": ["null", "array"],
+          "items": {
+            "type": "object"
+          }
+        },
+        "Precision": {
+          "type": ["null", "integer"]
+        },
+        "PropertyType": {
+          "type": ["null", "string"]
+        },
+        "RelationshipName": {
+          "type": ["null", "string"]
+        },
+        "Scale": {
+          "type": ["null", "integer"]
+        },
+        "Status": {
+          "type": ["null", "string"]
+        },
+        "StorageType": {
+          "type": ["null", "string"]
+        },
+        "ValueType": {
+          "type": ["null", "string"]
+        }
+      }
+}

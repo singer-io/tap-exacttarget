@@ -1,0 +1,71 @@
+{
+    "type": "object",
+    "properties": {
+      "CategoryID": {
+        "type": ["null", "integer"]
+      },
+      "CorrelationID": {
+        "type": ["null", "string"]
+      },
+      "CreatedDate": {
+        "type": ["null", "string"]
+      },
+      "CustomerKey": {
+        "type": ["null", "string"]
+      },
+      "DataRetentionPeriodLength": {
+        "type": ["null", "integer"]
+      },
+      "DeleteAtEndOfRetentionPeriod": {
+        "type": ["null", "string"]
+      },
+      "Description": {
+        "type": ["null", "string"]
+      },
+      "Fields": {
+        "type": ["null", "array"],
+        "items": {
+          "type": "object"
+        }
+      },
+      "ID": {
+        "type": "integer"
+      },
+      "IsSendable": {
+        "type": ["null", "string"]
+      },
+      "IsTestable": {
+        "type": ["null", "string"]
+      },
+      "ModifiedDate": {
+        "type": ["null", "string"]
+      },
+      "Name": {
+        "type": ["null", "string"]
+      },
+      "PartnerKey": {
+        "type": ["null", "string"]
+      },
+      "ResetRetentionPeriodOnImport": {
+        "type": ["null", "string"]
+      },
+      "RetainUntil": {
+        "type": ["null", "string"]
+      },
+      "RowBasedRetention": {
+        "type": ["null", "string"]
+      },
+      "SendableDataExtensionField": {
+        "type": ["null", "object"]
+      },
+      "SendableSubscriberField": {
+        "type": ["null", "object"]
+      },
+      "Status": {
+        "type": ["null", "string"]
+      },
+      "Template": {
+        "type": ["null", "object"]
+      }
+    }
+}

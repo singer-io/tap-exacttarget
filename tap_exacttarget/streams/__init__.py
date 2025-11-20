@@ -14,6 +14,14 @@ from .list_subscribers import ListSubscribers
 from .list import ETList
 from .send import Sends
 from .subscriber import Subscribers
+from .account_user import AccountUser
+from .automation import Automation
+from .automation_instance import AutomationInstance
+from .data_extension import DataExtension
+from .data_extension_field import DataExtensionField
+from .link_send import LinkSend
+from .send_summary import SendSummary
+
 
 STREAMS = {
     Campaigns.tap_stream_id: Campaigns,
@@ -31,4 +39,12 @@ STREAMS = {
     ListSend.tap_stream_id: ListSend,
     ListSubscribers.tap_stream_id: ListSubscribers,
     Subscribers.tap_stream_id: Subscribers,
+} | {
+    AccountUser.tap_stream_id: AccountUser,
+    Automation.tap_stream_id: Automation,
+    AutomationInstance.tap_stream_id: AutomationInstance,
+    DataExtension.tap_stream_id: DataExtension,
+    DataExtensionField.tap_stream_id: DataExtensionField,
+    LinkSend.tap_stream_id: LinkSend,
+    SendSummary.tap_stream_id: SendSummary,
 }
