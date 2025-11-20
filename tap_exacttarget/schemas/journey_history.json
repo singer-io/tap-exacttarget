@@ -1,0 +1,112 @@
+{
+    "type": "object",
+    "properties": {
+      "ContactKey": {
+        "type": ["null", "string" ]},
+      "ContactID": {
+        "type": ["null", "integer" ]},
+      "JourneyID": {
+        "type": ["null", "string" ]},
+      "JourneyName": {
+        "type": ["null", "string" ]},
+      "VersionNumber": {
+        "type": ["null", "integer" ]},
+      "ActivityID": {
+        "type": ["null", "string" ]},
+      "ActivityName": {
+        "type": ["null", "string" ]},
+      "ActivityType": {
+        "type": ["null", "string" ]},
+      "ActivityExternalKey": {
+        "type": ["null", "string" ]},
+      "ActivityInstanceID": {
+        "type": ["null", "string" ]},
+      "EventDate": {
+        "type": ["null", "string" ],
+        "format": "date-time"},
+      "TransactionTime": {
+        "type": ["null", "string" ],
+        "format": "date-time"},
+      "IsTest": {
+        "type": ["null", "boolean" ]},
+      "EntrySourceID": {
+        "type": ["null", "string" ]},
+      "EntrySourceName": {
+        "type": ["null", "string" ]},
+      "EntryEventID": {
+        "type": ["null", "string" ]},
+      "Status": {
+        "type": ["null", "string" ]},
+      "Outcome": {
+        "type": ["null", "string" ]},
+      "GoalID": {
+        "type": ["null", "string" ]},
+      "GoalName": {
+        "type": ["null", "string" ]},
+      "ExitCriteriaID": {
+        "type": ["null", "string" ]},
+      "EmailID": {
+        "type": ["null", "integer" ]},
+      "EmailName": {
+        "type": ["null", "string" ]},
+      "EmailSubject": {
+        "type": ["null", "string" ]},
+      "EmailPreHeader": {
+        "type": ["null", "string" ]},
+      "SendDefinitionID": {
+        "type": ["null", "string" ]},
+      "SMSID": {
+        "type": ["null", "string" ]},
+      "SMSMessage": {
+        "type": ["null", "string" ]},
+      "PushNotificationID": {
+        "type": ["null", "string" ]},
+      "PushMessage": {
+        "type": ["null", "string" ]},
+      "DecisionSplitPath": {
+        "type": ["null", "string" ]},
+      "DecisionSplitPathName": {
+        "type": ["null", "string" ]},
+      "WaitDuration": {
+        "type": ["null", "integer" ]},
+      "WaitEndDate": {
+        "type": ["null", "string" ],
+        "format": "date-time"},
+      "ErrorCode": {
+        "type": ["null", "string" ]},
+      "ErrorMessage": {
+        "type": ["null", "string" ]},
+      "BounceCategory": {
+        "type": ["null", "string" ]},
+      "BounceSubcategory": {
+        "type": ["null", "string" ]},
+      "UnsubscribeReason": {
+        "type": ["null", "string" ]},
+      "EngagementScore": {
+        "type": [ "null", "number" ]},
+      "AttributeData": {
+        "type": [ "null", "object"]},
+      "EventDefinitionKey": {
+        "type": ["null", "string" ]},
+      "EventDefinitionName": {
+        "type": ["null", "string" ]},
+      "DataExtensionID": {
+        "type": ["null", "string" ]},
+      "DataExtensionName": {
+        "type": ["null", "string" ]},
+      "ListID": {
+        "type": ["null", "integer" ]},
+      "ListName": {
+        "type": ["null", "string" ]},
+      "SubscriberKey": {
+        "type": ["null", "string" ]},
+      "SubscriberID": {
+        "type": ["null", "integer" ]},
+      "EmailAddress": {
+        "type": ["null", "string" ]},
+      "MobileNumber": {
+        "type": ["null", "string" ]},
+      "DeviceID": {
+        "type": ["null", "string" ]}
+    }
+  }
