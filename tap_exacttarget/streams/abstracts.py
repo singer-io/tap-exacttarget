@@ -243,6 +243,7 @@ class IncrementalStream(BaseStream):
         """Performs Pagination and query building."""
 
         query_fields = self.get_query_fields(stream_metadata, schema)
+        fetch_null = True
         for start_dt, end_dt in self.create_date_windows(
             start_date, now().astimezone(tz=fixed_cst), self.client.date_window
         ):
@@ -253,6 +254,14 @@ class IncrementalStream(BaseStream):
                 self.replication_key, "lessThanOrEqual", date_value=end_dt
             )
             date_range = self.client.create_complex_filter(start_date, "AND", end_date)
+
+            if fetch_null:
+                null_filter = self.client.create_simple_filter(
+                self.replication_key, "isNull", value=None
+                )
+                date_range = self.client.create_complex_filter(date_range, "OR", null_filter)
+                fetch_null = False
+
 
             next_page = True
             request_id = None
