@@ -7,14 +7,20 @@
         "CorrelationID": { "type": ["null", "string"] },
         "CreatedDate": { "type": ["null", "string"] },
         "CustomerKey": { "type": ["null", "string"] },
-        "DeliveredTime": { "type": ["null", "string"] },
-        "ID": { "type": "number" },
-        "IsTestAccount": { "type": ["null", "string"] },
-        "ModifiedDate": { "type": ["null", "string"] },
-        "NonTransactional": { "type": ["null", "string"] },
+        "DeliveredTime": {
+            "type": ["string", "null"],
+            "format": "date-time"
+        },
+        "ID": { "type": "integer" },
+        "IsTestAccount": { "type": ["null", "boolean"] },
+        "ModifiedDate": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "NonTransactional": { "type": ["null", "integer"] },
         "PartnerKey": { "type": ["null", "string"] },
-        "SendID": { "type": ["null", "number"] },
-        "TotalSent": { "type": ["null", "string"] },
-        "Transactional": { "type": ["null", "string"] }
+        "SendID": { "type": ["null", "integer"] },
+        "TotalSent": { "type": ["null", "integer"] },
+        "Transactional": { "type": ["null", "integer"] }
       }
 }

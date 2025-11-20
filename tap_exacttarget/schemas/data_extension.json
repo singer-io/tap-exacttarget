@@ -5,10 +5,11 @@
         "type": ["null", "integer"]
       },
       "CorrelationID": {
-        "type": ["null", "string"]
+        "type": ["null", "integer"]
       },
       "CreatedDate": {
-        "type": ["null", "string"]
+        "type": ["string", "null"],
+        "format": "date-time"
       },
       "CustomerKey": {
         "type": ["null", "string"]
@@ -38,7 +39,8 @@
         "type": ["null", "string"]
       },
       "ModifiedDate": {
-        "type": ["null", "string"]
+        "type": ["string", "null"],
+        "format": "date-time"
       },
       "Name": {
         "type": ["null", "string"]

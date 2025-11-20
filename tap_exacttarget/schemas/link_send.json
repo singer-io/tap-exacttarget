@@ -2,7 +2,10 @@
     "type": "object",
     "properties": {
         "CorrelationID": { "type": ["null", "string"] },
-        "CreatedDate": { "type": ["null", "string"] },
+        "CreatedDate": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
         "CustomerKey": { "type": ["null", "string"] },
         "ID": { "type": "integer" },
         "IDLong": { "type": "integer" },
@@ -12,13 +15,16 @@
             "Alias": { "type": ["null", "string"] },
             "ID": { "type": "integer" },
             "PartnerKey": { "type": ["null", "string"] },
-            "TotalClicks": { "type": ["null", "string"] },
-            "UniqueClicks": { "type": ["null", "string"] },
+            "TotalClicks": { "type": ["null", "integer"] },
+            "UniqueClicks": { "type": ["null", "integer"] },
             "URL": { "type": ["null", "string"] }
           }
         },
-        "ModifiedDate": { "type": ["null", "string"] },
+        "ModifiedDate": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
         "PartnerKey": { "type": ["null", "string"] },
-        "SendID": { "type": "integer" }
+        "SendID": { "type": ["null", "integer"] }
       }
 }
