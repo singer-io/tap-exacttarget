@@ -8,7 +8,7 @@
         },
         "CustomerKey": { "type": ["null", "string"] },
         "ID": { "type": "integer" },
-        "IDLong": { "type": "integer" },
+        "IDLong": { "type":  ["null", "integer"] },
         "Link": {
           "type": ["null","object"],
           "properties": {
