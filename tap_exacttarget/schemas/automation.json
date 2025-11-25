@@ -1,96 +1,74 @@
 {
-    "type": "object",
-    "properties": {
-      "AutomationSource": {
-        "type": ["null", "object"],
-        "properties": {}
-      },
-      "AutomationTasks": {
-        "type": ["null", "array"],
-        "items": {
-          "type": "object",
-          "properties": {}
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": ["string"]
+    },
+    "name": {
+      "type": ["string", "null"]
+    },
+    "description": {
+      "type": ["string", "null"]
+    },
+    "key": {
+      "type": ["string", "null"]
+    },
+    "typeId": {
+      "type": ["integer", "null"]
+    },
+    "type": {
+      "type": ["string", "null"]
+    },
+    "statusId": {
+      "type": ["integer", "null"]
+    },
+    "status": {
+      "type": ["string", "null"]
+    },
+    "categoryId": {
+      "type": ["integer", "null"]
+    },
+    "lastRunTime": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "lastRunInstanceId": {
+      "type": ["string", "null"]
+    },
+    "schedule": {
+      "type": ["object", "null"],
+      "properties": {
+        "scheduleStatus": {
+          "type": ["string", "null"]
         }
       },
-      "AutomationType": { "type": ["null", "string"] },
-      "CorrelationID": { "type": ["null", "string"] },
-      "CreatedDate": {
-        "type": ["string", "null"],
-        "format": "date-time"
+      "additionalProperties": false
+    },
+    "fileTrigger": {
+      "type": ["object", "null"],
+      "properties": {
+        "queueFiles": { "type": ["boolean", "null"] },
+        "isPublished": { "type": ["boolean", "null"] },
+        "fileNamePatternTypeId": { "type": ["integer", "null"] },
+        "fileNamingPattern": { "type": ["string", "null"] },
+        "folderLocationText": { "type": ["string", "null"] },
+        "triggerActive": { "type": ["boolean", "null"] }
       },
-      "CustomerKey": { "type": ["null", "string"] },
-      "Description": { "type": ["null", "string"] },
-      "ID": { "type": "integer" },
-      "InteractionObjectID": { "type": ["null", "string"] },
-      "IsActive": { "type": ["null", "boolean"] },
-      "Keyword": { "type": ["null", "string"] },
-      "ModifiedDate": {
-        "type": ["string", "null"],
-        "format": "date-time"
+      "additionalProperties": false
+    },
+
+    "automationTrigger": {
+      "type": ["object", "null"],
+      "properties": {
+        "queueFiles": { "type": ["boolean", "null"] },
+        "filenamePattern": { "type": ["string", "null"] },
+        "filenamePatternTypeId": { "type": ["integer", "null"] },
+        "fileTransferLocationId": { "type": ["string", "null"] },
+        "sampleFileName": { "type": ["string", "null"] },
+        "status": { "type": ["integer", "null"] }
       },
-      "Name": { "type": ["null", "string"] },
-      "Notifications": {
-        "type": ["null", "array"],
-        "items": {
-          "type": "object",
-          "properties": {
-            "Address": {
-              "type": ["null", "array"],
-              "items": {
-                "type": "object",
-                "properties": {}
-              }
-            },
-            "Body": { "type": ["null", "string"] },
-            "ChannelType": { "type": ["null", "string"] },
-            "CorrelationID": { "type": ["null", "string"] },
-            "CreatedDate": { "type": ["null", "string"] },
-            "CustomerKey": { "type": ["null", "string"] },
-            "Description": { "type": ["null", "string"] },
-            "ID": { "type": ["null", "integer"] },
-            "ModifiedDate": { "type": ["null", "string"] },
-            "Name": { "type": ["null", "string"] },
-            "NotificationType": { "type": ["null", "string"] },
-            "PartnerKey": { "type": ["null", "string"] }
-          }
-        }
-      },
-      "PartnerKey": { "type": ["null", "string"] },
-      "ProgramID": { "type": ["null", "string"] },
-      "Schedule": {
-        "type": ["null", "object"],
-        "properties": {
-          "CorrelationID": { "type": ["null", "string"] },
-          "CreatedDate": {
-            "type": ["string", "null"],
-            "format": "date-time"
-          },
-          "CustomerKey": { "type": ["null", "string"] },
-          "Description": { "type": ["null", "string"] },
-          "EndDateTime": { "type": ["null", "string"] },
-          "ID": { "type": ["null", "integer"] },
-          "Keyword": { "type": ["null", "string"] },
-          "ModifiedDate":{
-            "type": ["string", "null"],
-            "format": "date-time"
-          },
-          "Name": { "type": ["null", "string"] },
-          "Occurrences": { "type": ["null", "integer"] },
-          "Recurrence": { "type": ["null", "object"], "properties": {} },
-          "RecurrenceRangeType": { "type": ["null", "string"] },
-          "RecurrenceType": { "type": ["null", "string"] },
-          "StartDateTime": {
-            "type": ["string", "null"],
-            "format": "date-time"
-          },
-          "TimeZone": { "type": ["null", "object"], "properties": {} },
-          "PartnerKey": { "type": ["null", "string"] }
-        }
-      },
-      "ScheduledTime": {
-        "type": ["string", "null"],
-        "format": "date-time"
-      },
-      "Status": { "type": ["null", "string"] }
+      "additionalProperties": false
     }
+  },
+  "additionalProperties": false
 }
