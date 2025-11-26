@@ -7,7 +7,8 @@ class SendSummary(IncrementalStream):
     """Class for SendSummary stream."""
 
     # https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/sendsummary.html
-    # Using CreatedDate, since the object may no
+    # Using CreatedDate, unable to find any record i.e updated
+    # document suggests retrieve-only object which may never be updated
 
     client: Client
 
