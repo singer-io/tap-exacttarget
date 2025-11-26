@@ -1,0 +1,91 @@
+{
+  "type": "object",
+  "properties":{
+      "CreatedDate": {
+        "type": ["null", "string"]
+      },
+      "CustomerKey": {
+        "type": ["null", "string"]
+      },
+      "DataExtension": {
+        "type": ["null", "object"],
+        "properties":{
+          "CustomerKey": {
+            "type": ["null", "string"]
+          }
+        }
+      },
+      "DefaultValue": {
+        "type": ["null", "string"]
+      },
+      "Description": {
+        "type": ["null", "string"]
+      },
+      "DisplayOrder": {
+        "type": ["null", "integer"]
+      },
+      "FieldType": {
+        "type": ["null", "string"]
+      },
+      "ObjectID": {
+        "type": "string"
+      },
+      "IsFilterable": {
+        "type": ["null", "boolean"]
+      },
+      "IsPrimaryKey": {
+        "type": ["null", "boolean"]
+      },
+      "IsRequired": {
+        "type": ["null", "boolean"]
+      },
+      "IsSendTime": {
+        "type": ["null", "boolean"]
+      },
+      "Label": {
+        "type": ["null", "string"]
+      },
+      "MaxLength": {
+        "type": ["null", "integer"]
+      },
+      "ModifiedDate": {
+        "type": ["null", "string"]
+      },
+      "Name": {
+        "type": ["null", "string"]
+      },
+      "Ordinal": {
+        "type": ["null", "integer"]
+      },
+      "PartnerKey": {
+        "type": ["null", "string"]
+      },
+      "PicklistItems": {
+        "type": ["null", "array"],
+        "items": {
+          "type": "object"
+        }
+      },
+      "Precision": {
+        "type": ["null", "integer"]
+      },
+      "PropertyType": {
+        "type": ["null", "string"]
+      },
+      "RelationshipName": {
+        "type": ["null", "string"]
+      },
+      "Scale": {
+        "type": ["null", "integer"]
+      },
+      "Status": {
+        "type": ["null", "string"]
+      },
+      "StorageType": {
+        "type": ["null", "string"]
+      },
+      "ValueType": {
+        "type": ["null", "string"]
+      }
+    }
+}

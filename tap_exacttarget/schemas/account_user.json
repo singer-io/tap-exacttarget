@@ -1,0 +1,98 @@
+{
+    "type": "object",
+    "properties": {
+        "AccountUserID": {
+          "type": ["null", "string"]
+        },
+        "ActiveFlag": {
+          "type": ["null", "boolean"]
+        },
+        "BusinessUnit": {
+          "type": ["null", "string"]
+        },
+        "ChallengeAnswer": {
+          "type": ["null", "string"]
+        },
+        "ChallengePhrase": {
+          "type": ["null", "string"]
+        },
+        "CorrelationID": {
+          "type": ["null", "string"]
+        },
+        "CreatedDate": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "CustomerKey": {
+          "type": ["null", "string"]
+        },
+        "DefautApplication": {
+          "type": ["null", "string"]
+        },
+        "DefaultBusinessUnit": {
+          "type": ["null", "string"]
+        },
+        "DefaultBusinessUnitObject": {
+          "type": ["null", "string"]
+        },
+        "Delete": {
+          "type": ["null", "string"]
+        },
+        "Email": {
+          "type": ["null", "string"]
+        },
+        "ID": {
+          "type": "integer"
+        },
+        "IsAPIUser": {
+          "type": ["null", "boolean"]
+        },
+        "IsLocked":{
+          "type": ["null", "boolean"]
+      },
+        "LanguageLocale": {
+          "type": ["null", "string"]
+        },
+        "LastSuccessfulLogin":  {
+          "type": ["string", "null"],
+          "format": "date-time"
+      },
+        "Locale": {
+          "type": ["null", "string"]
+        },
+        "ModifiedDate": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "MustChangePassword": {
+          "type": ["null", "boolean"]
+        },
+        "Name": {
+          "type": ["null", "string"]
+        },
+        "NotificationEmailAddress": {
+          "type": ["null", "string"]
+        },
+        "PartnerKey": {
+          "type": ["null", "string"]
+        },
+        "Password": {
+          "type": ["null", "string"]
+        },
+        "Roles": {
+          "type": ["null", "string"]
+        },
+        "SsoIdentities": {
+          "type": ["null", "string"]
+        },
+        "TimeZone": {
+          "type": ["null", "string"]
+        },
+        "Unlock": {
+          "type": ["null", "boolean"]
+        },
+        "UserID": {
+          "type": ["null", "string"]
+        }
+      }
+}

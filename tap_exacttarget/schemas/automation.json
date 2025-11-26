@@ -1,0 +1,69 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": ["string", "null"]
+    },
+    "description": {
+      "type": ["string", "null"]
+    },
+    "key": {
+      "type": ["string", "null"]
+    },
+    "typeId": {
+      "type": ["integer", "null"]
+    },
+    "type": {
+      "type": ["string", "null"]
+    },
+    "statusId": {
+      "type": ["integer", "null"]
+    },
+    "status": {
+      "type": ["string", "null"]
+    },
+    "categoryId": {
+      "type": ["integer", "null"]
+    },
+    "lastRunTime": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "lastRunInstanceId": {
+      "type": ["string", "null"]
+    },
+    "schedule": {
+      "type": ["object", "null"],
+      "properties": {
+        "scheduleStatus": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "fileTrigger": {
+      "type": ["object", "null"],
+      "properties": {
+        "queueFiles": { "type": ["boolean", "null"] },
+        "isPublished": { "type": ["boolean", "null"] },
+        "fileNamePatternTypeId": { "type": ["integer", "null"] },
+        "fileNamingPattern": { "type": ["string", "null"] },
+        "folderLocationText": { "type": ["string", "null"] },
+        "triggerActive": { "type": ["boolean", "null"] }
+      }
+    },
+    "automationTrigger": {
+      "type": ["object", "null"],
+      "properties": {
+        "queueFiles": { "type": ["boolean", "null"] },
+        "filenamePattern": { "type": ["string", "null"] },
+        "filenamePatternTypeId": { "type": ["integer", "null"] },
+        "fileTransferLocationId": { "type": ["string", "null"] },
+        "sampleFileName": { "type": ["string", "null"] },
+        "status": { "type": ["integer", "null"] }
+      }
+    }
+  }
+}

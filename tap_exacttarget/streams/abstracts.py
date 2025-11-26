@@ -115,12 +115,15 @@ class BaseStream(ABC):
 
     def get_available_fields(self):
         """Provides selectable fields for each stream."""
-        is_retrievable = []
+        is_retrievable,non_retriveable = [], []
         obj_defs = self.client.describe_request(self.object_ref)
         schema = obj_defs["ObjectDefinition"][0]
         for prop in schema["Properties"]:
             if prop["IsRetrievable"]:
                 is_retrievable.append(prop["Name"])
+            else:
+                non_retriveable.append(prop["Name"])
+        LOGGER.info("Objtype: %s not-available properties: %s", self.object_ref, non_retriveable)
         return is_retrievable
 
     def get_query_fields(self, *args, **kwargs):
