@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.0
+ * Introduces new streams [#103](https://github.com/singer-io/tap-exacttarget/pull/103)
+
 ## 2.0.0
  * Replace fuelsdk and rewrite tap using zeep [#100](https://github.com/singer-io/tap-exacttarget/pull/100)
 

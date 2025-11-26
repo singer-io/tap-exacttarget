@@ -21,8 +21,6 @@ from .data_extension import DataExtension
 from .data_extension_field import DataExtensionField
 from .link_send import LinkSend
 from .send_summary import SendSummary
-from .journey_history import JourneyHistory
-
 
 STREAMS = {
     Campaigns.tap_stream_id: Campaigns,
@@ -47,6 +45,5 @@ STREAMS = {
     DataExtension.tap_stream_id: DataExtension,
     DataExtensionField.tap_stream_id: DataExtensionField,
     LinkSend.tap_stream_id: LinkSend,
-    SendSummary.tap_stream_id: SendSummary,
-    JourneyHistory.tap_stream_id: JourneyHistory
+    SendSummary.tap_stream_id: SendSummary
 }
