@@ -220,7 +220,6 @@ class Client:
         if "Error" in response["OverallStatus"]:
             raise MarketingCloudError(response["OverallStatus"])
 
-
     @backoff.on_exception(
         backoff.expo,
         (ConnectionError, Timeout, HTTPError, RequestException),
