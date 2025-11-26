@@ -11,6 +11,6 @@ class DataExtensionField(FullTableStream):
     stream = "data_extension_field"
     tap_stream_id = "data_extension_field"
     object_ref = "DataExtensionField"
-    key_properties = ["ID"]
+    key_properties = ["ObjectID"]
     replication_key = "ModifiedDate"
     valid_replication_keys = ["ModifiedDate"]

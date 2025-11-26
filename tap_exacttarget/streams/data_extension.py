@@ -1,9 +1,12 @@
 from typing import Dict
 from tap_exacttarget.client import Client
-from tap_exacttarget.streams.abstracts import FullTableStream
+from tap_exacttarget.streams.abstracts import IncrementalStream
+from singer import get_logger
+
+LOGGER = get_logger()
 
 
-class DataExtension(FullTableStream):
+class DataExtension(IncrementalStream):
     """Class for List Send stream."""
 
     client: Client
@@ -11,14 +14,14 @@ class DataExtension(FullTableStream):
     stream = "data_extension"
     tap_stream_id = "data_extension"
     object_ref = "DataExtension"
-    key_properties = ["ID"]
+    key_properties = ["CustomerKey"]
     replication_key = "ModifiedDate"
     valid_replication_keys = ["ModifiedDate"]
 
-    # repl_keys = ["ModifiedDate"]
     def get_query_fields(self, *args, **kwargs):
         """Filter Query fields."""
         q_fields = self.get_available_fields()
         if "IsPlatformObject" in q_fields:
             q_fields.remove("IsPlatformObject")
+        LOGGER.info("Objtype: %s fields: %s", self.object_ref, q_fields)
         return q_fields

@@ -4,21 +4,18 @@
       "CategoryID": {
         "type": ["null", "integer"]
       },
-      "CorrelationID": {
-        "type": ["null", "integer"]
-      },
       "CreatedDate": {
         "type": ["string", "null"],
         "format": "date-time"
       },
       "CustomerKey": {
-        "type": ["null", "string"]
+        "type": "string"
       },
       "DataRetentionPeriodLength": {
         "type": ["null", "integer"]
       },
       "DeleteAtEndOfRetentionPeriod": {
-        "type": ["null", "string"]
+        "type": ["null", "boolean"]
       },
       "Description": {
         "type": ["null", "string"]
@@ -29,14 +26,11 @@
           "type": "object"
         }
       },
-      "ID": {
-        "type": "integer"
-      },
       "IsSendable": {
-        "type": ["null", "string"]
+        "type": ["null", "boolean"]
       },
       "IsTestable": {
-        "type": ["null", "string"]
+        "type": ["null", "boolean"]
       },
       "ModifiedDate": {
         "type": ["string", "null"],
@@ -49,25 +43,35 @@
         "type": ["null", "string"]
       },
       "ResetRetentionPeriodOnImport": {
-        "type": ["null", "string"]
+        "type": ["null", "boolean"]
       },
       "RetainUntil": {
         "type": ["null", "string"]
       },
       "RowBasedRetention": {
-        "type": ["null", "string"]
+        "type": ["null", "boolean"]
       },
       "SendableDataExtensionField": {
-        "type": ["null", "object"]
+        "type": ["null", "object"],
+        "properties": {
+          "Name": {
+            "type": ["null", "string"]
+          }
+        }
+      },
+      "Template": {
+        "type": ["null", "object"],
+        "properties": {
+          "CustomerKey": {
+            "type": ["null", "string"]
+          }
+        }
       },
       "SendableSubscriberField": {
         "type": ["null", "object"]
       },
       "Status": {
         "type": ["null", "string"]
-      },
-      "Template": {
-        "type": ["null", "object"]
       }
     }
 }

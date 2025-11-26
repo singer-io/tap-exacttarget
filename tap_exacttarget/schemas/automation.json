@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "id": {
-      "type": ["string"]
+      "type": "string"
     },
     "name": {
       "type": ["string", "null"]
@@ -41,8 +41,7 @@
         "scheduleStatus": {
           "type": ["string", "null"]
         }
-      },
-      "additionalProperties": false
+      }
     },
     "fileTrigger": {
       "type": ["object", "null"],
@@ -53,10 +52,8 @@
         "fileNamingPattern": { "type": ["string", "null"] },
         "folderLocationText": { "type": ["string", "null"] },
         "triggerActive": { "type": ["boolean", "null"] }
-      },
-      "additionalProperties": false
+      }
     },
-
     "automationTrigger": {
       "type": ["object", "null"],
       "properties": {
@@ -66,9 +63,7 @@
         "fileTransferLocationId": { "type": ["string", "null"] },
         "sampleFileName": { "type": ["string", "null"] },
         "status": { "type": ["integer", "null"] }
-      },
-      "additionalProperties": false
+      }
     }
-  },
-  "additionalProperties": false
+  }
 }
