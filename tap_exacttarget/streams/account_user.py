@@ -1,9 +1,9 @@
 from typing import Dict
 from tap_exacttarget.client import Client
-from tap_exacttarget.streams.abstracts import FullTableStream
+from tap_exacttarget.streams.abstracts import IncrementalStream
 
 
-class AccountUser(FullTableStream):
+class AccountUser(IncrementalStream):
     """Class for List Send stream."""
 
     client: Client

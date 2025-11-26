@@ -1,26 +1,24 @@
 {
-    "type": "object",
-    "properties": {
-        "AccountEmail": { "type": ["null", "string"] },
-        "AccountID": { "type": ["null", "string"] },
-        "AccountName": { "type": ["null", "string"] },
-        "CorrelationID": { "type": ["null", "string"] },
-        "CreatedDate": { "type": ["null", "string"] },
-        "CustomerKey": { "type": ["null", "string"] },
-        "DeliveredTime": {
-            "type": ["string", "null"],
-            "format": "date-time"
-        },
-        "ID": { "type": "integer" },
-        "IsTestAccount": { "type": ["null", "boolean"] },
-        "ModifiedDate": {
+  "type": "object",
+  "properties": {
+      "AccountEmail": { "type": ["null", "string"] },
+      "AccountID": { "type": ["null", "string"] },
+      "AccountName": { "type": ["null", "string"] },
+      "CorrelationID": { "type": ["null", "string"] },
+      "CustomerKey": { "type": ["null", "string"] },
+      "DeliveredTime": {
           "type": ["string", "null"],
           "format": "date-time"
-        },
-        "NonTransactional": { "type": ["null", "integer"] },
-        "PartnerKey": { "type": ["null", "string"] },
-        "SendID": { "type": ["null", "integer"] },
-        "TotalSent": { "type": ["null", "integer"] },
-        "Transactional": { "type": ["null", "integer"] }
-      }
+      },
+      "IsTestAccount": { "type": ["null", "boolean"] },
+      "CreatedDate": {
+        "type": ["string", "null"],
+        "format": "date-time"
+      },
+      "NonTransactional": { "type": ["null", "integer"] },
+      "PartnerKey": { "type": ["null", "string"] },
+      "SendID": { "type": ["integer"] },
+      "TotalSent": { "type": ["null", "integer"] },
+      "Transactional": { "type": ["null", "integer"] }
+    }
 }
