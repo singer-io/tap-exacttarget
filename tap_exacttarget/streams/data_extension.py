@@ -25,3 +25,11 @@ class DataExtension(IncrementalStream):
             q_fields.remove("IsPlatformObject")
         LOGGER.info("Objtype: %s fields: %s", self.object_ref, q_fields)
         return q_fields
+
+    def transform_record(self, obj):
+        obj = super().transform_record(obj)
+        obj['Template'] = obj.get('Template', {}).get('CustomerKey')
+        obj['SendableDataExtensionField'] = obj.get('SendableDataExtensionField', {}).get('Name')
+        obj['SendableSubscriberField'] = obj.get('SendableSubscriberField', {}).get('Name')
+
+        return obj

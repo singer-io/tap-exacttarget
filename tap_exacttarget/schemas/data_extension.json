@@ -46,28 +46,13 @@
       "type": ["null", "boolean"]
     },
     "SendableDataExtensionField": {
-      "type": ["null", "object"],
-      "properties": {
-        "Name": {
-          "type": ["null", "string"]
-        }
-      }
+     "type": ["null", "string"]
     },
     "Template": {
-      "type": ["null", "object"],
-      "properties": {
-        "CustomerKey": {
-          "type": ["null", "string"]
-        }
-      }
+      "type": ["null", "string"]
     },
     "SendableSubscriberField": {
-      "type": ["null", "object"],
-      "properties": {
-        "Name": {
-          "type": ["null", "string"]
-        }
-      }
+     "type": ["null", "string"]
     },
     "Status": {
       "type": ["null", "string"]
