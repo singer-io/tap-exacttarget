@@ -1,3 +1,4 @@
+import re
 from singer import get_logger
 
 from tap_exacttarget.client import Client
@@ -94,7 +95,8 @@ def discover_dao_streams(client: Client):
             category_id = item["CategoryID"]
 
             stream_name = item["Name"]
-            stream_id = f"data_extension_{stream_name}".lower()
+            stream_name_sanitized = re.sub(r'[^a-zA-Z0-9]+', '_', stream_name).strip('_').lower()
+            stream_id = f"data_extension_{stream_name_sanitized}"
             stream_fields = discovered_fields.get(customer_key, {})
 
             key_props = ["_CustomObjectKey"] + stream_fields.get("key_properties", [])
