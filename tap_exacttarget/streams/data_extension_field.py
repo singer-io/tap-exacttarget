@@ -14,3 +14,9 @@ class DataExtensionField(FullTableStream):
     key_properties = ["ObjectID"]
     replication_key = "ModifiedDate"
     valid_replication_keys = ["ModifiedDate"]
+
+    def transform_record(self, obj):
+        obj = super().transform_record(obj)
+        obj['DataExtension'] = obj.get('DataExtension', {}).get('CustomerKey')
+
+        return obj

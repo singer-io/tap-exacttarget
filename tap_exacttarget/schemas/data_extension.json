@@ -1,77 +1,76 @@
 {
-    "type": "object",
-    "properties": {
-      "CategoryID": {
-        "type": ["null", "integer"]
-      },
-      "CreatedDate": {
-        "type": ["string", "null"],
-        "format": "date-time"
-      },
-      "CustomerKey": {
-        "type": "string"
-      },
-      "DataRetentionPeriodLength": {
-        "type": ["null", "integer"]
-      },
-      "DeleteAtEndOfRetentionPeriod": {
-        "type": ["null", "boolean"]
-      },
-      "Description": {
-        "type": ["null", "string"]
-      },
-      "Fields": {
-        "type": ["null", "array"],
-        "items": {
-          "type": "object"
+  "type": "object",
+  "properties": {
+    "CategoryID": {
+      "type": ["null", "integer"]
+    },
+    "CreatedDate": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "CustomerKey": {
+      "type": "string"
+    },
+    "DataRetentionPeriodLength": {
+      "type": ["null", "integer"]
+    },
+    "DeleteAtEndOfRetentionPeriod": {
+      "type": ["null", "boolean"]
+    },
+    "Description": {
+      "type": ["null", "string"]
+    },
+    "IsSendable": {
+      "type": ["null", "boolean"]
+    },
+    "IsTestable": {
+      "type": ["null", "boolean"]
+    },
+    "ModifiedDate": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "Name": {
+      "type": ["null", "string"]
+    },
+    "PartnerKey": {
+      "type": ["null", "string"]
+    },
+    "ResetRetentionPeriodOnImport": {
+      "type": ["null", "boolean"]
+    },
+    "RetainUntil": {
+      "type": ["null", "string"]
+    },
+    "RowBasedRetention": {
+      "type": ["null", "boolean"]
+    },
+    "SendableDataExtensionField": {
+      "type": ["null", "object"],
+      "properties": {
+        "Name": {
+          "type": ["null", "string"]
         }
-      },
-      "IsSendable": {
-        "type": ["null", "boolean"]
-      },
-      "IsTestable": {
-        "type": ["null", "boolean"]
-      },
-      "ModifiedDate": {
-        "type": ["string", "null"],
-        "format": "date-time"
-      },
-      "Name": {
-        "type": ["null", "string"]
-      },
-      "PartnerKey": {
-        "type": ["null", "string"]
-      },
-      "ResetRetentionPeriodOnImport": {
-        "type": ["null", "boolean"]
-      },
-      "RetainUntil": {
-        "type": ["null", "string"]
-      },
-      "RowBasedRetention": {
-        "type": ["null", "boolean"]
-      },
-      "SendableDataExtensionField": {
-        "type": ["null", "object"],
-        "properties": {
-          "Name": {
-            "type": ["null", "string"]
-          }
-        }
-      },
-      "Template": {
-        "type": ["null", "object"],
-        "properties": {
-          "CustomerKey": {
-            "type": ["null", "string"]
-          }
-        }
-      },
-      "SendableSubscriberField": {
-        "type": ["null", "object"]
-      },
-      "Status": {
-        "type": ["null", "string"]
       }
+    },
+    "Template": {
+      "type": ["null", "object"],
+      "properties": {
+        "CustomerKey": {
+          "type": ["null", "string"]
+        }
+      }
+    },
+    "SendableSubscriberField": {
+      "type": ["null", "object"],
+      "properties": {
+        "Name": {
+          "type": ["null", "string"]
+        }
+      }
+    },
+    "Status": {
+      "type": ["null", "string"]
     }
+  }
 }

@@ -246,6 +246,8 @@ class IncrementalStream(BaseStream):
         """Performs Pagination and query building."""
 
         query_fields = self.get_query_fields(stream_metadata, schema)
+        # Forces records with null replication key values to be fetched
+        fetch_null = True
         for start_dt, end_dt in self.create_date_windows(
             start_date, now().astimezone(tz=fixed_cst), self.client.date_window
         ):
@@ -256,6 +258,14 @@ class IncrementalStream(BaseStream):
                 self.replication_key, "lessThanOrEqual", date_value=end_dt
             )
             date_range = self.client.create_complex_filter(start_date, "AND", end_date)
+
+
+            if fetch_null:
+                null_filter = self.client.create_simple_filter(
+                self.replication_key, "isNull", value=None
+                )
+                date_range = self.client.create_complex_filter(date_range, "OR", null_filter)
+                fetch_null = False
 
             next_page = True
             request_id = None
@@ -297,9 +307,10 @@ class IncrementalStream(BaseStream):
             if record[self.replication_key]:
                 record_timestamp = strptime_to_cst(record[self.replication_key])
                 record[self.replication_key] = record_timestamp.isoformat()
-                transformed_record = transformer.transform(record, schema, stream_metadata)
-                write_record(self.tap_stream_id, transformed_record)
-                records_processed += 1
+
+            transformed_record = transformer.transform(record, schema, stream_metadata)
+            write_record(self.tap_stream_id, transformed_record)
+            records_processed += 1
 
             if record_timestamp:
                 current_max_bookmark_date = max(current_max_bookmark_date, record_timestamp)

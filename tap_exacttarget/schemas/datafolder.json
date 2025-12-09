@@ -69,11 +69,8 @@
       ]
     },
     "ParentFolder": {
-      "type": [
-        "null",
-        "object"
-      ]
-    },
+        "type": ["null", "integer"]
+      },
     "PartnerProperties": {
       "type": "array",
       "items": {

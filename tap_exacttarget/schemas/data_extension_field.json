@@ -8,12 +8,7 @@
         "type": ["null", "string"]
       },
       "DataExtension": {
-        "type": ["null", "object"],
-        "properties":{
-          "CustomerKey": {
-            "type": ["null", "string"]
-          }
-        }
+        "type": ["null", "string"]
       },
       "DefaultValue": {
         "type": ["null", "string"]
