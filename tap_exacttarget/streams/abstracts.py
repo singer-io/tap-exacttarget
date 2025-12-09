@@ -288,7 +288,8 @@ class IncrementalStream(BaseStream):
                     next_page = False
 
                 for rec in raw_records:
-                    yield self.transform_record(rec)
+                    if (transformed := self.transform_record(rec)):
+                        yield transformed
 
     def sync(
         self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer
