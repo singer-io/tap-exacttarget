@@ -276,7 +276,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        stream_id = "data_extension_test-extension_with$special!chars"
+        stream_id = "data_extension_test_extension_with_special_chars"
         self.assertIn(stream_id, result)
 
         # Verify the class was created successfully despite special chars
