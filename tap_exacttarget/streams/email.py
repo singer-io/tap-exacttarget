@@ -21,10 +21,10 @@ class Email(IncrementalStream):
 
         content_area_ids = []
 
-        for content_area in obj.get("ContentAreas", []):
+        for content_area in (obj.get("ContentAreas") or []):
             content_area_ids.append(content_area.get("ID"))
 
-        obj["EmailID"] = obj.get("Email", {}).get("ID")
+        obj["EmailID"] = (obj.get("Email") or {}).get("ID")
         obj["ContentAreaIDs"] = content_area_ids
 
         return obj

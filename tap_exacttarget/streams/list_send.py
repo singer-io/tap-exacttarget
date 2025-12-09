@@ -15,5 +15,5 @@ class ListSend(FullTableStream):
 
     def transform_record(self, obj: Dict):
         obj = super().transform_record(obj)
-        obj["ListID"] = obj.get("List", {}).get("ID")
+        obj["ListID"] = (obj.get("List") or {}).get("ID")
         return obj

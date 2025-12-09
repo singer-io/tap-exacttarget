@@ -17,6 +17,5 @@ class DataFolder(IncrementalStream):
 
     def transform_record(self, obj):
         obj = super().transform_record(obj)
-        obj['ParentFolder'] = obj.get('ParentFolder', {}).get('ID')
-
+        obj['ParentFolder'] = (obj.get('ParentFolder') or {}).get('ID')
         return obj

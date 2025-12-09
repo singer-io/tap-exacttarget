@@ -28,8 +28,8 @@ class DataExtension(IncrementalStream):
 
     def transform_record(self, obj):
         obj = super().transform_record(obj)
-        obj['Template'] = obj.get('Template', {}).get('CustomerKey')
-        obj['SendableDataExtensionField'] = obj.get('SendableDataExtensionField', {}).get('Name')
-        obj['SendableSubscriberField'] = obj.get('SendableSubscriberField', {}).get('Name')
+        obj['Template'] = (obj.get('Template') or {}).get('CustomerKey')
+        obj['SendableDataExtensionField'] = (obj.get('SendableDataExtensionField') or {}).get('Name')
+        obj['SendableSubscriberField'] = (obj.get('SendableSubscriberField') or {}).get('Name')
 
         return obj

@@ -17,6 +17,6 @@ class DataExtensionField(FullTableStream):
 
     def transform_record(self, obj):
         obj = super().transform_record(obj)
-        obj['DataExtension'] = obj.get('DataExtension', {}).get('CustomerKey')
+        obj['DataExtension'] = (obj.get('DataExtension') or {}).get('CustomerKey')
 
         return obj
