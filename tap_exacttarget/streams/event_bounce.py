@@ -1,9 +1,5 @@
-from datetime import datetime
 from tap_exacttarget.client import Client
-from tap_exacttarget.streams.abstracts import IncrementalStream, strptime_to_cst, fixed_cst
-from singer import get_logger, write_record
-
-LOGGER = get_logger()
+from tap_exacttarget.streams.abstracts import IncrementalStream
 
 
 class BounceEvent(IncrementalStream):
