@@ -112,6 +112,7 @@ class BaseStream(ABC):
         self.metadata = metadata
         self.schema = schema
         self.stream_metadata = metadata.get(()) or {}
+        self.query_fields = None
 
     def get_available_fields(self):
         """Provides selectable fields for each stream."""
@@ -246,7 +247,7 @@ class IncrementalStream(BaseStream):
         """Performs Pagination and query building."""
 
         query_fields = self.get_query_fields(stream_metadata, schema)
-
+        self.query_fields = query_fields
         for start_dt, end_dt in self.create_date_windows(
             start_date, now().astimezone(tz=fixed_cst), self.client.date_window
         ):

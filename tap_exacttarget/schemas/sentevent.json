@@ -1,7 +1,7 @@
 {
   "type": "object",
   "properties": {
-    "SendID": {
+    "BatchID": {
       "type": [
         "null",
         "integer"
@@ -20,26 +20,38 @@
         "string"
       ]
     },
-    "BatchID": {
+    "ListID": {
       "type": [
         "null",
         "integer"
       ]
     },
-    "CorrelationID": {
+    "PartnerKey": {
       "type": [
         "null",
         "string"
       ]
     },
-    "URL": {
+    "SendID": {
       "type": [
         "null",
-        "string"
+        "integer"
+      ]
+    },
+    "SubscriberID": {
+      "type": [
+        "null",
+        "integer"
       ]
     },
     "SubscriberKey": {
       "type": [
+        "string"
+      ]
+    },
+    "TriggeredSendDefinitionObjectID": {
+      "type": [
+        "null",
         "string"
       ]
     }

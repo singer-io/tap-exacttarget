@@ -16,5 +16,9 @@ class SentEvent(IncrementalStream):
 
     def transform_record(self, obj):
         obj = super().transform_record(obj)
+
+        for item in (obj.get('PartnerProperties') or []):
+            obj[item["Name"]] = item["Value"]
+
         if obj['SubscriberKey'] is not None:
             return obj
