@@ -26,6 +26,12 @@
         "integer"
       ]
     },
+    "ListID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
     "TriggeredSendDefinitionObjectID": {
       "type": [
         "null",
@@ -56,6 +62,18 @@
           }
         }
       }
+    },
+    "SubscriberID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PartnerKey": {
+      "type": [
+        "null",
+        "string"
+      ]
     }
   }
 }

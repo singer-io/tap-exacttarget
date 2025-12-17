@@ -15,5 +15,7 @@ class UnsubEvent(IncrementalStream):
 
     def transform_record(self, obj):
         obj = super().transform_record(obj)
+
+        obj['ListID'] = (obj.get('List') or {}).get('ID')
         if obj['SubscriberKey'] is not None:
             return obj

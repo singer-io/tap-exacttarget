@@ -26,6 +26,26 @@
         "integer"
       ]
     },
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
     "PartnerKey": {
       "type": [
         "null",
