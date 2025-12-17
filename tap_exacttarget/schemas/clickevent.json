@@ -1,6 +1,12 @@
 {
   "type": "object",
   "properties": {
+    "ID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
     "SendID": {
       "type": [
         "null",
@@ -26,12 +32,6 @@
         "integer"
       ]
     },
-    "CorrelationID": {
-      "type": [
-        "null",
-        "string"
-      ]
-    },
     "URL": {
       "type": [
         "null",
@@ -41,6 +41,38 @@
     "SubscriberKey": {
       "type": [
         "string"
+      ]
+    },
+    "CreatedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "ModifiedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "URLID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+     "TriggeredSendDefinitionObjectID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PartnerKey": {
+      "type": [
+        "null",
+        "integer"
       ]
     }
   }
