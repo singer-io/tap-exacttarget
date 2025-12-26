@@ -217,9 +217,6 @@ class Client:
         if "Error: API Permission Failed" in response["OverallStatus"]:
             raise MarketingCloudPermissionFailure(response["OverallStatus"])
 
-        if "Error" in response["OverallStatus"]:
-            raise MarketingCloudError(response["OverallStatus"])
-
     @backoff.on_exception(
         backoff.expo,
         (ConnectionError, Timeout, HTTPError, RequestException),
