@@ -21,6 +21,9 @@ class SentEvent(IncrementalStream):
         "BatchID", "ListID", "PartnerProperties", "PartnerKey",
         "SubscriberID", "TriggeredSendDefinitionObjectID"
     }
+    
+    # Regex pattern for validating property names (compiled once for performance)
+    NAME_PATTERN = re.compile(r'^[a-zA-Z0-9_-]+$')
 
     def transform_record(self, obj):
         obj = super().transform_record(obj)
@@ -37,13 +40,14 @@ class SentEvent(IncrementalStream):
                 name = item.get("Name")
                 value = item.get("Value")
                 
-                if not name:
+                # Skip if name is None or empty string
+                if name is None or name == '':
                     continue
                 
                 # Sanitize property name - only allow alphanumeric, underscore, and dash
                 # Convert to string in case it's not already
                 name_str = str(name)
-                if not re.match(r'^[a-zA-Z0-9_-]+$', name_str):
+                if not self.NAME_PATTERN.match(name_str):
                     # Skip properties with invalid characters
                     continue
                 
