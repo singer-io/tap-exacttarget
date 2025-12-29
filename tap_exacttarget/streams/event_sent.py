@@ -30,7 +30,7 @@ class SentEvent(IncrementalStream):
 
         # Validate and process PartnerProperties
         partner_properties = obj.get('PartnerProperties')
-        if partner_properties and isinstance(partner_properties, list):
+        if partner_properties is not None and isinstance(partner_properties, list):
             for item in partner_properties:
                 # Validate item structure
                 if not isinstance(item, dict):
