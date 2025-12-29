@@ -69,7 +69,8 @@
         "string"
       ],
       "format": "date-time"
-    },"ModifiedDate": {
+    },
+    "ModifiedDate": {
       "type": [
         "null",
         "string"
