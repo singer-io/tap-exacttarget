@@ -14,6 +14,26 @@
       ],
       "format": "date-time"
     },
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
     "EventType": {
       "type": [
         "null",
@@ -26,22 +46,52 @@
         "integer"
       ]
     },
-    "CorrelationID": {
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    "URL": {
-      "type": [
-        "null",
-        "string"
-      ]
-    },
     "SubscriberKey": {
       "type": [
+        "string"
+      ]
+    },
+    "ID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "CreatedDate": {
+      "type": [
         "null",
         "string"
+      ],
+      "format": "date-time"
+    },"ModifiedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+     "TriggeredSendDefinitionObjectID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PartnerKey": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "IsMasterUnsubscribed": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "ListID": {
+      "type": [
+        "null",
+        "integer"
       ]
     }
   }

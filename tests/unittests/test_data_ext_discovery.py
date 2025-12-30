@@ -764,8 +764,8 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
 
-        self.assertIn("data_extension_test extension!@# 123", result)
-        stream_class = result["data_extension_test extension!@# 123"]
+        self.assertIn("data_extension_test_extension_123", result)
+        stream_class = result["data_extension_test_extension_123"]
         self.assertEqual(stream_class.__name__, "DataExtensionObjStreamtestextension123")
 
     @patch("tap_exacttarget.discover_dataextensionobj.discover_fields")

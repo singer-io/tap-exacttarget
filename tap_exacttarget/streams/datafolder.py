@@ -14,3 +14,8 @@ class DataFolder(IncrementalStream):
     replication_key = "ModifiedDate"
     valid_replication_keys = ["ModifiedDate"]
     config_start_key = "start_date"
+
+    def transform_record(self, obj):
+        obj = super().transform_record(obj)
+        obj['ParentFolder'] = (obj.get('ParentFolder') or {}).get('ID')
+        return obj

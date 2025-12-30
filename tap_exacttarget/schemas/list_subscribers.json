@@ -62,7 +62,6 @@
     },
     "SubscriberKey": {
       "type": [
-        "null",
         "string"
       ]
     }

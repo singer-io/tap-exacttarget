@@ -23,7 +23,7 @@ class Subscribers(FullTableStream):
         obj = super().transform_record(obj)
 
         if obj["Lists"]:
-            obj["ListIDs"] = [_list.get("ObjectID") for _list in obj.get("Lists", [])]
+            obj["ListIDs"] = [_list.get("ObjectID") for _list in (obj.get("Lists") or [])]
         return obj
 
     def filter_records(self, parent_id_list):

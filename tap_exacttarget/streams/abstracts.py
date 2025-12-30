@@ -112,15 +112,19 @@ class BaseStream(ABC):
         self.metadata = metadata
         self.schema = schema
         self.stream_metadata = metadata.get(()) or {}
+        self.query_fields = None
 
     def get_available_fields(self):
         """Provides selectable fields for each stream."""
-        is_retrievable = []
+        is_retrievable, non_retrievable = [], []
         obj_defs = self.client.describe_request(self.object_ref)
         schema = obj_defs["ObjectDefinition"][0]
         for prop in schema["Properties"]:
             if prop["IsRetrievable"]:
                 is_retrievable.append(prop["Name"])
+            else:
+                non_retrievable.append(prop["Name"])
+        LOGGER.info("Objtype: %s not-available properties: %s", self.object_ref, non_retrievable)
         return is_retrievable
 
     def get_query_fields(self, *args, **kwargs):
@@ -243,6 +247,7 @@ class IncrementalStream(BaseStream):
         """Performs Pagination and query building."""
 
         query_fields = self.get_query_fields(stream_metadata, schema)
+        self.query_fields = query_fields
         for start_dt, end_dt in self.create_date_windows(
             start_date, now().astimezone(tz=fixed_cst), self.client.date_window
         ):
@@ -275,7 +280,8 @@ class IncrementalStream(BaseStream):
                     next_page = False
 
                 for rec in raw_records:
-                    yield self.transform_record(rec)
+                    if (transformed := self.transform_record(rec)):
+                        yield transformed
 
     def sync(
         self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer
@@ -294,9 +300,10 @@ class IncrementalStream(BaseStream):
             if record[self.replication_key]:
                 record_timestamp = strptime_to_cst(record[self.replication_key])
                 record[self.replication_key] = record_timestamp.isoformat()
-                transformed_record = transformer.transform(record, schema, stream_metadata)
-                write_record(self.tap_stream_id, transformed_record)
-                records_processed += 1
+
+            transformed_record = transformer.transform(record, schema, stream_metadata)
+            write_record(self.tap_stream_id, transformed_record)
+            records_processed += 1
 
             if record_timestamp:
                 current_max_bookmark_date = max(current_max_bookmark_date, record_timestamp)

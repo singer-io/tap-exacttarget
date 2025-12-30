@@ -32,10 +32,13 @@ class DataExtensionObjectBase:
                     selected_fields.append(key[1])
 
         query_fields = []
+
         for field in selected_fields:
             if field in available_fields and field != "CategoryID":
                 query_fields.append(field)
+
         LOGGER.info("Objtype: %s fields: %s", self.object_ref, query_fields)
+
         return query_fields
 
     def transform_record(self, obj: Dict):

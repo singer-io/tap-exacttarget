@@ -1,7 +1,7 @@
 {
   "type": "object",
   "properties": {
-    "SendID": {
+    "BatchID": {
       "type": [
         "null",
         "integer"
@@ -20,25 +20,56 @@
         "string"
       ]
     },
-    "BatchID": {
+    "ListID": {
       "type": [
         "null",
         "integer"
       ]
     },
-    "CorrelationID": {
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
+    "PartnerKey": {
       "type": [
         "null",
         "string"
       ]
     },
-    "URL": {
+    "SendID": {
       "type": [
         "null",
-        "string"
+        "integer"
+      ]
+    },
+    "SubscriberID": {
+      "type": [
+        "null",
+        "integer"
       ]
     },
     "SubscriberKey": {
+      "type": [
+        "string"
+      ]
+    },
+    "TriggeredSendDefinitionObjectID": {
       "type": [
         "null",
         "string"

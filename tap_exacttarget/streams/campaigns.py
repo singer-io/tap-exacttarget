@@ -22,7 +22,7 @@ class Campaigns(FullTableStream):
     def get_records(self, stream_metadata: Dict, schema: Dict):
 
         next_page = True
-        pagesize = 2
+        pagesize = 25
         params = {}
         while next_page:
 

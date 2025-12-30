@@ -1,7 +1,6 @@
 from tap_exacttarget.client import Client
 from tap_exacttarget.streams.abstracts import IncrementalStream
 
-
 class UnsubEvent(IncrementalStream):
     """Class for Unsub Event stream."""
 
@@ -13,3 +12,10 @@ class UnsubEvent(IncrementalStream):
     key_properties = ["SendID", "EventType", "SubscriberKey", "EventDate"]
     replication_key = "EventDate"
     valid_replication_keys = ["EventDate"]
+
+    def transform_record(self, obj):
+        obj = super().transform_record(obj)
+
+        obj['ListID'] = (obj.get('List') or {}).get('ID')
+        if obj['SubscriberKey'] is not None:
+            return obj

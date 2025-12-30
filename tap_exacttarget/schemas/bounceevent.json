@@ -7,6 +7,32 @@
         "integer"
       ]
     },
+    "ID": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "PartnerProperties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    },
     "EventDate": {
       "type": [
         "null",
@@ -26,22 +52,59 @@
         "integer"
       ]
     },
-    "CorrelationID": {
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    "URL": {
-      "type": [
-        "null",
-        "string"
-      ]
-    },
     "SubscriberKey": {
       "type": [
+        "string"
+      ]
+    },
+    "CreatedDate": {
+      "type": [
         "null",
         "string"
+      ],
+      "format": "date-time"
+    },
+    "ModifiedDate": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "SMTPCode": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SMTPReason": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "BounceCategory": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "BounceType": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "TriggeredSendDefinitionObjectID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PartnerKey": {
+      "type": [
+        "null",
+        "integer"
       ]
     }
   }
