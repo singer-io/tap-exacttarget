@@ -569,13 +569,13 @@ class TestDiscoverDaoStreams(unittest.TestCase):
                 "valid_replication_keys": [
                     "ModifiedDate",
                     "EventDate",
-                    "EventDateTime",
+                    "EventDatetime",
                 ],
                 "properties": {
                     "Id": {"type": ["null", "integer"]},
                     "ModifiedDate": {"type": ["null", "string"]},
                     "EventDate": {"type": ["null", "string"]},
-                    "EventDateTime": {"type": ["null", "string"]},
+                    "EventDatetime": {"type": ["null", "string"]},
                 },
             }
         }
