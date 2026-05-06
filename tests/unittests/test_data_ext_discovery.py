@@ -589,7 +589,7 @@ class TestDiscoverDaoStreams(unittest.TestCase):
 
         result = discover_dao_streams(mock_client)
         stream_class = result["data_extension_eventext"]
-        self.assertEqual(stream_class.replication_key, "EventDateTime")
+        self.assertEqual(stream_class.replication_key, "EventDatetime")
 
     @patch("tap_exacttarget.discover_dataextensionobj.discover_fields")
     def test_replication_key_priority_join_date_second(self, mock_discover_fields):
