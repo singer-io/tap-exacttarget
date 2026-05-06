@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 from datetime import date, datetime, time, timedelta, timezone
 from typing import Any, Dict, List, Tuple
 
+from tap_exacttarget.exceptions import MarketingCloudError
+
 import dateutil.parser
 from singer import Transformer, get_bookmark, get_logger, write_bookmark, write_record
 from singer.metadata import get_standard_metadata, to_list, to_map, write
@@ -243,45 +245,83 @@ class IncrementalStream(BaseStream):
                 break
         return export_batches
 
+    def _build_search_filter(self, start_dt, end_dt, include_null=False):
+        """Build a date range search filter with optional null records."""
+        start_filter = self.client.create_simple_filter(
+            self.replication_key, "greaterThanOrEqual", date_value=start_dt
+        )
+        end_filter = self.client.create_simple_filter(
+            self.replication_key, "lessThanOrEqual", date_value=end_dt
+        )
+        search_filter = self.client.create_complex_filter(start_filter, "AND", end_filter)
+
+        if include_null:
+            null_filter = self.client.create_simple_filter(
+                self.replication_key, "isNull", value=None
+            )
+            search_filter = self.client.create_complex_filter(search_filter, "OR", null_filter)
+
+        return search_filter
+
+    def _fetch_paginated_records(self, query_fields, search_filter, start_dt, end_dt, include_null=False):
+        """Fetch records with pagination and null filter error retry logic."""
+        next_page = True
+        request_id = None
+
+        while next_page:
+            try:
+                response = self.client.retrieve_request(
+                    self.object_ref, query_fields, request_id=request_id, search_filter=search_filter
+                )
+            except MarketingCloudError as e:
+                if include_null and "Value cannot be null" in str(e):
+                    LOGGER.warning(
+                        "Query with isNull filter failed for %s, retrying without null filter.",
+                        self.object_ref,
+                    )
+                    search_filter = self._build_search_filter(start_dt, end_dt, include_null=False)
+                    response = self.client.retrieve_request(
+                        self.object_ref, query_fields, request_id=request_id, search_filter=search_filter
+                    )
+                else:
+                    raise
+
+            raw_records = response["Results"]
+            request_id = response["RequestID"]
+
+            if response["OverallStatus"] != "MoreDataAvailable":
+                if "Error" in response["OverallStatus"]:
+                    LOGGER.info(
+                        "Req Failed: %s %s %s",
+                        self.object_ref,
+                        query_fields,
+                        response["OverallStatus"],
+                    )
+                next_page = False
+
+            for rec in raw_records:
+                if (transformed := self.transform_record(rec)):
+                    yield transformed
+
     def get_records(self, start_date, stream_metadata, schema):
         """Performs Pagination and query building."""
-
+        fetch_null = True
         query_fields = self.get_query_fields(stream_metadata, schema)
         self.query_fields = query_fields
+
         for start_dt, end_dt in self.create_date_windows(
             start_date, now().astimezone(tz=fixed_cst), self.client.date_window
         ):
-            start_date = self.client.create_simple_filter(
-                self.replication_key, "greaterThanOrEqual", date_value=start_dt
-            )
-            end_date = self.client.create_simple_filter(
-                self.replication_key, "lessThanOrEqual", date_value=end_dt
-            )
-            date_range = self.client.create_complex_filter(start_date, "AND", end_date)
+            search_filter = self._build_search_filter(start_dt, end_dt, include_null=fetch_null)
 
-            next_page = True
-            request_id = None
-            while next_page:
+            for record in self._fetch_paginated_records(
+                query_fields, search_filter, start_dt, end_dt, include_null=fetch_null
+            ):
+                yield record
 
-                response = self.client.retrieve_request(
-                    self.object_ref, query_fields, request_id=request_id, search_filter=date_range
-                )
-                raw_records = response["Results"]
-                request_id = response["RequestID"]
-
-                if response["OverallStatus"] != "MoreDataAvailable":
-                    if "Error" in response["OverallStatus"]:
-                        LOGGER.info(
-                            "Req Failed: %s %s %s",
-                            self.object_ref,
-                            query_fields,
-                            response["OverallStatus"],
-                        )
-                    next_page = False
-
-                for rec in raw_records:
-                    if (transformed := self.transform_record(rec)):
-                        yield transformed
+            # Only include null filter on first window
+            if fetch_null:
+                fetch_null = False
 
     def sync(
         self, state: Dict, schema: Dict, stream_metadata: Dict, transformer: Transformer
