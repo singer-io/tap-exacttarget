@@ -58,7 +58,7 @@ def discover_fields(client: Client):
         if field["IsPrimaryKey"]:
             stream_field_data["key_properties"].append(field_name)
 
-        if field_name in supported_repl_keys:
+        if field_name in supported_repl_keys or field["FieldType"] == "Date":
             stream_field_data["valid_replication_keys"].append(field_name)
 
         stream_field_data["properties"][field_name] = detect_field_schema(field)
@@ -112,13 +112,13 @@ def discover_dao_streams(client: Client):
                 },
             }
 
-            # Modified Date is the preferred replication key
-            # Maintaining original sequence of the key picking order
+            # Preferred replication keys are checked first (in order).
+            # Falls back to any available date field if none of the preferred keys exist.
             replication_key = next(
                 (
                     key for key in supported_repl_keys if key in repl_keys
                 ),
-                None,
+                next(iter(repl_keys), None),
             )
 
             #  Sanitize the stream name to create a valid Python class name by removing special characters.
