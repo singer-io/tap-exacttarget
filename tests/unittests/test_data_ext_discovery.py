@@ -562,6 +562,36 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         self.assertEqual(stream_class.replication_key, "ModifiedDate")
 
     @patch("tap_exacttarget.discover_dataextensionobj.discover_fields")
+    def test_replication_key_priority_event_datetime_first(self, mock_discover_fields):
+        mock_discover_fields.return_value = {
+            "customer-key-005-a": {
+                "key_properties": ["Id"],
+                "valid_replication_keys": [
+                    "ModifiedDate",
+                    "EventDate",
+                    "EventDateTime",
+                ],
+                "properties": {
+                    "Id": {"type": ["null", "integer"]},
+                    "ModifiedDate": {"type": ["null", "string"]},
+                    "EventDate": {"type": ["null", "string"]},
+                    "EventDateTime": {"type": ["null", "string"]},
+                },
+            }
+        }
+
+        mock_client = Mock()
+        mock_client.retrieve_request.return_value = {
+            "RequestID": "req-123",
+            "OverallStatus": "OK",
+            "Results": [{"CustomerKey": "customer-key-005-a", "Name": "EventExt", "CategoryID": 100}],
+        }
+
+        result = discover_dao_streams(mock_client)
+        stream_class = result["data_extension_eventext"]
+        self.assertEqual(stream_class.replication_key, "EventDateTime")
+
+    @patch("tap_exacttarget.discover_dataextensionobj.discover_fields")
     def test_replication_key_priority_join_date_second(self, mock_discover_fields):
         mock_discover_fields.return_value = {
             "customer-key-006": {
