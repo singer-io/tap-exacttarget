@@ -15,9 +15,29 @@ field_type_mapping = {
     "Text": "string",
     "Date": "string",
 }
-supported_repl_keys = ["ModifiedDate", "JoinDate", "_ModifiedDate", "_CreatedDate"]
+supported_repl_keys = ["ModifiedDate", "JoinDate", "_ModifiedDate", "_CreatedDate", "EventDatetime", "EventDate"]
+priority_event_repl_keys = ["EventDatetime", "EventDate"]
 
 field_format = {"Decimal": "singer.decimal", "Date": "date-time"}
+
+
+def select_replication_key(repl_keys):
+    """
+    If a data_extension table has EventDatetime or EventDate
+    it is likely to be a table populated via a event
+    such tables should use EventDatetime or EventDate over
+    the regular replication keys they do not contain value for modified_at field
+    because these events are immutable in nature.
+    """
+    for event_key in priority_event_repl_keys:
+        if event_key in repl_keys:
+            return event_key
+
+    for key in supported_repl_keys:
+        if key in repl_keys:
+            return key
+
+    return next(iter(repl_keys), None)
 
 
 def detect_field_schema(field):
@@ -112,14 +132,7 @@ def discover_dao_streams(client: Client):
                 },
             }
 
-            # Modified Date is the preferred replication key
-            # Maintaining original sequence of the key picking order
-            replication_key = next(
-                (
-                    key for key in supported_repl_keys if key in repl_keys
-                ),
-                None,
-            )
+            replication_key = select_replication_key(repl_keys)
 
             #  Sanitize the stream name to create a valid Python class name by removing special characters.
             name_suffix = stream_name.strip().lower()
