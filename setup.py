@@ -13,7 +13,7 @@ setup(
     install_requires=[
         "singer-python==6.1.1",
         "zeep==4.3.1",
-        "requests==2.32.4",
+        "requests==2.33.0",
     ],
     extras_require={
         "dev": ["pylint==4.0.0", "nose2==0.15.1"],
