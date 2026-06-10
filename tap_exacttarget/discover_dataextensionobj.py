@@ -83,7 +83,7 @@ def discover_fields(client: Client):
         if field["IsPrimaryKey"]:
             stream_field_data["key_properties"].append(field_name)
 
-        if field_name in supported_repl_keys or field_name.lower() in supported_repl_keys_lower:
+        if field_name.lower() in supported_repl_keys_lower:
             stream_field_data["valid_replication_keys"].append(field_name)
 
         stream_field_data["properties"][field_name] = detect_field_schema(field)
