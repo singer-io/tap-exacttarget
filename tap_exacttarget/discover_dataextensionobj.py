@@ -72,7 +72,7 @@ def discover_fields(client: Client):
         doa_fields.extend(response["Results"])
 
     supported_repl_keys_lower = [key.lower() for key in supported_repl_keys]
-    
+
     for field in doa_fields:
         stream_id = field["DataExtension"]["CustomerKey"]
         field_name = field["Name"].strip()
