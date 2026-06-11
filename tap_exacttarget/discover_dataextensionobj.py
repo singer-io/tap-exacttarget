@@ -29,13 +29,16 @@ def select_replication_key(repl_keys):
     the regular replication keys they do not contain value for modified_at field
     because these events are immutable in nature.
     """
+    repl_keys_map = {k.lower(): k for k in repl_keys}
     for event_key in priority_event_repl_keys:
-        if event_key in repl_keys:
-            return event_key
+        event_key_lower = event_key.lower()
+        if event_key_lower in repl_keys_map:
+            return repl_keys_map[event_key_lower]
 
     for key in supported_repl_keys:
-        if key in repl_keys:
-            return key
+        key_lower = key.lower()
+        if key_lower in repl_keys_map:
+            return repl_keys_map[key_lower]
 
     return next(iter(repl_keys), None)
 
@@ -68,6 +71,8 @@ def discover_fields(client: Client):
             has_data = False
         doa_fields.extend(response["Results"])
 
+    supported_repl_keys_lower = [key.lower() for key in supported_repl_keys]
+
     for field in doa_fields:
         stream_id = field["DataExtension"]["CustomerKey"]
         field_name = field["Name"].strip()
@@ -78,7 +83,7 @@ def discover_fields(client: Client):
         if field["IsPrimaryKey"]:
             stream_field_data["key_properties"].append(field_name)
 
-        if field_name in supported_repl_keys:
+        if field_name.lower() in supported_repl_keys_lower:
             stream_field_data["valid_replication_keys"].append(field_name)
 
         stream_field_data["properties"][field_name] = detect_field_schema(field)

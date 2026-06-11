@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="tap-exacttarget",
-    version="2.2.0",
+    version="2.3.0",
     description="Singer.io tap for extracting data from the ExactTarget API",
     author="Singer.io",
     url="https://singer.io",
