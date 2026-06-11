@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.0
+ * Improve repl-key discovery for d.e streams [#110](https://github.com/singer-io/tap-exacttarget/pull/110)
+
+
 ## 2.2.0
  * Support for EventDate/Time replication keys and support for null filter [#109](https://github.com/singer-io/tap-exacttarget/pull/109)
 
