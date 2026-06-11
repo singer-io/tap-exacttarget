@@ -256,6 +256,86 @@ class TestDiscoverDaoStreams(unittest.TestCase):
         # JoinDate should be chosen over _CreatedDate
         self.assertEqual(stream_class.replication_key, "JoinDate")
 
+    def test_event_replication_key_priority(self):
+        """Test that EventDatetime/EventDate are preferred over other replication keys."""
+        mock_client = Mock()
+        mock_client.retrieve_request.side_effect = [
+            # Fields discovery with event and regular replication keys
+            {
+                "RequestID": "req-fields",
+                "OverallStatus": "OK",
+                "Results": [
+                    {
+                        "Name": "ModifiedDate",
+                        "IsPrimaryKey": False,
+                        "FieldType": "Date",
+                        "DataExtension": {"CustomerKey": "customer-key-6"},
+                    },
+                    {
+                        "Name": "EventDatetime",
+                        "IsPrimaryKey": False,
+                        "FieldType": "Date",
+                        "DataExtension": {"CustomerKey": "customer-key-6"},
+                    },
+                ],
+            },
+            # DataExtension discovery
+            {
+                "RequestID": "req-de",
+                "OverallStatus": "OK",
+                "Results": [
+                    {"CustomerKey": "customer-key-6", "Name": "EventPriorityTest", "CategoryID": 600}
+                ],
+            },
+        ]
+
+        result = discover_dao_streams(mock_client)
+        stream_class = result["data_extension_eventprioritytest"]
+        # EventDatetime should be chosen over ModifiedDate
+        self.assertEqual(stream_class.replication_key, "EventDatetime")
+
+
+    def test_event_replication_key_case_insensitivity(self):
+        """Test select_replication_key is case-insensitive and preserves original key casing for returned value.
+
+        Verifies behavior for both all-lowercase and camelCase key names in a single test.
+        """
+        # lowercase keys
+        mock_client_lower = Mock()
+        mock_client_lower.retrieve_request.side_effect = [
+            {
+                "RequestID": "req-fields",
+                "OverallStatus": "OK",
+                "Results": [
+                    {"Name": "modifieddate", "IsPrimaryKey": False, "FieldType": "Date", "DataExtension": {"CustomerKey": "customer-key-7"}},
+                    {"Name": "eventdatetime", "IsPrimaryKey": False, "FieldType": "Date", "DataExtension": {"CustomerKey": "customer-key-7"}},
+                ],
+            },
+            {"RequestID": "req-de", "OverallStatus": "OK", "Results": [{"CustomerKey": "customer-key-7", "Name": "EventCaseTestLower", "CategoryID": 700}]},
+        ]
+
+        result_lower = discover_dao_streams(mock_client_lower)
+        stream_class_lower = result_lower["data_extension_eventcasetestlower"]
+        self.assertEqual(stream_class_lower.replication_key, "eventdatetime")
+
+        # camelCase keys
+        mock_client_camel = Mock()
+        mock_client_camel.retrieve_request.side_effect = [
+            {
+                "RequestID": "req-fields",
+                "OverallStatus": "OK",
+                "Results": [
+                    {"Name": "ModifiedDate", "IsPrimaryKey": False, "FieldType": "Date", "DataExtension": {"CustomerKey": "customer-key-8"}},
+                    {"Name": "eventDatetime", "IsPrimaryKey": False, "FieldType": "Date", "DataExtension": {"CustomerKey": "customer-key-8"}},
+                ],
+            },
+            {"RequestID": "req-de", "OverallStatus": "OK", "Results": [{"CustomerKey": "customer-key-8", "Name": "EventCaseTestCamel", "CategoryID": 800}]},
+        ]
+
+        result_camel = discover_dao_streams(mock_client_camel)
+        stream_class_camel = result_camel["data_extension_eventcasetestcamel"]
+        self.assertEqual(stream_class_camel.replication_key, "eventDatetime")
+
     def test_special_characters_in_stream_name(self):
         """Test stream names with special characters are sanitized for class names."""
         mock_client = Mock()
