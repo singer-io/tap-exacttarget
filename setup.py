@@ -12,7 +12,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "singer-python==6.1.1",
-        "zeep==4.3.1",
+        "zeep==4.3.3",
         "requests==2.33.0",
     ],
     extras_require={
