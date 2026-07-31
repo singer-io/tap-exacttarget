@@ -348,7 +348,7 @@ class TestAbstractStreamHelpers(TestCase):
         stream.get_bookmark = MagicMock(return_value="2024-01-01T00:00:00Z")
         stream.get_records = MagicMock(
             return_value=[
-                {"ModifiedDate": datetime(2024, 1, 2, 10, 0, tzinfo=fixed_cst)},
+                {"ModifiedDate": "2024-01-02T10:00:00-06:00"},
                 {"ModifiedDate": "2024-01-03T09:30:00Z"},
             ]
         )
@@ -357,15 +357,27 @@ class TestAbstractStreamHelpers(TestCase):
         transformer = MagicMock()
         transformer.transform.side_effect = lambda record, schema, metadata: record
 
-        with patch("tap_exacttarget.streams.abstracts.write_record") as mock_write_record, patch(
-            "tap_exacttarget.streams.abstracts.strptime_to_cst",
-            side_effect=lambda value: value if isinstance(value, datetime) else datetime.fromisoformat(value.replace("Z", "+00:00")),
-        ):
+        with patch("tap_exacttarget.streams.abstracts.write_record") as mock_write_record:
             state = IncrementalStream.sync(stream, {}, {"properties": {}}, {}, transformer)
 
         self.assertEqual(state, {"state": "updated"})
         self.assertEqual(mock_write_record.call_count, 2)
         stream.write_bookmark.assert_called_once()
+
+    def test_sync_raises_for_datetime_replication_value(self):
+        stream = ProbeIncrementalStream(_metadata(), {"properties": {}}, self.client)
+        stream.get_bookmark = MagicMock(return_value="2024-01-01T00:00:00Z")
+        stream.get_records = MagicMock(
+            return_value=[
+                {"ModifiedDate": datetime(2024, 1, 2, 10, 0, tzinfo=fixed_cst)},
+            ]
+        )
+
+        transformer = MagicMock()
+        transformer.transform.side_effect = lambda record, schema, metadata: record
+
+        with self.assertRaises(TypeError):
+            IncrementalStream.sync(stream, {}, {"properties": {}}, {}, transformer)
 
     def test_full_table_stream_get_records_and_sync(self):
         stream = ProbeFullTableStream(_metadata(), {"properties": {}}, self.client)

@@ -16,15 +16,15 @@ setup(
         "requests==2.34.2",
     ],
     extras_require={
-        'dev': [
-            'pylint',
-            'nose2',
-            'parameterized',
-            'pytest',
-            'pytest-cov',
-            'coverage',
+        "dev": [
+            "pylint",
+            "nose2",
+            "parameterized",
+            "pytest",
+            "pytest-cov",
+            "coverage",
         ]
-      },
+    },
     entry_points={
         "console_scripts": [
             "tap-exacttarget=tap_exacttarget:main"
