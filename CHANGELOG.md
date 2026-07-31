@@ -1,7 +1,7 @@
 # Changelog
 
 ## 2.3.1
-  * Update python version 3.12 
+  * Update python version 3.12 [#112](https://github.com/singer-io/tap-exacttarget/pull/112)
 
 ## 2.3.0
  * Improve repl-key discovery for d.e streams [#110](https://github.com/singer-io/tap-exacttarget/pull/110)
