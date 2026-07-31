@@ -28,13 +28,21 @@ jobs:
           command: |
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
             mkdir -p test_output
-            pytest --cov=tap_exacttarget --cov-report=term-missing --cov-fail-under=99 --junitxml=test_output/unittests.xml tests/unittests
+            coverage run --source=tap_exacttarget -m pytest tests/unittests --junitxml=test_output/report.xml
+          when: always
+      - run:
+          name: 'Coverage Report'
+          command: |
+            source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
+            coverage report -m | tee coverage.txt
             coverage html
           when: always
       - store_test_results:
-          path: test_output
+          path: test_output/report.xml
       - store_artifacts:
           path: htmlcov
+      - store_artifacts:
+          path: coverage.txt
       # - run:
       #     name: 'Integration Tests'
       #     command: |
