@@ -34,7 +34,7 @@ jobs:
           name: 'Coverage Report'
           command: |
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
-            coverage report -m | tee coverage.txt
+            coverage report -m --fail-under=99 | tee coverage.txt
             coverage html
           when: always
       - store_test_results:
