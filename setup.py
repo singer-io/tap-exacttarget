@@ -18,8 +18,6 @@ setup(
     extras_require={
         "dev": [
             "pylint",
-            "nose2",
-            "parameterized",
             "pytest",
             "pytest-cov",
             "coverage",
