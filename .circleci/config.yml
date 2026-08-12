@@ -8,10 +8,10 @@ jobs:
       - run:
           name: 'Setup virtual env'
           command: |
-            uv venv --python 3.11 /usr/local/share/virtualenvs/tap-exacttarget
+            uv venv --python 3.12 /usr/local/share/virtualenvs/tap-exacttarget
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
-            uv pip install -U 'pip==25.2' 'setuptools==80.9.0'
-            uv pip install .[dev]
+            uv pip install -U setuptools
+            uv pip install -e .[dev]
       - run:
           name: 'JSON Validator'
           command: |
@@ -27,8 +27,22 @@ jobs:
           name: 'Unit Tests'
           command: |
             source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
-            uv pip install nose2==0.15.1
-            nose2  tests.unittests
+            mkdir -p test_output
+            coverage run --source=tap_exacttarget -m pytest tests/unittests --junitxml=test_output/report.xml
+          when: always
+      - run:
+          name: 'Coverage Report'
+          command: |
+            source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
+            coverage report -m --fail-under=99
+            coverage html
+          when: always
+      - store_test_results:
+          path: test_output
+      - store_artifacts:
+          path: htmlcov
+      - store_artifacts:
+          path: coverage.txt
       # - run:
       #     name: 'Integration Tests'
       #     command: |
