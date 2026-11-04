@@ -43,6 +43,12 @@ jobs:
           path: htmlcov
       - store_artifacts:
           path: coverage.txt
+      - run:
+          name: 'Mocked Integration Tests'
+          command: |
+            source /usr/local/share/virtualenvs/tap-exacttarget/bin/activate
+            pytest tests/mockedtests
+          when: always
       # - run:
       #     name: 'Integration Tests'
       #     command: |
