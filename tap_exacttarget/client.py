@@ -23,6 +23,15 @@ DEFAULT_TIMEOUT = 300
 TOKEN_EXPIRY_BUFFER = 500
 
 
+def is_non_retryable_http_error(err):
+    """Return True for HTTP errors that should not be retried."""
+    return (
+        isinstance(err, HTTPError)
+        and err.response is not None
+        and err.response.status_code == 403
+    )
+
+
 class Client:
 
     batch_size = 2500
@@ -230,6 +239,7 @@ class Client:
     @backoff.on_exception(
         backoff.expo,
         (ConnectionError, Timeout, HTTPError, RequestException),
+        giveup=is_non_retryable_http_error,
         max_tries=5,
         max_time=300,
     )

@@ -175,3 +175,42 @@ class TestSyncDataExtensionPermissionHandling(TestCase):
                 sync_module.sync(MagicMock(), catalog, state)
 
         mock_write_schema.assert_not_called()
+
+    @patch("tap_exacttarget.sync.singer.write_schema")
+    @patch("tap_exacttarget.sync.singer.write_state")
+    @patch("tap_exacttarget.sync.singer.set_currently_syncing")
+    @patch("tap_exacttarget.sync.singer.metadata.to_map", side_effect=lambda metadata: metadata)
+    @patch("tap_exacttarget.sync.singer.Transformer")
+    def test_sync_skips_failed_stream_id_even_if_stale_stream_registry_entry_exists(
+        self, mock_transformer_cls, mock_to_map, mock_set_currently_syncing, mock_write_state, mock_write_schema
+    ):
+        """If a stream ID is already marked failed, sync() must skip it before
+        consulting STREAMS, so stale registry entries are not instantiated."""
+        state = {"bookmarks": {}}
+        dao_stream_id = f"{DATA_EXTENSION_STREAM_PREFIX}foo"
+        campaigns_item = _stream_item("campaigns")
+        dao_item = _stream_item(dao_stream_id)
+        catalog = CatalogMock([campaigns_item, dao_item])
+
+        campaigns_stream = MagicMock(key_properties=["id"], replication_key=None, tap_stream_id="campaigns")
+        stale_stream_factory = Mock(side_effect=MarketingCloudPermissionFailure("stale unauthorized stream"))
+
+        mock_transformer = MagicMock()
+        mock_transformer.__enter__.return_value = mock_transformer
+        mock_transformer_cls.return_value = mock_transformer
+        mock_set_currently_syncing.side_effect = lambda current_state, syncing: current_state
+
+        with patch.object(
+            sync_module,
+            "discover_dao_streams",
+            side_effect=MarketingCloudPermissionFailure("no access to Data Extensions"),
+        ):
+            with patch.dict(
+                sync_module.STREAMS,
+                {"campaigns": Mock(return_value=campaigns_stream), dao_stream_id: stale_stream_factory},
+                clear=False,
+            ):
+                sync_module.sync(MagicMock(), catalog, state)
+
+        campaigns_stream.sync.assert_called_once()
+        stale_stream_factory.assert_not_called()

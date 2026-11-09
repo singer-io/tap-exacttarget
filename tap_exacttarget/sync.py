@@ -85,13 +85,14 @@ def sync(client, catalog: singer.Catalog, state: Dict):
 
         stream_metadata = singer.metadata.to_map(stream.metadata)
 
+        if any(stream_id == tap_stream_id for stream_id, _ in failed_streams):
+            continue
+
         if tap_stream_id == "subscribers":
             continue
 
         if tap_stream_id not in STREAMS:
-            if not any(stream_id == tap_stream_id for stream_id, _ in failed_streams):
-                raise KeyError(f"Selected stream '{tap_stream_id}' is unavailable after discovery")
-            continue
+            raise KeyError(f"Selected stream '{tap_stream_id}' is unavailable after discovery")
 
         stream_obj = STREAMS[tap_stream_id](stream_metadata, stream_schema, client)
 
