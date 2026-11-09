@@ -1,10 +1,12 @@
 from requests.exceptions import ConnectionError, RequestException, HTTPError, Timeout
+from unittest.mock import Mock, patch
 from zeep.exceptions import TransportError, Fault
 from tap_exacttarget.exceptions import (
     IncompatibleFieldSelectionError,
     MarketingCloudPermissionFailure,
     MarketingCloudSoapApiException,
 )
+from tap_exacttarget.client import is_non_retryable_http_error
 from .base_test import BaseClientTest
 
 
@@ -136,3 +138,28 @@ class TestErrorHandling(BaseClientTest):
 
         # Should be the same exception, not wrapped
         assert exc_info.exception is original_error
+
+    def test_non_retryable_http_error_returns_true_for_403(self):
+        response = Mock()
+        response.status_code = 403
+        err = HTTPError("403 Forbidden", response=response)
+
+        assert is_non_retryable_http_error(err) is True
+
+    def test_non_retryable_http_error_returns_false_for_non_403(self):
+        response = Mock()
+        response.status_code = 500
+        err = HTTPError("500 Internal Server Error", response=response)
+
+        assert is_non_retryable_http_error(err) is False
+
+    def test_get_rest_does_not_retry_403(self):
+        response = Mock()
+        response.status_code = 403
+        response.raise_for_status.side_effect = HTTPError("403 Forbidden", response=response)
+
+        with patch("tap_exacttarget.client.requests.get", return_value=response) as mock_get:
+            with self.assertRaises(HTTPError):
+                self.client_instance.get_rest("hub/v1/campaigns/", params={})
+
+        assert mock_get.call_count == 1

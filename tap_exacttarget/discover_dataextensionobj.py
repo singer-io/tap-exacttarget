@@ -7,6 +7,12 @@ from tap_exacttarget.streams import DataExtensionObjectFt, DataExtensionObjectIn
 
 LOGGER = get_logger()
 
+# Prefix used for every dynamically-discovered Data Extension stream's
+# tap_stream_id (see discover_dao_streams() below). Shared with sync.py so it
+# can tell, from the catalog alone, whether discover_dao_streams() needs to
+# be called at all for a given sync.
+DATA_EXTENSION_STREAM_PREFIX = "data_extension_"
+
 field_type_mapping = {
     "Boolean": "boolean",
     "Decimal": "number",
@@ -121,7 +127,7 @@ def discover_dao_streams(client: Client):
 
             stream_name = item["Name"]
             stream_name_sanitized = re.sub(r'[^a-zA-Z0-9]+', '_', stream_name).strip('_').lower()
-            stream_id = f"data_extension_{stream_name_sanitized}"
+            stream_id = f"{DATA_EXTENSION_STREAM_PREFIX}{stream_name_sanitized}"
             stream_fields = discovered_fields.get(customer_key, {})
 
             key_props = ["_CustomObjectKey"] + stream_fields.get("key_properties", [])

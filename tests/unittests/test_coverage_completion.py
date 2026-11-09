@@ -143,12 +143,22 @@ class TestEntryPointsAndDiscovery(TestCase):
         mock_discover.assert_not_called()
         mock_sync.assert_called_once_with(mock_client.return_value, args.catalog, args.state)
 
+    @staticmethod
+    def _make_fully_accessible_client():
+        """Builds a mock client whose access-check probes always succeed, so
+        discover() includes every stream in STREAMS."""
+        client = MagicMock()
+        client.retrieve_request.return_value = {"OverallStatus": "OK", "Results": []}
+        client.get_rest.return_value = {"items": [], "page": 1}
+        return client
+
     @patch("tap_exacttarget.discover.discover_dao_streams", return_value={})
     def test_discover_builds_catalog_from_schema_files(self, mock_discover_dao_streams):
-        catalog = discover(client=None)
+        client = self._make_fully_accessible_client()
+        catalog = discover(client=client)
 
         self.assertEqual(len(catalog.streams), len(STREAMS))
-        mock_discover_dao_streams.assert_called_once_with(client=None)
+        mock_discover_dao_streams.assert_called_once_with(client=client)
 
     @patch("tap_exacttarget.discover.discover_dao_streams")
     def test_discover_includes_dynamic_streams(self, mock_discover_dao_streams):
@@ -159,8 +169,9 @@ class TestEntryPointsAndDiscovery(TestCase):
             get_metadata=lambda schema: [],
         )
         mock_discover_dao_streams.return_value = {"dynamic_stream": dynamic_stream}
+        client = self._make_fully_accessible_client()
 
-        catalog = discover(client=None)
+        catalog = discover(client=client)
 
         self.assertTrue(any(stream.tap_stream_id == "dynamic_stream" for stream in catalog.streams))
 

@@ -115,6 +115,27 @@ class TestSoapOperations(BaseClientTest):
         # Verify RetrieveOptions called with correct batch size
         mock_retrieve_options_type.assert_called_once_with(BatchSize=1234, IncludeObjects=True)
 
+    def test_retrieve_request_uses_override_batch_size_when_provided(self):
+        """Test that per-request batch size override takes precedence."""
+        mock_retrieve_request_type = Mock()
+        mock_retrieve_options_type = Mock()
+
+        self.client_instance.soap_client.get_type.side_effect = [
+            mock_retrieve_request_type,
+            mock_retrieve_options_type,
+        ]
+
+        self.client_instance.batch_size = 1234
+
+        mock_response = {"OverallStatus": "OK", "Results": []}
+        self.client_instance.soap_client.service.Retrieve.return_value = mock_response
+
+        self.client_instance.retrieve_request(
+            object_type="Subscriber", properties=["SubscriberKey"], batch_size=1
+        )
+
+        mock_retrieve_options_type.assert_called_once_with(BatchSize=1, IncludeObjects=True)
+
     def test_retrieve_request_sets_include_objects_true(self):
         """Test that IncludeObjects is always set to True in options."""
         mock_retrieve_request_type = Mock()
