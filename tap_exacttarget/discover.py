@@ -42,9 +42,9 @@ def check_stream_access(client: Client, stream_name: str, stream_class: Type[Bas
             client.get_rest(endpoint, params={})
         else:
             probe_field = stream_class.key_properties[0]
-            client.retrieve_request(stream_class.object_ref, [probe_field])
+            client.retrieve_request(stream_class.object_ref, [probe_field], batch_size=1)
             if stream_name == "list_subscribers":
-                client.retrieve_request("LIST", ["ID"])
+                client.retrieve_request("LIST", ["ID"], batch_size=1)
         return True
     except MarketingCloudPermissionFailure as err:
         LOGGER.warning(

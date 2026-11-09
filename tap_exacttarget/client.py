@@ -169,13 +169,20 @@ class Client:
         max_time=300,
     )
     def retrieve_request(
-        self, object_type, properties, request_id=None, search_filter=None
+        self,
+        object_type,
+        properties,
+        request_id=None,
+        search_filter=None,
+        batch_size=None,
     ):
         retrieve_req = self.soap_client.get_type("ns0:RetrieveRequest")
         retrieve_opts = self.soap_client.get_type("ns0:RetrieveOptions")
 
+        requested_batch_size = self.batch_size if batch_size is None else batch_size
+
         retrieve_options = retrieve_opts(
-            BatchSize=self.batch_size,
+            BatchSize=requested_batch_size,
             # This ensures all the Inherited APIObject fields are available
             IncludeObjects=True,
         )

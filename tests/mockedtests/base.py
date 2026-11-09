@@ -68,13 +68,21 @@ class MockClient:
         self.rest_calls: List[Dict] = []
 
     # -- SOAP-style API ---------------------------------------------------
-    def retrieve_request(self, object_type, properties, request_id=None, search_filter=None):
+    def retrieve_request(
+        self,
+        object_type,
+        properties,
+        request_id=None,
+        search_filter=None,
+        batch_size=None,
+    ):
         self.retrieve_calls.append(
             {
                 "object_type": object_type,
                 "properties": properties,
                 "request_id": request_id,
                 "search_filter": search_filter,
+                "batch_size": batch_size,
             }
         )
         if object_type in self.deny_object_types:

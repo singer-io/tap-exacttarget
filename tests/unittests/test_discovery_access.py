@@ -47,7 +47,7 @@ class TestCheckStreamAccessSoap(unittest.TestCase):
         stream_class = make_stream_class(object_ref="Email", key_properties=["ID"])
 
         self.assertTrue(check_stream_access(client, "email", stream_class))
-        client.retrieve_request.assert_called_once_with("Email", ["ID"])
+        client.retrieve_request.assert_called_once_with("Email", ["ID"], batch_size=1)
 
     def test_permission_denied_excludes_stream(self):
         client = MagicMock()
@@ -113,7 +113,7 @@ class TestApplyAccessChecks(unittest.TestCase):
     def test_excludes_unauthorized_top_level_stream(self):
         client = MagicMock()
 
-        def side_effect(object_ref, _fields):
+        def side_effect(object_ref, _fields, batch_size=None):
             if object_ref == "Email":
                 raise MarketingCloudPermissionFailure("Error: API Permission Failed")
             return {"OverallStatus": "OK", "Results": []}
@@ -149,12 +149,14 @@ class TestApplyAccessChecks(unittest.TestCase):
         self.assertEqual(result, {})
         # Only the parent should have been probed; the child is pruned without
         # issuing a separate request once its parent is known to be excluded.
-        client.retrieve_request.assert_called_once_with("ListSubscriber", ["SubscriberKey"])
+        client.retrieve_request.assert_called_once_with(
+            "ListSubscriber", ["SubscriberKey"], batch_size=1
+        )
 
     def test_child_individually_excluded_even_if_parent_accessible(self):
         client = MagicMock()
 
-        def side_effect(object_ref, _fields):
+        def side_effect(object_ref, _fields, batch_size=None):
             if object_ref == "Subscriber":
                 raise MarketingCloudPermissionFailure("Error: API Permission Failed")
             return {"OverallStatus": "OK", "Results": []}
@@ -174,6 +176,20 @@ class TestApplyAccessChecks(unittest.TestCase):
         result = _apply_access_checks(client, streams)
 
         self.assertEqual(set(result.keys()), {"list_subscribers"})
+
+    def test_list_subscribers_performs_additional_list_probe_with_single_batch(self):
+        client = MagicMock()
+        client.retrieve_request.return_value = {"OverallStatus": "OK", "Results": []}
+        stream_class = make_stream_class(object_ref="ListSubscriber", key_properties=["SubscriberKey"])
+
+        self.assertTrue(check_stream_access(client, "list_subscribers", stream_class))
+        self.assertEqual(
+            client.retrieve_request.call_args_list,
+            [
+                unittest.mock.call("ListSubscriber", ["SubscriberKey"], batch_size=1),
+                unittest.mock.call("LIST", ["ID"], batch_size=1),
+            ],
+        )
 
     def test_no_streams_accessible_returns_empty_dict(self):
         client = MagicMock()
