@@ -89,9 +89,8 @@ def sync(client, catalog: singer.Catalog, state: Dict):
             continue
 
         if tap_stream_id not in STREAMS:
-            # Selected Data Extension stream whose discovery was skipped
-            # above because the credentials lack access to Data Extensions
-            # (already recorded in failed_streams); nothing else to do here.
+            if not any(stream_id == tap_stream_id for stream_id, _ in failed_streams):
+                raise KeyError(f"Selected stream '{tap_stream_id}' is unavailable after discovery")
             continue
 
         stream_obj = STREAMS[tap_stream_id](stream_metadata, stream_schema, client)
